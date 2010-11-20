@@ -1,0 +1,206 @@
+*vimUnit.txt*    A template to create vim and winmanager managed plugins.  v0.1
+
+
+	vimUnit. A unit-testing framework targeting vim-scripts
+
+==============================================================================
+CONTENT                                                      *vimUnit-contents*
+                                                                 *unit-testing* 
+	Installation        : |vimUnit-installation|                  *unittesting* 
+	Configuration       : |vimUnit-configuration|
+	vimUnit intro       : |vimUnit|
+	Requirements        : |vimUnit-requirements|
+	vimUnit commands    : |vimUnit-commands|
+	Bugs                : |vimUnit-bugs|
+	Tips                : |vimUnit-tips|
+	Todo list           : |vimUnit-todo|
+	Change log          : |vimUnit-change-log|
+
+==============================================================================
+1. vimUnit Installation                                 *vimUnit-installation*
+
+	TODO: Write documentation, Installation
+	
+	Copy the file vimUnit.vim to your ftplugin directory. That would normaly 
+	be ~/.vim/ftplugin/ on *nix and $VIM/vimfiles/ftplugin/ on MS-Windows.
+
+	The next time you start vim (or gvim) after you have installed the plugin 
+	this documentation si suposed to automaticaly be installed.
+	
+==============================================================================
+1.1 vimUnit Configuration                              *vimUnit-configuration*
+															|vimUnit-content|
+															
+															*vimUnit-AutoRun*
+															      *VUAutoRun*
+	To ease testing of scripts there is a AutoRun (VUAutoRun()) routine. When 
+	called from the commandline or a mapping of your preference it takes the 
+	curser position in the file and figure out if your inside a function 
+	starting with 'Test'. If you are the file your in will be saved and sourced.
+	Then the function will be called, and you get a printout of the statistics.
+	So placing the cursor on call (in a vim file) inside the function:
+	
+		function! TestThis()
+			call VUAssertTrue(TRUE(),'Simple test of true')	
+		endfunction
+		
+	And calling:
+		:call VUAutoRun()
+		
+	Will give you the statistics.
+
+	
+                                                           *vimUnit-verbosity*
+	When we are running test cases to much output could be annoying. turn msg 
+	output off in your vimrc file with:
+		let g:vimUnitVerbosity = 0
+	Default value is 1.
+                                                            *vimUnit-selftest*
+	vimUnit has code to test that it work as expected. This code will run the 
+	first time vim is running after you installed vimUnit. After that it will 
+	only run again if there is changes to the vimUnit.vim file. If you want 
+	vimUnit to do a self-test every time it is loaded (sourced) you should add
+	this line to your vimrc file:
+		let g:vimUnitSelfTest = 1
+
+==============================================================================
+1.1 vimUnit Requirements                                *vimUnit-requirements*
+															|vimUnit-content|
+	TODO: Write documentation, Requirements
+	
+	Just a working vim environment
+	
+==============================================================================
+2. vimUnit Intro                                      *VU* *VimUnit* *vimUnit*
+															|vimUnit-content|
+	TODO: Write documentation, Intro
+	
+	The phillosophy behind test-first driven development is simple. 
+	When you consider to write some code, you normaly have an idea of what you
+	want the code to do. So, instead of just thinking of what your code should 
+	do try to write down a test case formalising your thoughts. When you have 
+	a test case you start writing the code to make the test case complete 
+	successfully. If your work discover problem areas, error conditions or
+	suche write a test to make shure your code handels it. And will continue 
+	to handel it the next time you make some changes. Writing code, also test
+	code, is hard (but fun) work.
+	Ex:
+		"First we have an ide of how our function Cube should work
+		func! TestCaseCube()
+			call VUAssertEquals(<SID>Cube(1),1,'Trying to cube 1)')
+			call VUAssertEquals(<SID>Cube(2),2*2*2,'Trying to cube 2)')
+			call VUAssertEquals(<SID>Cube(3),3*3*3,'Trying to cube 3)')
+			"Take a look at the statistics
+			call VURunnerPrintStatistics()
+		endfunc
+		"We write ouer Cube Function
+		func! <SID>Cube(arg1)
+			let nFoo = arg1*arg1*arg1
+			return nFoo
+		endfunc
+		
+		"Enter commands to run the test
+		"Source the current file (in current window)
+		:so %
+		"call the TestCase
+		:call TestCaseCube()
+
+	That's it If we get errors we must investigate. We should make test's 
+	discovering how our function handels obvious error conditions. How about
+	adding this line to our TestCase:
+		call VUAssertEquals(<SID>Cube('tre'),3*3*3,'Trying to pass a string')
+		
+	Do we get a nice error message or does our script grind to a halt?
+	Should we add a test in Cube that ensure valide arguments?
+		if type(arg1) == 0
+			...
+		else
+			echomsg "ERROR: You passed a string to the Cube function."
+		endif
+		
+	After some itterations and test writings we should feel confident that our
+	Cube function works like expected, and will continue to do so even if we 
+	make changes to it.
+
+==============================================================================
+3. vimUnit Commands                                         *vimUnit-commands*
+															|vimUnit-content|
+	TODO: Write documentation, Commands
+	
+	When you se ... at the end of the argument list you may optionaly provide 
+	a message string.
+	
+	VUAssertEquals(ar1, arg2, ...)
+		VUAssert that arg1 is euqal in content to arg2.
+	VUAssertTrue(arg1, ...)
+		VUAssert that arg1 is true.
+	VUAssertFalse(arg1, ...)
+		VUAssert that arg1 is false.
+	VUAssertNotNull(arg1, ...)
+		VUAssert that arg1 is initiated.
+	VUAssertNotSame(arg1, arg2, ...)
+		VUAssert that arg1 and arg2 reference diffrent memory.
+	VUAssertSame(arg1, arg2, ...)
+		VUAssert that arg1 and arg2 are from the same memory.
+	VUAssertFail(...)
+		Log a userdefined failure.
+		
+
+
+	VURunnerInit()
+		TODO:
+	VURunnerStartSuite(caller)
+		TODO:
+	VURunnerStopSuite(caller)
+		TODO:
+==============================================================================
+4. vimUnit Bugs                                                 *vimUnit-bugs*
+															|vimUnit-content|
+	TODO: Write documentation, Bugs
+	
+	Bugs, what bugs..;o)
+	
+==============================================================================
+5. vimUnit Tips                                                 *vimUnit-tips*
+															|vimUnit-content|
+	TODO: Write documentation, Tips
+	
+==============================================================================
+6. vimUnit Todo list                                            *vimUnit-todo*   
+															|vimUnit-content|
+	TODO: Write more documentation
+	TODO: Cleanup function header comments	
+
+	TODO: TestResult methodes are not implemented 		    
+		TestResultAddError(test, ...)
+		TestResultAddFailure(test, ...)
+		TestResultAddListener(listener, ...)
+		TestResultCloneListener()
+		TestResultErrorCount()
+		TestResultErrors()
+		TestResultFailureCount()
+		TestResultFailures()
+		TestResultRemoveListener(listener, ...)
+		TestResultRun(testCase, ...)
+		TestResultRunCount()
+		TestResultShouldStop()
+		TestResultStartTest(test)
+		TestResultStop()
+		TestResultWasSuccessful()
+		}}}
+==============================================================================
+7. vimUnit Change log                                     *vimUnit-change-log*
+															|vimUnit-content|
+Developer reference: (breake up mail address)
+---------------------------------------------
+SF = Staale Flock, staale -- lexholm .. no
+
+------------------------------------------------------------------------------
+By	Date		Description, if version nr changes place it first.
+------------------------------------------------------------------------------
+SF	8 Nov 2004	0.1	Initial uppload
+==============================================================================
+" Need the next formating line inside the help document
+" vim: ts=4 sw=4 tw=78: 
+
+ vim:tw=78:ts=8:ft=help:norl:
