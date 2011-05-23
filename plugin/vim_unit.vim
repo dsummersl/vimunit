@@ -328,6 +328,17 @@ function! VUAssertFail(...)	"{{{2
 	return FALSE()	
 endfunction
 
+" ---------------------------------------------------------------------
+" FUNCTION:	VUTraceMsg
+" PURPOSE:
+"	Add a debug message to the final testing report.
+" ARGUMENTS:
+" 	msg : The debug message
+" ---------------------------------------------------------------------
+function! VUTraceMsg(msg)
+    call <SID>MsgSink('', a:msg)
+endfunction
+
 " VURunner {{{1
 function! VURunnerRunTest(test)
 		"exe "call ".sFoo.'()'
@@ -355,10 +366,20 @@ function! VURunnerPrintStatistics(caller,...) "{{{2
 		if exists('a:1') && a:1 != ''
 			let sFoo = sFoo."MSG: ".a:1
 		endif
+		if g:vimUnitVerbosity
+            " only if verbosity is on
+            for msg in s:msgSink
+                echo msg[0].': '.msg[1].(msg[2] != '' ? ' => source: ' . msg[2] . '()' : '')
+            endfor
+        endif
 		let sFoo = sFoo."Test count:\t".s:testRunCount."\nTest Success:\t".s:testRunSuccessCount."\nTest failures:\t".s:testRunFailureCount."\nExpected failures:\t".s:testRunExpectedFailuresCount
 		let sFoo = sFoo."\n--------------------------------------------------\n"
-		" 
 		echo sFoo
+		if s:testRunSuccessCount + s:testRunExpectedFailuresCount == s:testRunCount
+            echo "\n*** SUCCESS ***\n"
+        else
+            echo "\n!!! FAILURE !!!\n"
+        endif
 		return sFoo
 	else
 		"echomsg "SUITE RUNNING:"
@@ -435,8 +456,9 @@ function! <sid>MsgSink(caller,msg)  "{{{2
     " TODO change this so that it records the last test, and whether if failed
     " or not.
 	if g:vimUnitVerbosity > 0
-        let s:msgSink = s:msgSink + [[a:caller,a:msg]]
-		echo a:caller.': '.a:msg
+        let trace = split(expand("<sfile>"), '\.\.')
+        let s:msgSink = s:msgSink + [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+		"echo a:caller.': '.a:msg
 	endif
 endfunction
 
