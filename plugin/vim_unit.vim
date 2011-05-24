@@ -182,8 +182,8 @@ function! VUAssertEquals(arg1, arg2, ...)	"{{{2
 		let bFoo = FALSE()
 		let arg1text = string(a:arg1)
 		let arg2text = string(a:arg2)
-        if (len(a:000) == 3)
-            call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text ." MSG: ". a:3)
+        if (exists('a:1'))
+            call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text ." MSG: ". a:1)
         else
             call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text)
         endif
@@ -210,7 +210,7 @@ function! VUAssertTrue(arg1, ...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 2)
+        if (exists('a:1'))
             call <SID>MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE()." MSG: ".a:1)
         else
             call <SID>MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
@@ -238,7 +238,7 @@ function! VUAssertFalse(arg1, ...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 2)
+        if (exists('a:1'))
             call <SID>MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE()." MSG: ".a:1)
         else
             call <SID>MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE())
@@ -284,8 +284,8 @@ function! VUAssertNotSame(arg1,arg2,...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 3)
-            call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:3)
+        if (exists('a:1'))
+            call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:1)
         else
             call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2)
         endif
@@ -305,8 +305,8 @@ function! VUAssertSame(arg1, arg2, ...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 3)
-            call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:3)
+        if (exists('a:1'))
+            call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:1)
         else
             call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2)
         endif
@@ -319,7 +319,7 @@ endfunction
 function! VUAssertFail(...)	"{{{2
 	let s:testRunCount = s:testRunCount + 1	
 	let s:testRunFailureCount = s:testRunFailureCount + 1
-    if (len(a:000) == 1)
+    if (exists('a:1'))
         call <SID>MsgSink('AssertFail','MSG: '.a:1)
     else
         call <SID>MsgSink('AssertFail','')
