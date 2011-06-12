@@ -182,8 +182,8 @@ function! VUAssertEquals(arg1, arg2, ...)	"{{{2
 		let bFoo = FALSE()
 		let arg1text = string(a:arg1)
 		let arg2text = string(a:arg2)
-        if (len(a:000) == 3)
-            call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text ." MSG: ". a:3)
+        if (exists('a:1'))
+            call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text ." MSG: ". a:1)
         else
             call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text)
         endif
@@ -210,7 +210,7 @@ function! VUAssertTrue(arg1, ...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 2)
+        if (exists('a:1'))
             call <SID>MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE()." MSG: ".a:1)
         else
             call <SID>MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
@@ -238,7 +238,7 @@ function! VUAssertFalse(arg1, ...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 2)
+        if (exists('a:1'))
             call <SID>MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE()." MSG: ".a:1)
         else
             call <SID>MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE())
@@ -284,8 +284,8 @@ function! VUAssertNotSame(arg1,arg2,...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 3)
-            call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:3)
+        if (exists('a:1'))
+            call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:1)
         else
             call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2)
         endif
@@ -305,8 +305,8 @@ function! VUAssertSame(arg1, arg2, ...)	"{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-        if (len(a:000) == 3)
-            call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:3)
+        if (exists('a:1'))
+            call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:1)
         else
             call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2)
         endif
@@ -319,13 +319,24 @@ endfunction
 function! VUAssertFail(...)	"{{{2
 	let s:testRunCount = s:testRunCount + 1	
 	let s:testRunFailureCount = s:testRunFailureCount + 1
-    if (len(a:000) == 1)
+    if (exists('a:1'))
         call <SID>MsgSink('AssertFail','MSG: '.a:1)
     else
         call <SID>MsgSink('AssertFail','')
     endif
     let s:lastAssertionResult = FALSE()
 	return FALSE()	
+endfunction
+
+" ---------------------------------------------------------------------
+" FUNCTION:	VUTraceMsg
+" PURPOSE:
+"	Add a debug message to the final testing report.
+" ARGUMENTS:
+" 	msg : The debug message
+" ---------------------------------------------------------------------
+function! VUTraceMsg(msg)
+    call <SID>MsgSink('', a:msg)
 endfunction
 
 " VURunner {{{1
@@ -355,10 +366,20 @@ function! VURunnerPrintStatistics(caller,...) "{{{2
 		if exists('a:1') && a:1 != ''
 			let sFoo = sFoo."MSG: ".a:1
 		endif
+		if g:vimUnitVerbosity
+            " only if verbosity is on
+            for msg in s:msgSink
+                echo msg[0].': '.msg[1].(msg[2] != '' ? ' => source: ' . msg[2] . '()' : '')
+            endfor
+        endif
 		let sFoo = sFoo."Test count:\t".s:testRunCount."\nTest Success:\t".s:testRunSuccessCount."\nTest failures:\t".s:testRunFailureCount."\nExpected failures:\t".s:testRunExpectedFailuresCount
 		let sFoo = sFoo."\n--------------------------------------------------\n"
-		" 
 		echo sFoo
+		if s:testRunSuccessCount + s:testRunExpectedFailuresCount == s:testRunCount
+            echo "\n*** SUCCESS ***\n"
+        else
+            echo "\n!!! FAILURE !!!\n"
+        endif
 		return sFoo
 	else
 		"echomsg "SUITE RUNNING:"
@@ -435,8 +456,9 @@ function! <sid>MsgSink(caller,msg)  "{{{2
     " TODO change this so that it records the last test, and whether if failed
     " or not.
 	if g:vimUnitVerbosity > 0
-        let s:msgSink = s:msgSink + [[a:caller,a:msg]]
-		echo a:caller.': '.a:msg
+        let trace = split(expand("<sfile>"), '\.\.')
+        let s:msgSink = s:msgSink + [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+		"echo a:caller.': '.a:msg
 	endif
 endfunction
 
