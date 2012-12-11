@@ -952,7 +952,7 @@ CONTENT  {{{2                                                *vimUnit-contents*
 	a test case you start writing the code to make the test case complete 
 	successfully. If your work discover problem areas, error conditions or
 	suche write a test to make shure your code handels it. And will continue 
-	to handel it the next time you make some changes. Writing code, also test
+	to handle it the next time you make some changes. Writing code, also test
 	code, is hard (but fun) work.
 	Ex:
 		"First we have an ide of how our function Cube should work
@@ -960,8 +960,6 @@ CONTENT  {{{2                                                *vimUnit-contents*
 			call VUAssertEquals(<SID>Cube(1),1,'Trying to cube 1)')
 			call VUAssertEquals(<SID>Cube(2),2*2*2,'Trying to cube 2)')
 			call VUAssertEquals(<SID>Cube(3),3*3*3,'Trying to cube 3)')
-			"Take a look at the statistics
-			call VURunnerPrintStatistics()
 		endfunc
 		"We write ouer Cube Function
 		func! <SID>Cube(arg1)
