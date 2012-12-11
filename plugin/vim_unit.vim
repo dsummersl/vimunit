@@ -884,18 +884,18 @@ CONTENT  {{{2                                                *vimUnit-contents*
 	Bugs                : |vimUnit-bugs|
 	Tips                : |vimUnit-tips|
 	Todo list           : |vimUnit-todo|
-	Change log          : |vimUnit-cahnge-log|
+	Change log          : |vimUnit-change-log|
 
 ==============================================================================
 1. vimUnit Installation {{{2                            *vimUnit-installation*
 
 	TODO: Write documentation, Installation
 	
-	Copy the file vimUnit.vim to your ftplugin directory. That would normaly 
+	Copy the file vimUnit.vim to your ftplugin directory. That would normally 
 	be ~/.vim/ftplugin/ on *nix and $VIM/vimfiles/ftplugin/ on MS-Windows.
 
 	The next time you start vim (or gvim) after you have installed the plugin 
-	this documentation si suposed to automaticaly be installed.
+	this documentation is supposed to automatically be installed.
 	
 ==============================================================================
 1.1 vimUnit Configuration {{{2                         *vimUnit-configuration*
@@ -905,7 +905,7 @@ CONTENT  {{{2                                                *vimUnit-contents*
 															      *VUAutoRun*
 	To ease testing of scripts there is a AutoRun (VUAutoRun()) routine. When 
 	called from the commandline or a mapping of your preference it takes the 
-	curser position in the file and figure out if your inside a function 
+	cursor position in the file and figure out if your inside a function 
 	starting with 'Test'. If you are the file your in will be saved and sourced.
 	Then the function will be called, and you get a printout of the statistics.
 	So placing the cursor on call (in a vim file) inside the function:
@@ -921,8 +921,8 @@ CONTENT  {{{2                                                *vimUnit-contents*
 
 	
                                                            *vimUnit-verbosity*
-	When we are running test cases to much output could be annoying. turn msg 
-	output off in your vimrc file with:
+    When we are running test cases to much output can be annoying. Turn
+    message output off in your vimrc file with:
 		let g:vimUnitVerbosity = 0
 	Default value is 1.
                                                             *vimUnit-selftest*
@@ -945,17 +945,18 @@ CONTENT  {{{2                                                *vimUnit-contents*
 															|vimUnit-content|
 	TODO: Write documentation, Intro
 	
-	The phillosophy behind test-first driven development is simple. 
-	When you consider to write some code, you normaly have an idea of what you
-	want the code to do. So, instead of just thinking of what your code should 
-	do try to write down a test case formalising your thoughts. When you have 
+	The philosophy behind test-first driven development is simple. 
+	When you consider to write some code, you normally have an idea of what you
+	want the code to do. Instead of just thinking of what your code should 
+	do try to write down a test case formalizing your thoughts. When you have 
 	a test case you start writing the code to make the test case complete 
-	successfully. If your work discover problem areas, error conditions or
-	suche write a test to make shure your code handels it. And will continue 
+	successfully. If you discover problem areas, or error conditions 
+	write a test to make sure your code handles it. And will continue 
 	to handle it the next time you make some changes. Writing code, also test
 	code, is hard (but fun) work.
-	Ex:
-		"First we have an ide of how our function Cube should work
+
+	Example:
+		"First we have an idea of how our function Cube should work
 		func! TestCaseCube()
 			call VUAssertEquals(<SID>Cube(1),1,'Trying to cube 1)')
 			call VUAssertEquals(<SID>Cube(2),2*2*2,'Trying to cube 2)')
@@ -974,19 +975,19 @@ CONTENT  {{{2                                                *vimUnit-contents*
 		:call TestCaseCube()
 
 	That's it If we get errors we must investigate. We should make test's 
-	discovering how our function handels obvious error conditions. How about
+	discovering how our function handles obvious error conditions. How about
 	adding this line to our TestCase:
 		call VUAssertEquals(<SID>Cube('tre'),3*3*3,'Trying to pass a string')
 		
 	Do we get a nice error message or does our script grind to a halt?
-	Should we add a test in Cube that ensure valide arguments?
+	Should we add a test in Cube that ensure valid arguments?
 		if type(arg1) == 0
 			...
 		else
 			echomsg "ERROR: You passed a string to the Cube function."
 		endif
 		
-	After some itterations and test writings we should feel confident that our
+	After some iterations and test writings we should feel confident that our
 	Cube function works like expected, and will continue to do so even if we 
 	make changes to it.
 
@@ -995,7 +996,7 @@ CONTENT  {{{2                                                *vimUnit-contents*
 															|vimUnit-content|
 	TODO: Write documentation, Commands
 	
-	When you se ... at the end of the argument list you may optionaly provide 
+	When you see ... at the end of the argument list you may optionally provide 
 	a message string.
 	
 	VUAssertEquals(ar1, arg2, ...)
@@ -1007,11 +1008,11 @@ CONTENT  {{{2                                                *vimUnit-contents*
 	VUAssertNotNull(arg1, ...)
 		VUAssert that arg1 is initiated.
 	VUAssertNotSame(arg1, arg2, ...)
-		VUAssert that arg1 and arg2 reference diffrent memory.
+		VUAssert that arg1 and arg2 reference different memory.
 	VUAssertSame(arg1, arg2, ...)
 		VUAssert that arg1 and arg2 are from the same memory.
 	VUAssertFail(...)
-		Log a userdefined failure.
+		Log a user defined failure.
 		
 
 
@@ -1039,7 +1040,7 @@ CONTENT  {{{2                                                *vimUnit-contents*
 	TODO: Write more documentation
 	TODO: Cleanup function header comments	
 
-	TODO: TestResult methodes are not implemented 		{{{3
+	TODO: TestResult methods are not implemented 		{{{3
 		TestResultAddError(test, ...)
 		TestResultAddFailure(test, ...)
 		TestResultAddListener(listener, ...)
@@ -1062,10 +1063,12 @@ CONTENT  {{{2                                                *vimUnit-contents*
 Developer reference: (breake up mail address)
 ---------------------------------------------
 SF = Staale Flock, staale -- lexholm .. no
+DS = Dane Summers, dsummersl -- yahoo .. com
 
 ------------------------------------------------------------------------------
 By	Date		Description, if version nr changes place it first.
 ------------------------------------------------------------------------------
+DS	9 Dec 2012	0.2	TODO...pending...
 SF	8 Nov 2004	0.1	Initial uppload
 ==============================================================================
 " Need the next formating line inside the help document
