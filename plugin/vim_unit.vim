@@ -113,6 +113,11 @@ if !exists('g:vimUnitVerbosity')
 	let g:vimUnitVerbosity = 1
 endif
 
+if !exists('g:vimUnitFailFast')
+	"Defaults to false (legacy behavior)
+	let g:vimUnitFailFast = 0
+endif
+
 "	Variables Script{{{2
 if !exists('s:lastAssertionResult')
     let s:lastAssertionResult = TRUE()
@@ -154,11 +159,10 @@ endif
 " RETURNS:
 "	false
 " -----------------------------------------
-function! TODO(funcName)	"{{{2
+function! TODO(funcName) "{{{2
 	echomsg '[TODO] '.a:funcName
 	return FALSE()
 endfunction
-
 " ---------------------------------------------------------------------
 " FUNCTION:	VUAssertEquals
 " PURPOSE:
@@ -171,9 +175,9 @@ endfunction
 "	1 if arg1 == arg2
 "	0 if arg1 != arg2
 " ---------------------------------------------------------------------
-function! VUAssertEquals(arg1, arg2, ...)	"{{{2
+function! VUAssertEquals(arg1, arg2, ...) "{{{2
 	let s:testRunCount = s:testRunCount + 1
-	" check the types..." 
+	" check the types..."
 	if a:arg1 == a:arg2
 		let s:testRunSuccessCount = s:testRunSuccessCount + 1
 		let bFoo = TRUE()
@@ -182,13 +186,25 @@ function! VUAssertEquals(arg1, arg2, ...)	"{{{2
 		let bFoo = FALSE()
 		let arg1text = string(a:arg1)
 		let arg2text = string(a:arg2)
-        if (exists('a:1'))
-            call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text ." MSG: ". a:1)
-        else
-            call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text)
-        endif
+		let msg = ''
+		if (exists('a:1'))
+			let msg = " MSG: ". a:1
+		endif
+		" TODO implement nice comparisons for dictionaries
+		" nice comparison for lists
+		if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+			if len(a:arg1) != len(a:arg2)
+				call <SID>MsgSink('AssertEquals','Lengths differ: len(arg1)=='. len(a:arg1) .' and len(arg2)=='. len(a:arg2) .' arg1='. arg1text .'!='. arg2text . msg)
+				" TODO if they are the same length then explain which index's
+				" differ
+			else
+				call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+			endif
+		else
+			call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+		endif
 	endif
-    let s:lastAssertionResult = bFoo
+	let s:lastAssertionResult = bFoo
 	return bFoo
 endfunction
 " ---------------------------------------------------------------------
@@ -202,7 +218,7 @@ endfunction
 " 	TRUE() if true and
 " 	FALSE() if false
 " ---------------------------------------------------------------------
-function! VUAssertTrue(arg1, ...)	"{{{2
+function! VUAssertTrue(arg1, ...) "{{{2
 	let s:testRunCount = s:testRunCount + 1
 	if a:arg1 == TRUE()
 		let s:testRunSuccessCount = s:testRunSuccessCount + 1
@@ -230,7 +246,7 @@ endfunction
 "	0 if true
 "	1 if false
 " ---------------------------------------------------------------------
-function! VUAssertFalse(arg1, ...)	"{{{2
+function! VUAssertFalse(arg1, ...) "{{{2
 	let s:testRunCount = s:testRunCount + 1
 	if a:arg1 == FALSE()
 		let s:testRunSuccessCount = s:testRunSuccessCount + 1
@@ -250,7 +266,7 @@ endfunction
 
 " VUAssert that the arg1 is initialized (is not null)
 " Is this situation possible in vim script?
-function! VUAssertNotNull(arg1, ...)	"{{{2	
+function! VUAssertNotNull(arg1, ...) "{{{2	
 	"NOTE: I do not think we will have a situation in a vim-script where we
 	"can pass a variable containing a null as I understand it that is a 
 	"uninitiated variable. 
@@ -275,7 +291,7 @@ endfunction
 
 " VUAssert the the two variables dos not reference the same memory ?
 " NOTE: Do not think we can control this in vim
-function! VUAssertNotSame(arg1,arg2,...)	"{{{2
+function! VUAssertNotSame(arg1,arg2,...) "{{{2
 	let s:testRunCount = s:testRunCount + 1
 	"Could not do: if &a:arg1 != &a:arg2
 	if a:arg1 != a:arg2
@@ -296,7 +312,7 @@ endfunction
 
 "Assert that arg1 and arg2 reference the same memory
 "NOTE: Don't know how to test this in vim
-function! VUAssertSame(arg1, arg2, ...)	"{{{2
+function! VUAssertSame(arg1, arg2, ...) "{{{2
 	let s:testRunCount = s:testRunCount + 1
 	"TODO: This does not ensure the same memory reference.
 	if a:arg1 == a:arg2
@@ -316,7 +332,7 @@ function! VUAssertSame(arg1, arg2, ...)	"{{{2
 endfunction
 
 "Fail a test with no arguments
-function! VUAssertFail(...)	"{{{2
+function! VUAssertFail(...) "{{{2
 	let s:testRunCount = s:testRunCount + 1	
 	let s:testRunFailureCount = s:testRunFailureCount + 1
     if (exists('a:1'))
@@ -335,17 +351,23 @@ endfunction
 " ARGUMENTS:
 " 	msg : The debug message
 " ---------------------------------------------------------------------
-function! VUTraceMsg(msg)
+function! VUTraceMsg(msg) 
     call <SID>MsgSink('', a:msg)
 endfunction
 
 " VURunner {{{1
-function! VURunnerRunTest(test)
+function! VURunnerRunTest(test) 
+	try
+		let did_vim_unit_vim = 1
 		"exe "call ".sFoo.'()'
 		call VURunnerInit()
 		echo "Running: ".a:test
 		call {a:test}()
-		call VURunnerPrintStatistics('VUAutoRun:'.a:test)	
+		call VURunnerPrintStatistics('VUAutoRun:'.a:test)
+	catch /.*/
+		echo "Failed: ". a:test
+		echo "Error: ". v:exception ." -- ". v:throwpoint
+	endtry
 endfunction
 " ----------------------------------------- {{{2
 " FUNCTION:	VURunnerPrintStatistics
@@ -367,19 +389,19 @@ function! VURunnerPrintStatistics(caller,...) "{{{2
 			let sFoo = sFoo."MSG: ".a:1
 		endif
 		if g:vimUnitVerbosity
-            " only if verbosity is on
-            for msg in s:msgSink
-                echo msg[0].': '.msg[1].(msg[2] != '' ? ' => source: ' . msg[2] . '()' : '')
-            endfor
-        endif
+			" only if verbosity is on
+			for msg in s:msgSink
+				echo msg[0].': '.msg[1].(msg[2] != '' ? ' => source: ' . msg[2] . '()' : '')
+			endfor
+		endif
 		let sFoo = sFoo."Test count:\t".s:testRunCount."\nTest Success:\t".s:testRunSuccessCount."\nTest failures:\t".s:testRunFailureCount."\nExpected failures:\t".s:testRunExpectedFailuresCount
 		let sFoo = sFoo."\n--------------------------------------------------\n"
 		echo sFoo
 		if s:testRunSuccessCount + s:testRunExpectedFailuresCount == s:testRunCount
-            echo "\n*** SUCCESS ***\n"
-        else
-            echo "\n!!! FAILURE !!!\n"
-        endif
+			echo "\n*** SUCCESS ***\n"
+		else
+			echo "\n!!! FAILURE !!!\n"
+		endif
 		return sFoo
 	else
 		"echomsg "SUITE RUNNING:"
@@ -387,7 +409,7 @@ function! VURunnerPrintStatistics(caller,...) "{{{2
 	endif
 endfunction
 
-function! VURunnerInit()	"{{{2
+function! VURunnerInit() "{{{2
 	if exists('s:suiteRunning') && s:suiteRunning == FALSE()
 		echomsg "CLEARING: statistics"
         let s:lastAssertionResult = TRUE()
@@ -409,7 +431,7 @@ endfunction
 " RETURNS:
 "	
 " -----------------------------------------
-function! VURunnerStartSuite(caller)	"{{{2
+function! VURunnerStartSuite(caller) "{{{2
 	call VURunnerInit()
 	let s:suiteRunning = TRUE()
 endfunction
@@ -437,34 +459,39 @@ endfunction
 "	
 " -----------------------------------------
 
-function! VURunnerExpectFailure(...)  "{{{2
-    " This function will throw an exception if the last assert statement did
-    " not fail. Use this to ensure that a enexpected success is caught.
+function! VURunnerExpectFailure(...) "{{{2
+	if g:vimUnitFailFast
+		throw "VURunnerExpectFailure incompatible with g:vimUnitFailFast mode. Use try/catch blocks"
+	endif
+	" This function will throw an exception if the last assert statement did
+	" not fail. Use this to ensure that a enexpected success is caught.
 	let s:testRunExpectedFailuresCount = s:testRunExpectedFailuresCount + 1
-    "if (a:caller == s:msgSink[-1][0] && s:lastAssertionResult == 0)
-    if (s:lastAssertionResult)
-        if (len(s:msgSink) > 0)
-            throw "Expected failure, but last assertion passed: ".string(s:msgSink[-1])
-        else
-            throw "Expected failure, but last assertion passed."
-        endif
-    endif
+	"if (a:caller == s:msgSink[-1][0] && s:lastAssertionResult == 0)
+	if (s:lastAssertionResult)
+		if (len(s:msgSink) > 0)
+			throw "Expected failure, but last assertion passed: ".string(s:msgSink[-1])
+		else
+			throw "Expected failure, but last assertion passed."
+		endif
+	endif
 endfunction
 
-function! <sid>MsgSink(caller,msg)  "{{{2
+function! <sid>MsgSink(caller,msg) "{{{2
     " recording of the last failure
-    " TODO change this so that it records the last test, and whether if failed
-    " or not.
+	let trace = split(expand("<sfile>"), '\.\.')
+	let msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+	if g:vimUnitFailFast
+		throw string(msg[0][1])
+	endif
 	if g:vimUnitVerbosity > 0
-        let trace = split(expand("<sfile>"), '\.\.')
-        let s:msgSink = s:msgSink + [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+		let s:msgSink = s:msgSink + msg
 		"echo a:caller.': '.a:msg
 	endif
 endfunction
 
 "staale - GetCurrentFunctionName()
 "Extract the function name the cursor is inside
-function! <SID>GetCurrentFunctionName()		"{{{2
+function! <SID>GetCurrentFunctionName() "{{{2
 	"call s:FindBlock('\s*fu\%[nction]\>!\=\s.*(\%([^)]*)\|\%(\n\s*\\[^)]*\)*\n)\)', '', '', '^\s*endf\%[unction]', 0)
 	"bWn ==> b=Search backward, W=Don't wrap around end of file,n=Do not move cursor.
 	let nTop = searchpair('^\s*fu\%[nction]\%[!]\ .*','','^\s*endf\%[unction].*','bWn')
@@ -472,7 +499,71 @@ function! <SID>GetCurrentFunctionName()		"{{{2
 	return sLine
 endfunction
 
-function! <SID>ExtractFunctionName(strLine)		"{{{2
+" TODO this is great function that should be all over the place (in a general
+" utility library)
+function! <SID>searchallpair(start,middle,end, ...) 
+	let flags = ''
+	let stopline = 0
+	let timeout = 0
+	if a:0 > 0
+		let flags = a:1
+	endif
+	if a:0 > 1
+		let stopline = a:2
+	endif
+	if a:0 > 2
+		let timeout = a:3
+	endif
+	" Return all matches in a file. Just like 'searchpair' but returns a list
+	" of the matches in the file..
+	" save the old position.
+	let origpos = getpos('.')
+	" go to line 1
+	if matchstr(flags,'b')
+		1
+		let cmp='<='
+	else
+		$
+		let cmp='>='
+	endif
+
+	if matchstr(flags,'W') == "" | let flags = flags .'W' | endif
+	let lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.line('.'))
+	let results = []
+	while 1
+		if lastcall != 0
+			call add(results,lastcall)
+		endif
+		let curline = line('.')
+		if cmp == '<='
+			let nextStart = search(a:start,'W')
+			if !nextStart
+				break
+			endif
+		else
+			let nextEnd = search(a:end,'bW')
+			if !nextEnd
+				break
+			endif
+		endif
+		let lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+	endwhile
+	call setpos('.',origpos)
+	return results
+endfunction
+
+function! <SID>GetCurrentFunctionNames() "{{{2
+	" Get all functions in the file.
+	let matches = <SID>searchallpair('^\s*fu\%[nction]\%[!]\ .*','','^\s*endf\%[unction].*','Wb')
+	let results = []
+	for m in matches
+		let sLine = getline(m)
+		call add(results,sLine)
+	endfor
+	return results
+endfunction
+
+function! <SID>ExtractFunctionName(strLine) "{{{2
 " This used to be part of the GetCurrentFunctionName() routine
 " But to make as much as possible of the code testable we have to isolate code
 " that do any kind of buffer or window interaction.
@@ -481,7 +572,92 @@ function! <SID>ExtractFunctionName(strLine)		"{{{2
 	let sFuncName =strpart(sFoo ,0,strlen(sFoo)-1)
 	return sFuncName
 endfunction
+"function VURunAllTests {{{2
+" -----------------------------------------
+" FUNCTION: VURunAllTests
+" PURPOSE:  Runs all the tests in a file.
+"
+" ARGUMENTS:
+"   optional boolean. If true, then this function will exit vim with an error
+"   code. Suitable for scripting unit tests ala
+"
+"       vim -nc 'so %' <filename>
+"
+" RETURNS:
+"
+"   Prints out the test results.
+"
+" -----------------------------------------
+function! VURunAllTests(...)
+	" Run all the tests that exist in this file.
+	" NOTE:If you change this code you must manualy source the file!
 
+	let oldFailFast = g:vimUnitFailFast
+	let g:vimUnitFailFast = 1
+	let oldvfile = &verbosefile
+	let oldverbose = &verbose
+	echom "oldvfile = '". oldvfile ."'"
+	echom "oldverbose = '". oldverbose ."'"
+
+	"Locate function line on line with or above current line
+	let messages = []
+	let goodTests = 0
+	let badTests = 0
+	let goodAssertions = 0
+	let badAssertions = 0
+	for fn in <SID>GetCurrentFunctionNames()
+		let sFoo = <SID>ExtractFunctionName(fn)
+		if match(sFoo,'^Test') > -1
+			if exists( '*'.sFoo)
+				try
+					call VURunnerInit()
+					" TODO make the verbose file a temp file.
+					" Get the line number of this particular function
+					" then grep the verbose file for the offset.
+					exe "silent !rm vfile.txt"
+					set verbosefile=vfile.txt
+					set verbose=20
+					call {sFoo}()
+					let goodTests = goodTests + 1
+				catch /.*/
+					exec "set verbose=".oldverbose
+					exec "set verbosefile=".oldvfile
+					exec "silent !grep -A 2 'continuing in function.*". sFoo ."$' vfile.txt | tail -n 5 | head -n 1 > vline.txt"
+					let lineno = readfile('vline.txt')[0]
+					call add(messages,printf("%-15s     Good assertions: %3d",sFoo,s:testRunSuccessCount))
+					call add(messages,"    Error: ". v:exception)
+					call add(messages,"    ". lineno)
+					let badTests = badTests + 1
+				finally
+					exec "set verbose=".oldverbose
+					exec "set verbosefile=".oldvfile
+					let goodAssertions = goodAssertions + s:testRunSuccessCount
+					let badAssertions = badAssertions + s:testRunFailureCount
+				endtry
+			else
+				call confirm ("ERROR: VUAutoRunner. Function name: ".sFoo." Could not be found by function exists(".sFoo.")")
+			endif
+		else
+			call add(messages,"NOTE: Found function name: ".sFoo." Does not start with Test.So we will not run it automaticaly")
+		endif
+	endfor
+
+	" final deletion of log files.
+	exe "silent !rm vfile.txt"
+	exe "silent !rm vline.txt"
+	let g:vimUnitFailFast = oldFailFast
+
+	for line in messages
+		echo line
+	endfor
+	echo ""
+	echo "----------------------------------------------"
+	echo "Summary:"
+	echo printf(" OK (%3d tests, %3d assertions)",goodTests,goodAssertions)
+	if badTests > 0
+		echo printf("BAD (%3d tests)",badTests)
+	endif
+endfunction
 
 "function VUAutoRun {{{2
 " We have to make a check so we can AutoRun vimUnit.vim itself
@@ -517,7 +693,7 @@ endfunction
 endif
 
 " SelfTest VUAssert {{{1
-function! TestVUAssertEquals()  "{{{2
+function! TestVUAssertEquals() "{{{2
 	let sSelf = 'TestVUAssertEquals'
 	call VUAssertEquals(1,1)
 	call VUAssertEquals(1,2)
@@ -569,7 +745,7 @@ function! TestVUAssertEquals()  "{{{2
 "	call VUAssertEquals(%%%,%%%,"Simple test comparing %%%,expect failure')
 endfunction
 
-function! TestVUAssertTrue()  "{{{2
+function! TestVUAssertTrue() "{{{2
 	let sSelf = 'TestVUAssertTrue'
 	call VUAssertTrue(TRUE())
 	call VUAssertTrue(FALSE())	
@@ -603,7 +779,7 @@ function! TestVUAssertTrue()  "{{{2
 	
 endfunction
 
-function! TestVUAssertFalse()  "{{{2
+function! TestVUAssertFalse() "{{{2
 	let sSelf = 'TestVUAssertFalse'
 	call VUAssertfalse(FALSE())	
 	call VUAssertFalse(TRUE())	
@@ -631,7 +807,7 @@ function! TestVUAssertFalse()  "{{{2
 	call VURunnerExpectFailure(sSelf,'AssertFalse(arg1="","")')
 	
 endfunction
-function! TestVUAssertNotNull()  "{{{2
+function! TestVUAssertNotNull() "{{{2
 	"NOTE: I do not think we will have a situation in a vim-script where we
 	"can pass a variable containing a null as I understand it that is a 
 	"uninitiated variable. 
@@ -660,7 +836,7 @@ function! TestVUAssertNotNull()  "{{{2
 	
 endfunction
 
-function! TestVUAssertNotSame()  "{{{2
+function! TestVUAssertNotSame() "{{{2
 	" VUAssert the two arguments does not reference the same memory
 	" NOTE: I do not know how to test this in vim.
 	" TODO: Write more relevant test's
@@ -674,7 +850,7 @@ function! TestVUAssertNotSame()  "{{{2
 	call VURunnerExpectFailure(sSelf,'arg1 = arg2 is the same')
 endfunction
 
-function! TestVUAssertSame()  "{{{2
+function! TestVUAssertSame() "{{{2
 	" VUAssert the two arguments does reference the same memory
 	" NOTE: I do not know how to test this in vim.
 	" TODO: Write more relevant test's
@@ -688,7 +864,7 @@ function! TestVUAssertSame()  "{{{2
 	call VURunnerExpectFailure(sSelf,'arg1 != arg2 and reference diffrent memory')
 endfunction
 
-function! TestVUAssertFail()  "{{{2
+function! TestVUAssertFail() "{{{2
 	let sSelf = 'testAssertFail'
 	call VUAssertFail('Expected failure')
 	call VURunnerExpectFailure(sSelf,'Calling VUAssertFail()')
@@ -709,8 +885,48 @@ function! TestExtractFunctionName() "{{{1
 	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('   func TestFunction()	"{{{3'),'Declaration starting with space and ending with commented folding marker')
 	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('func TestFunction(arg1, funcarg1, ..)'),'arguments contain func')
 endfunction	"}}}
+function! TestGetCurrentFunctionNames() "{{{1
+	let sSelf = 'TestExtractFunctionNames'
+	"Testing legal function declarations
+	" TODO apparently this function isn't perfect ... the following functions
+	" should have been found:
+"\ 'function! VURunAllTests() ', <---
+"\ 'function! <SID>GetCurrentFunctionNames() "{{{2', <----
+"\ 'function! VURunnerPrintStatistics(caller,...) "{{{2', <----
+	let sFoo = VUAssertEquals(<SID>GetCurrentFunctionNames(),[
+		\ 'function! TestSuiteVimUnitSelfTest() "{{{1',
+		\ 'function! TestGetCurrentFunctionNames() "{{{1',
+		\ 'function! TestExtractFunctionName() "{{{1',
+		\ 'function! TestVUAssertFail() "{{{2',
+		\ 'function! TestVUAssertSame() "{{{2',
+		\ 'function! TestVUAssertNotSame() "{{{2',
+		\ 'function! TestVUAssertNotNull() "{{{2',
+		\ 'function! TestVUAssertFalse() "{{{2',
+		\ 'function! TestVUAssertTrue() "{{{2',
+		\ 'function! TestVUAssertEquals() "{{{2',
+		\ 'function! VUAutoRun() ',
+		\ 'function! <SID>ExtractFunctionName(strLine) "{{{2',
+		\ 'function! <SID>searchallpair(start,middle,end, ...) ',
+		\ 'function! <SID>GetCurrentFunctionName() "{{{2',
+		\ 'function! <sid>MsgSink(caller,msg) "{{{2',
+		\ 'function! VURunnerExpectFailure(...) "{{{2',
+		\ 'function! VURunnerStopSuite(caller) "{{{2',
+		\ 'function! VURunnerStartSuite(caller) "{{{2',
+		\ 'function! VURunnerInit() "{{{2',
+		\ 'function! VURunnerRunTest(test) ',
+		\ 'function! VUTraceMsg(msg) ',
+		\ 'function! VUAssertFail(...) "{{{2',
+		\ 'function! VUAssertSame(arg1, arg2, ...) "{{{2',
+		\ 'function! VUAssertNotSame(arg1,arg2,...) "{{{2',
+		\ 'function! VUAssertNotNull(arg1, ...) "{{{2	',
+		\ 'function! VUAssertFalse(arg1, ...) "{{{2',
+		\ 'function! VUAssertTrue(arg1, ...) "{{{2',
+		\ 'function! VUAssertEquals(arg1, arg2, ...) "{{{2',
+		\ 'function! TODO(funcName) "{{{2'
+		\ ])
+endfunction	"}}}
 
-function! TestSuiteVimUnitSelfTest()  "{{{1
+function! TestSuiteVimUnitSelfTest() "{{{1
 	let sSelf = 'TestSuiteVimUnitSelfTest'
 	call TestVUAssertEquals()
 	call TestVUAssertTrue()
@@ -719,359 +935,5 @@ function! TestSuiteVimUnitSelfTest()  "{{{1
 	call TestVUAssertSame()
 	call TestVUAssertFail()
 	call TestExtractFunctionName()
+	call TestGetCurrentFunctionNames()
 endfunction
-
-" Help (Documentation) installation {{{1
-"
-" InstallDocumentation {{{2
-" ---------------------------------------------------------------------
-" Function: <SID>InstallDocumentation(full_name, revision)   
-"   Install help documentation.
-" Arguments:
-"   full_name: Full name of this vim pluggin script, including path name.
-"   revision:  Revision of the vim script. #version# mark in the document file
-"              will be replaced with this string with 'v' prefix.
-" Return:
-"   1 if new document installed, 0 otherwise.
-" Note: Cleaned and generalized by guo-peng Wen
-" 
-" Source: vimspell.vim s:SpellInstallDocumentation 
-"         http://www.vim.org/scripts/script.php?script_id=465  
-" ---------------------------------------------------------------------
-function! <SID>InstallDocumentation(full_name, revision)
-    " Name of the document path based on the system we use:
-    if (has("unix"))
-        " On UNIX like system, using forward slash:
-        let l:slash_char = '/'
-        let l:mkdir_cmd  = ':silent !mkdir -p '
-    else
-        " On M$ system, use backslash. Also mkdir syntax is different.
-        " This should only work on W2K and up.
-        let l:slash_char = '\'
-        let l:mkdir_cmd  = ':silent !mkdir '
-    endif
-
-    let l:doc_path = l:slash_char . 'doc'
-    let l:doc_home = l:slash_char . '.vim' . l:slash_char . 'doc'
-
-    " Figure out document path based on full name of this script:
-    let l:vim_plugin_path = fnamemodify(a:full_name, ':h')
-    let l:vim_doc_path    = fnamemodify(a:full_name, ':h:h') . l:doc_path
-    if (!(filewritable(l:vim_doc_path) == 2))
-        echomsg "Doc path: " . l:vim_doc_path
-        execute l:mkdir_cmd . l:vim_doc_path
-        if (!(filewritable(l:vim_doc_path) == 2))
-            " Try a default configuration in user home:
-            let l:vim_doc_path = expand("~") . l:doc_home
-            if (!(filewritable(l:vim_doc_path) == 2))
-                execute l:mkdir_cmd . l:vim_doc_path
-                if (!(filewritable(l:vim_doc_path) == 2))
-                    " Put a warning:
-                    echomsg "Unable to open documentation directory"
-                    echomsg " type :help add-local-help for more informations."
-                    return 0
-                endif
-            endif
-        endif
-    endif
-
-    " Exit if we have problem to access the document directory:
-    if (!isdirectory(l:vim_plugin_path)
-        \ || !isdirectory(l:vim_doc_path)
-        \ || filewritable(l:vim_doc_path) != 2)
-        return 0
-    endif
-
-    " Full name of script and documentation file:
-    let l:script_name = fnamemodify(a:full_name, ':t')
-    let l:doc_name    = fnamemodify(a:full_name, ':t:r') . '.txt'
-    let l:plugin_file = l:vim_plugin_path . l:slash_char . l:script_name
-    let l:doc_file    = l:vim_doc_path    . l:slash_char . l:doc_name
-
-    " Bail out if document file is still up to date:
-    if (filereadable(l:doc_file)  &&
-        \ getftime(l:plugin_file) < getftime(l:doc_file))
-        return 0
-    endif
-
-    " Prepare window position restoring command:
-    if (strlen(@%))
-        let l:go_back = 'b ' . bufnr("%")
-    else
-        let l:go_back = 'enew!'
-    endif
-
-    " Create a new buffer & read in the pluggin file (me):
-    setl nomodeline
-    exe 'enew!'
-    exe 'r ' . l:plugin_file
-
-    setl modeline
-    let l:buf = bufnr("%")
-    setl noswapfile modifiable
-
-    norm zR
-    norm gg
-
-    " Delete from first line to a line starts with
-    " === START_DOC
-    1,/^=\{3,}\s\+START_DOC\C/ d
-
-    " Delete from a line starts with
-    " === END_DOC
-    " to the end of the documents:
-    /^=\{3,}\s\+END_DOC\C/,$ d
-
-    " Remove fold marks:
-    % s/{\{3}[1-9]/    /
-
-    " Add modeline for help doc: the modeline string is mangled intentionally
-    " to avoid it be recognized by VIM:
-    call append(line('$'), '')
-    call append(line('$'), ' v' . 'im:tw=78:ts=8:ft=help:norl:')
-
-    " Replace revision:
-    exe "normal :1s/#version#/ v" . a:revision . "/\<CR>"
-
-    " Save the help document:
-    exe 'w! ' . l:doc_file
-    exe l:go_back
-    exe 'bw ' . l:buf
-
-    " Build help tags:
-    exe 'helptags ' . l:vim_doc_path
-
-    return 1
-endfunction
-
-" Automatically install documentation when script runs {{{2
-" This code will check file (self) and install/update documentation included
-" at the bottom.
-" SOURCE: vimspell.vim, function! <SID>InstallDocumentation
-  let s:revision=
-	\ substitute("$Revision: 0.1 $",'\$\S*: \([.0-9]\+\) \$','\1','')
-  silent! let s:help_install_status =
-      \ <SID>InstallDocumentation(expand('<sfile>:p'), s:revision)
-  if (s:help_install_status == 1) 
-	  call VURunnerRunTest('TestSuiteVimUnitSelfTest')
-      echom expand("<sfile>:t:r") . ' v' . s:revision .
-		\ ': Help-documentation installed.'
-  endif
-
-	if (g:vimUnitSelfTest == 1)
-	  call VURunnerRunTest('TestSuiteVimUnitSelfTest')
-	endif	
-
-" Stop sourceing this file, no code after this.
-finish
-
-" Documentation {{{1
-" Help header {{{2
-=== START_DOC
-*vimUnit.txt*    A template to create vim and winmanager managed plugins. #version#
-
-
-	vimUnit. A unit-testing framework targeting vim-scripts
-
-==============================================================================
-CONTENT  {{{2                                                *vimUnit-contents*
-                                                                 *unit-testing* 
-	Installation        : |vimUnit-installation|                  *unittesting* 
-	Configuration       : |vimUnit-configuration|
-	vimUnit intro       : |vimUnit|
-	Requirements        : |vimUnit-requirements|
-	vimUnit commands    : |vimUnit-commands|
-	Bugs                : |vimUnit-bugs|
-	Tips                : |vimUnit-tips|
-	Todo list           : |vimUnit-todo|
-	Change log          : |vimUnit-change-log|
-
-==============================================================================
-1. vimUnit Installation {{{2                            *vimUnit-installation*
-
-	TODO: Write documentation, Installation
-	
-	Copy the file vimUnit.vim to your ftplugin directory. That would normally 
-	be ~/.vim/ftplugin/ on *nix and $VIM/vimfiles/ftplugin/ on MS-Windows.
-
-	The next time you start vim (or gvim) after you have installed the plugin 
-	this documentation is supposed to automatically be installed.
-	
-==============================================================================
-1.1 vimUnit Configuration {{{2                         *vimUnit-configuration*
-															|vimUnit-content|
-															
-															*vimUnit-AutoRun*
-															      *VUAutoRun*
-	To ease testing of scripts there is a AutoRun (VUAutoRun()) routine. When 
-	called from the commandline or a mapping of your preference it takes the 
-	cursor position in the file and figure out if your inside a function 
-	starting with 'Test'. If you are the file your in will be saved and sourced.
-	Then the function will be called, and you get a printout of the statistics.
-	So placing the cursor on call (in a vim file) inside the function:
-	
-		function! TestThis()
-			call VUAssertTrue(TRUE(),'Simple test of true')	
-		endfunction
-		
-	And calling:
-		:call VUAutoRun()
-		
-	Will give you the statistics.
-
-	
-                                                           *vimUnit-verbosity*
-    When we are running test cases to much output can be annoying. Turn
-    message output off in your vimrc file with:
-		let g:vimUnitVerbosity = 0
-	Default value is 1.
-                                                            *vimUnit-selftest*
-	vimUnit has code to test that it work as expected. This code will run the 
-	first time vim is running after you installed vimUnit. After that it will 
-	only run again if there is changes to the vimUnit.vim file. If you want 
-	vimUnit to do a self-test every time it is loaded (sourced) you should add
-	this line to your vimrc file:
-		let g:vimUnitSelfTest = 1
-
-==============================================================================
-1.1 vimUnit Requirements {{{2                           *vimUnit-requirements*
-															|vimUnit-content|
-	TODO: Write documentation, Requirements
-	
-	Just a working vim environment
-	
-==============================================================================
-2. vimUnit Intro {{{2                                 *VU* *VimUnit* *vimUnit*
-															|vimUnit-content|
-	TODO: Write documentation, Intro
-	
-	The philosophy behind test-first driven development is simple. 
-	When you consider to write some code, you normally have an idea of what you
-	want the code to do. Instead of just thinking of what your code should 
-	do try to write down a test case formalizing your thoughts. When you have 
-	a test case you start writing the code to make the test case complete 
-	successfully. If you discover problem areas, or error conditions 
-	write a test to make sure your code handles it. And will continue 
-	to handle it the next time you make some changes. Writing code, also test
-	code, is hard (but fun) work.
-
-	Example:
-		"First we have an idea of how our function Cube should work
-		func! TestCaseCube()
-			call VUAssertEquals(<SID>Cube(1),1,'Trying to cube 1)')
-			call VUAssertEquals(<SID>Cube(2),2*2*2,'Trying to cube 2)')
-			call VUAssertEquals(<SID>Cube(3),3*3*3,'Trying to cube 3)')
-		endfunc
-		"We write ouer Cube Function
-		func! <SID>Cube(arg1)
-			let nFoo = arg1*arg1*arg1
-			return nFoo
-		endfunc
-		
-		"Enter commands to run the test
-		"Source the current file (in current window)
-		:so %
-		"call the TestCase
-		:call TestCaseCube()
-
-	That's it If we get errors we must investigate. We should make test's 
-	discovering how our function handles obvious error conditions. How about
-	adding this line to our TestCase:
-		call VUAssertEquals(<SID>Cube('tre'),3*3*3,'Trying to pass a string')
-		
-	Do we get a nice error message or does our script grind to a halt?
-	Should we add a test in Cube that ensure valid arguments?
-		if type(arg1) == 0
-			...
-		else
-			echomsg "ERROR: You passed a string to the Cube function."
-		endif
-		
-	After some iterations and test writings we should feel confident that our
-	Cube function works like expected, and will continue to do so even if we 
-	make changes to it.
-
-==============================================================================
-3. vimUnit Commands {{{2                                    *vimUnit-commands*
-															|vimUnit-content|
-	TODO: Write documentation, Commands
-	
-	When you see ... at the end of the argument list you may optionally provide 
-	a message string.
-	
-	VUAssertEquals(ar1, arg2, ...)
-		VUAssert that arg1 is euqal in content to arg2.
-	VUAssertTrue(arg1, ...)
-		VUAssert that arg1 is true.
-	VUAssertFalse(arg1, ...)
-		VUAssert that arg1 is false.
-	VUAssertNotNull(arg1, ...)
-		VUAssert that arg1 is initiated.
-	VUAssertNotSame(arg1, arg2, ...)
-		VUAssert that arg1 and arg2 reference different memory.
-	VUAssertSame(arg1, arg2, ...)
-		VUAssert that arg1 and arg2 are from the same memory.
-	VUAssertFail(...)
-		Log a user defined failure.
-		
-
-
-	VURunnerInit()
-		TODO:
-	VURunnerStartSuite(caller)
-		TODO:
-	VURunnerStopSuite(caller)
-		TODO:
-==============================================================================
-4. vimUnit Bugs {{{2                                            *vimUnit-bugs*
-															|vimUnit-content|
-	TODO: Write documentation, Bugs
-	
-	Bugs, what bugs..;o)
-	
-==============================================================================
-5. vimUnit Tips {{{2                                            *vimUnit-tips*
-															|vimUnit-content|
-	TODO: Write documentation, Tips
-	
-==============================================================================
-6. vimUnit Todo list {{{2                                       *vimUnit-todo*   
-															|vimUnit-content|
-	TODO: Write more documentation
-	TODO: Cleanup function header comments	
-
-	TODO: TestResult methods are not implemented 		{{{3
-		TestResultAddError(test, ...)
-		TestResultAddFailure(test, ...)
-		TestResultAddListener(listener, ...)
-		TestResultCloneListener()
-		TestResultErrorCount()
-		TestResultErrors()
-		TestResultFailureCount()
-		TestResultFailures()
-		TestResultRemoveListener(listener, ...)
-		TestResultRun(testCase, ...)
-		TestResultRunCount()
-		TestResultShouldStop()
-		TestResultStartTest(test)
-		TestResultStop()
-		TestResultWasSuccessful()
-		}}}
-==============================================================================
-7. vimUnit Change log  {{{2                               *vimUnit-change-log*
-															|vimUnit-content|
-Developer reference: (breake up mail address)
----------------------------------------------
-SF = Staale Flock, staale -- lexholm .. no
-DS = Dane Summers, dsummersl -- yahoo .. com
-
-------------------------------------------------------------------------------
-By	Date		Description, if version nr changes place it first.
-------------------------------------------------------------------------------
-DS	9 Dec 2012	0.2	TODO...pending...
-SF	8 Nov 2004	0.1	Initial uppload
-==============================================================================
-" Need the next formating line inside the help document
-" vim: ts=4 sw=4 tw=78: 
-=== END_DOC
-" vim: ts=4 sw=4 tw=78 foldmethod=marker
