@@ -411,9 +411,8 @@ endfunction
 
 function! VURunnerInit() "{{{2
 	if exists('s:suiteRunning') && s:suiteRunning == FALSE()
-		echomsg "CLEARING: statistics"
-        let s:lastAssertionResult = TRUE()
-        let s:msgSink = []
+		let s:lastAssertionResult = TRUE()
+		let s:msgSink = []
 		let s:testRunCount = 0
 		let s:testRunFailureCount = 0
 		let s:testRunSuccessCount = 0
@@ -575,13 +574,16 @@ endfunction
 "function VURunAllTests {{{2
 " -----------------------------------------
 " FUNCTION: VURunAllTests
-" PURPOSE:  Runs all the tests in a file.
+" PURPOSE:  Runs all the tests in the current file.
 "
 " ARGUMENTS:
 "   optional boolean. If true, then this function will exit vim with an error
 "   code. Suitable for scripting unit tests ala
 "
 "       vim -nc 'so %' <filename>
+"
+"   optional output file. If set, then the output is saved to the output file
+"   specified. Meant to be used with the former option set to true.
 "
 " RETURNS:
 "
@@ -596,8 +598,6 @@ function! VURunAllTests(...)
 	let g:vimUnitFailFast = 1
 	let oldvfile = &verbosefile
 	let oldverbose = &verbose
-	echom "oldvfile = '". oldvfile ."'"
-	echom "oldverbose = '". oldverbose ."'"
 
 	"Locate function line on line with or above current line
 	let messages = []
@@ -614,7 +614,7 @@ function! VURunAllTests(...)
 					" TODO make the verbose file a temp file.
 					" Get the line number of this particular function
 					" then grep the verbose file for the offset.
-					exe "silent !rm vfile.txt"
+					exe "silent !rm -f vfile.txt"
 					set verbosefile=vfile.txt
 					set verbose=20
 					call {sFoo}()
@@ -643,19 +643,30 @@ function! VURunAllTests(...)
 	endfor
 
 	" final deletion of log files.
-	exe "silent !rm vfile.txt"
-	exe "silent !rm vline.txt"
+	exe "silent !rm -f vfile.txt"
+	exe "silent !rm -f vline.txt"
 	let g:vimUnitFailFast = oldFailFast
 
-	for line in messages
-		echo line
-	endfor
-	echo ""
-	echo "----------------------------------------------"
-	echo "Summary:"
-	echo printf(" OK (%3d tests, %3d assertions)",goodTests,goodAssertions)
+	call add(messages, "")
+	call add(messages, "----------------------------------------------")
+	call add(messages, "Summary:")
+	call add(messages, printf(" OK (%3d tests, %3d assertions)",goodTests,goodAssertions))
 	if badTests > 0
-		echo printf("BAD (%3d tests)",badTests)
+		call add(messages, printf("BAD (%3d tests)",badTests))
+	endif
+	if a:0 > 1
+		call writefile(messages,a:000[1])
+	else
+		for line in messages
+			echo line
+		endfor
+	endif
+	if a:0 > 0 && a:000[0]
+		if badTests > 0
+			cquit
+		else
+			quit
+		endif
 	endif
 endfunction
 
