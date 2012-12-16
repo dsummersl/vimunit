@@ -4,5 +4,11 @@ A plugin to write unit tests for vim scripts.
 
 ----
 
-This plugin was written by Staale Flock, which is [[script #1125|http://www.vim.org/scripts/script.php?script_id=1125]]
+This plugin was originally written by Staale Flock, which is [[script #1125|http://www.vim.org/scripts/script.php?script_id=1125]]
 on the [[vim.org|http://vim.org]] site.
+
+----
+
+To run vim_unit's own tests type the following:
+
+    ./vutest.sh plugin/vim_unit.vim
