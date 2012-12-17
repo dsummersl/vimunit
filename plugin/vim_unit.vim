@@ -501,7 +501,7 @@ endfunction
 
 " TODO this is great function that should be all over the place (in a general
 " utility library)
-function! <SID>searchallpair(start,middle,end, ...) 
+function! <SID>searchallpair(start,middle,end, ...)
 	let flags = ''
 	let stopline = 0
 	let timeout = 0
@@ -619,7 +619,8 @@ function! VURunAllTests(...)
 				catch /.*/
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
-					exec "silent !grep -A 2 'continuing in function.*". sFoo ."$' vfile.txt | tail -n 5 | head -n 1 > vline.txt"
+					exec "silent !grep -A 2 'continuing in function.*". sFoo ."$' vfile.txt | grep line | tail -n 1 > vline.txt"
+					"exec "!cp vfile.txt verr.txt"
 					call add(messages,printf("%-25s| Good assertions: %3d",sFoo,s:testRunSuccessCount))
 					call add(messages,"    Error: ". v:exception)
 					let vline = readfile('vline.txt')
@@ -995,3 +996,4 @@ function! TestGetCurrentFunctionNames() "{{{1
 		\ 'function! TODO(funcName) "{{{2'
 		\ ])
 endfunction	"}}}
+" vim: set noet:
