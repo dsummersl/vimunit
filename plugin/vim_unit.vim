@@ -1,17 +1,10 @@
-fun s:str(str)
-  if type(a:str) != 1
-    return string(a:str)
-  end
-  return a:str
-endf
-
 " Normally za or zR will open the folds- zM will close them all.
-" File header {{{1
+" File header "{{{
 " --------------------------------------------------------------
 "  FILE:            vimUnit.vim
-"  AUTHOR:          Staale Flock, Staale -- lexholm .. no
-"  VERSION:         0.1
-"  LASTMODIFIED:    8 Nov 2004
+"  AUTHOR:          Staale Flock, Staale -- lexholm .. no + Dane Summers
+"  VERSION:         1.0
+"  LASTMODIFIED:    20 Dec 2012
 "
 "  PURPOSE:
 "		To provide vim scripts with a simple unit testing framework and tools.
@@ -70,18 +63,9 @@ endf
 "  Staale Flock, (staale -- lexholm .. no)
 "  Norway
 " ---------------------------------------------------------------------------
-"  
-" A first try on unit testing vim scripts
-" TODO: How do I unit test autocmd's?
-" TODO: How do I unit test map, imap and so on?
-" TODO: How do I unit test buffers
-" TODO: how do I unit test windows
-" TODO: how do I unit test the CTRL-W (wincmd) commands?
-"
-" TODO: split out the unit tests
-"
-
-" Define true and false {{{1
+""}}}
+"Global variables {{{
+" Define true and false 
 if !exists('g:false')
 	let g:FALSE = (1 != 1)
 endif
@@ -107,8 +91,8 @@ if !exists('*FALSE')
 	endfunction
 endif 
 
-"Variables {{{1
-"	Variables Global{{{2
+"Variables
+"	Variables Global
 "	Global variables might be set in vimrc
 
 if !exists('g:vimUnitSelfTest')
@@ -127,8 +111,17 @@ if !exists('g:vimUnitFailFast')
 	"Defaults to false (legacy behavior)
 	let g:vimUnitFailFast = 0
 endif
+"}}}
+" Script only support variables and functions"{{{
 
-"	Variables Script{{{2
+"function VUAutoRun 
+" We have to make a check so we can AutoRun vimUnit.vim itself
+if !exists('s:vimUnitAutoRun')
+	let s:vimUnitAutoRun = 0
+endif
+
+if s:vimUnitAutoRun == 0
+"	Variables Script
 if !exists('s:lastAssertionResult')
     let s:lastAssertionResult = TRUE()
 endif
@@ -157,24 +150,15 @@ if !exists('s:suiteRunning')
 	let s:suiteRunning = FALSE()
 endif
 
-
-
-" VUAssert {{{1
-" -----------------------------------------
-" FUNCTION:	TODO:
-" PURPOSE:
-"	Just a reminder that a function is not (fully) implemented.
-" ARGUMENTS:
-"	funcName:	The name of the calling function
-" RETURNS:
-"	false
-" -----------------------------------------
-function! TODO(funcName) "{{{2
-	echomsg '[TODO] '.a:funcName
-	return FALSE()
-endfunction
-" ---------------------------------------------------------------------
-" FUNCTION:	VUAssertEquals
+" convert an object to a string smartly
+fun s:str(str)
+  if type(a:str) != 1
+    return string(a:str)
+  end
+  return a:str
+endf
+"}}}
+" VUAssertEquals"{{{
 " PURPOSE:
 "	Compare arguments
 " ARGUMENTS:
@@ -185,7 +169,7 @@ endfunction
 "	1 if arg1 == arg2
 "	0 if arg1 != arg2
 " ---------------------------------------------------------------------
-function! VUAssertEquals(arg1, arg2, ...) "{{{2
+function! VUAssertEquals(arg1, arg2, ...) "
 	let diffs = vimunit#util#diff(a:arg1,a:arg2)
 	let s:testRunCount = s:testRunCount + 1
 	" check the types..."
@@ -210,9 +194,8 @@ function! VUAssertEquals(arg1, arg2, ...) "{{{2
 	endif
 	let s:lastAssertionResult = bFoo
 	return bFoo
-endfunction
-" ---------------------------------------------------------------------
-" FUNCTION:	VUAssertTrue
+endfunction"}}}
+"	VUAssertTrue"{{{
 " PURPOSE:
 " 	Check that the passed argument validates to true
 " ARGUMENTS:
@@ -222,7 +205,7 @@ endfunction
 " 	TRUE() if true and
 " 	FALSE() if false
 " ---------------------------------------------------------------------
-function! VUAssertTrue(arg1, ...) "{{{2
+function! VUAssertTrue(arg1, ...) "
 	let s:testRunCount = s:testRunCount + 1
 	if a:arg1 == TRUE()
 		let s:testRunSuccessCount = s:testRunSuccessCount + 1
@@ -238,9 +221,8 @@ function! VUAssertTrue(arg1, ...) "{{{2
 	endif	
     let s:lastAssertionResult = bFoo
 	return bFoo
-endfunction
-" ---------------------------------------------------------------------
-" FUNCTION:	 VUAssertFalse
+endfunction"}}}
+" VUAssertFalse"{{{
 " PURPOSE:
 "	Test if the argument equals false
 " ARGUMENTS:
@@ -250,7 +232,7 @@ endfunction
 "	0 if true
 "	1 if false
 " ---------------------------------------------------------------------
-function! VUAssertFalse(arg1, ...) "{{{2
+function! VUAssertFalse(arg1, ...) "
 	let s:testRunCount = s:testRunCount + 1
 	if a:arg1 == FALSE()
 		let s:testRunSuccessCount = s:testRunSuccessCount + 1
@@ -267,10 +249,11 @@ function! VUAssertFalse(arg1, ...) "{{{2
 	let s:lastAssertionResult = bFoo
 	return bFoo
 endfunction
-
+"}}}
+" VUAssertNotNull"{{{
 " VUAssert that the arg1 is initialized (is not null)
 " Is this situation possible in vim script?
-function! VUAssertNotNull(arg1, ...) "{{{2	
+function! VUAssertNotNull(arg1, ...) "	
 	"NOTE: I do not think we will have a situation in a vim-script where we
 	"can pass a variable containing a null as I understand it that is a 
 	"uninitiated variable. 
@@ -292,10 +275,11 @@ function! VUAssertNotNull(arg1, ...) "{{{2
     let s:lastAssertionResult = bFoo
 	return bFoo		
 endfunction
-
+"}}}
+" VUAssertNotSame"{{{
 " VUAssert the the two variables dos not reference the same memory ?
 " NOTE: Do not think we can control this in vim
-function! VUAssertNotSame(arg1,arg2,...) "{{{2
+function! VUAssertNotSame(arg1,arg2,...) "
 	let s:testRunCount = s:testRunCount + 1
 	"Could not do: if &a:arg1 != &a:arg2
 	if a:arg1 != a:arg2
@@ -313,10 +297,11 @@ function! VUAssertNotSame(arg1,arg2,...) "{{{2
     let s:lastAssertionResult = bFoo
 	return bFoo		
 endfunction
-
+"}}}
+" VUAssertSame"{{{
 "Assert that arg1 and arg2 reference the same memory
 "NOTE: Don't know how to test this in vim
-function! VUAssertSame(arg1, arg2, ...) "{{{2
+function! VUAssertSame(arg1, arg2, ...) "
 	let s:testRunCount = s:testRunCount + 1
 	"TODO: This does not ensure the same memory reference.
 	if a:arg1 == a:arg2
@@ -334,9 +319,10 @@ function! VUAssertSame(arg1, arg2, ...) "{{{2
     let s:lastAssertionResult = bFoo
 	return bFoo	
 endfunction
-
-"Fail a test with no arguments
-function! VUAssertFail(...) "{{{2
+"}}}
+" VUAssertFail"{{{
+" Fail a test with no arguments
+function! VUAssertFail(...) "
 	let s:testRunCount = s:testRunCount + 1	
 	let s:testRunFailureCount = s:testRunFailureCount + 1
     if (exists('a:1'))
@@ -347,7 +333,8 @@ function! VUAssertFail(...) "{{{2
     let s:lastAssertionResult = FALSE()
 	return FALSE()	
 endfunction
-
+"}}}
+" Deprecated functions (non fail fast)"{{{
 " ---------------------------------------------------------------------
 " FUNCTION:	VUTraceMsg
 " PURPOSE:
@@ -359,7 +346,7 @@ function! VUTraceMsg(msg)
     call vimunit#util#MsgSink('', a:msg)
 endfunction
 
-" VURunner {{{1
+" VURunner 
 function! VURunnerRunTest(test) 
 	try
 		let did_vim_unit_vim = 1
@@ -373,8 +360,8 @@ function! VURunnerRunTest(test)
 		echo "Error: ". v:exception ." -- ". v:throwpoint
 	endtry
 endfunction
-" ----------------------------------------- {{{2
-" FUNCTION:	VURunnerPrintStatistics
+" ----------------------------------------- 
+" FUNCTION:	VURunnerPrintStatistics"{{{
 " PURPOSE:
 "	Print statistics about test's
 " ARGUMENTS:
@@ -382,7 +369,7 @@ endfunction
 " RETURNS:
 "	String containing statistics
 " -----------------------------------------
-function! VURunnerPrintStatistics(caller,...) "{{{2
+function! VURunnerPrintStatistics(caller,...) "
 	if exists('s:suiteRunning') && s:suiteRunning == FALSE()
 		if exists('a:caller')
 			let sFoo = "----- ".a:caller."---------------------------------------------\n"
@@ -411,9 +398,9 @@ function! VURunnerPrintStatistics(caller,...) "{{{2
 		"echomsg "SUITE RUNNING:"
 		return ''
 	endif
-endfunction
+endfunction"}}}
 
-function! VURunnerInit() "{{{2
+function! VURunnerInit() "
 	if exists('s:suiteRunning') && s:suiteRunning == FALSE()
 		let s:lastAssertionResult = TRUE()
 		let s:msgSink = []
@@ -434,7 +421,7 @@ endfunction
 " RETURNS:
 "	
 " -----------------------------------------
-function! VURunnerStartSuite(caller) "{{{2
+function! VURunnerStartSuite(caller) "
 	call VURunnerInit()
 	let s:suiteRunning = TRUE()
 endfunction
@@ -448,12 +435,11 @@ endfunction
 " RETURNS:
 "	
 " -----------------------------------------
-function! VURunnerStopSuite(caller) "{{{2
+function! VURunnerStopSuite(caller) "
 	let s:suiteRunning = FALSE()
 endfunction
 
-" -----------------------------------------
-" FUNCTION:	 VURunnerExpectError
+" VURunnerExpectError
 " PURPOSE:
 "	Notify the runner that the next test is supposed to fail
 " ARGUMENTS:
@@ -462,7 +448,7 @@ endfunction
 "	
 " -----------------------------------------
 
-function! VURunnerExpectFailure(...) "{{{2
+function! VURunnerExpectFailure(...) "
 	echom "WARNING: VURunnerExpectFailure is deprecated."
 	if g:vimUnitFailFast
 		throw "VURunnerExpectFailure incompatible with g:vimUnitFailFast mode. Use try/catch blocks"
@@ -478,9 +464,8 @@ function! VURunnerExpectFailure(...) "{{{2
 			throw "Expected failure, but last assertion passed."
 		endif
 	endif
-endfunction
-
-"function VURunAllTests {{{2
+endfunction"}}}
+"function VURunAllTests "{{{
 " -----------------------------------------
 " FUNCTION: VURunAllTests
 " PURPOSE:  Runs all the tests in the current file.
@@ -532,9 +517,20 @@ function! VURunAllTests(...)
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
 					" for debugging an error, save the output for later use...
-					"exec "silent !cp vfile.txt verr-". sFoo .".txt"
+					" exec "silent !cp vfile.txt verr-". sFoo .".txt"
 					call add(messages,printf("%-25s| Good assertions: %3d",sFoo,s:testRunSuccessCount))
 					call add(messages,"  Error: ". v:exception)
+
+					" TODO this parsing of the verbose file is very hacky. We need an
+					" actual solution that:
+					" - notes the function enter/exit messages:
+					"   - calling function
+					"   - continuing in function
+					"   - function.* aborted
+					" By parsing this better we could reliably get the line number in the
+					" test case...which at the moment sometimes does happen, and sometimes
+					" doesn't.
+
 					" Extract the line where the test failed (if there was an exception)
 					exec "silent !grep -B 3 'function .*". sFoo ."\.\..* aborted' vfile.txt > vline.txt"
 					let lineNo = ''
@@ -606,15 +602,8 @@ function! VURunAllTests(...)
 			quit
 		endif
 	endif
-endfunction
-
-"function VUAutoRun {{{2
-" We have to make a check so we can AutoRun vimUnit.vim itself
-if !exists('s:vimUnitAutoRun')
-	let s:vimUnitAutoRun = 0
-endif
-if s:vimUnitAutoRun == 0
-function! VUAutoRun() 
+endfunction"}}}
+function! VUAutoRun() "{{{
 	"NOTE:If you change this code you must manualy source the file!
 
 	let s:vimUnitAutoRun = 1
@@ -639,6 +628,5 @@ function! VUAutoRun()
 	let s:vimUnitAutoRun = 0
 	let g:vimUnitSelfTest = b:currentVimSelfTest
 endfunction
-endif
-
+endif"}}}
 " vim: set noet fdm=marker:
