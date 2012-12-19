@@ -1,3 +1,10 @@
+fun s:str(str)
+  if type(a:str) != 1
+    return string(a:str)
+  end
+  return a:str
+endf
+
 " Normally za or zR will open the folds- zM will close them all.
 " File header {{{1
 " --------------------------------------------------------------
@@ -70,6 +77,9 @@
 " TODO: How do I unit test buffers
 " TODO: how do I unit test windows
 " TODO: how do I unit test the CTRL-W (wincmd) commands?
+"
+" TODO: split out the unit tests
+"
 
 " Define true and false {{{1
 if !exists('g:false')
@@ -176,32 +186,26 @@ endfunction
 "	0 if arg1 != arg2
 " ---------------------------------------------------------------------
 function! VUAssertEquals(arg1, arg2, ...) "{{{2
+	let diffs = vimunit#util#diff(a:arg1,a:arg2)
 	let s:testRunCount = s:testRunCount + 1
 	" check the types..."
-	if a:arg1 == a:arg2
+	if len(diffs) == 0
 		let s:testRunSuccessCount = s:testRunSuccessCount + 1
 		let bFoo = TRUE()
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-		let arg1text = string(a:arg1)
-		let arg2text = string(a:arg2)
+		let arg1text = s:str(a:arg1)
+		let arg2text = s:str(a:arg2)
 		let msg = ''
 		if (exists('a:1'))
 			let msg = " MSG: ". a:1
 		endif
-		" TODO implement nice comparisons for dictionaries
-		" nice comparison for lists
-		if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
-			if len(a:arg1) != len(a:arg2)
-				call <SID>MsgSink('AssertEquals','Lengths differ: len(arg1)=='. len(a:arg1) .' and len(arg2)=='. len(a:arg2) .' arg1='. arg1text .'!='. arg2text . msg)
-				" TODO if they are the same length then explain which index's
-				" differ
-			else
-				call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
-			endif
+		let diffs = vimunit#util#diff(a:arg1,a:arg2)
+		if len(diffs) > 0
+			call vimunit#util#MsgSink('AssertEquals',diffs[0])
 		else
-			call <SID>MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+			call vimunit#util#MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
 		endif
 	endif
 	let s:lastAssertionResult = bFoo
@@ -227,9 +231,9 @@ function! VUAssertTrue(arg1, ...) "{{{2
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
         if (exists('a:1'))
-            call <SID>MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE()." MSG: ".a:1)
+            call vimunit#util#MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE()." MSG: ".a:1)
         else
-            call <SID>MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
+            call vimunit#util#MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
         endif
 	endif	
     let s:lastAssertionResult = bFoo
@@ -255,9 +259,9 @@ function! VUAssertFalse(arg1, ...) "{{{2
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
 		if (exists('a:1'))
-			call <SID>MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE()." MSG: ".a:1)
+			call vimunit#util#MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE()." MSG: ".a:1)
 		else
-			call <SID>MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE())
+			call vimunit#util#MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE())
 		endif
 	endif	
 	let s:lastAssertionResult = bFoo
@@ -283,7 +287,7 @@ function! VUAssertNotNull(arg1, ...) "{{{2
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-		call <SID>MsgSink('AssertNotNull','arg1: Does not exist')
+		call vimunit#util#MsgSink('AssertNotNull','arg1: Does not exist')
 	endif	
     let s:lastAssertionResult = bFoo
 	return bFoo		
@@ -301,9 +305,9 @@ function! VUAssertNotSame(arg1,arg2,...) "{{{2
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
         if (exists('a:1'))
-            call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:1)
+            call vimunit#util#MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:1)
         else
-            call <SID>MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2)
+            call vimunit#util#MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2)
         endif
 	endif	
     let s:lastAssertionResult = bFoo
@@ -322,9 +326,9 @@ function! VUAssertSame(arg1, arg2, ...) "{{{2
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
         if (exists('a:1'))
-            call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:1)
+            call vimunit#util#MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:1)
         else
-            call <SID>MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2)
+            call vimunit#util#MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2)
         endif
 	endif	
     let s:lastAssertionResult = bFoo
@@ -336,9 +340,9 @@ function! VUAssertFail(...) "{{{2
 	let s:testRunCount = s:testRunCount + 1	
 	let s:testRunFailureCount = s:testRunFailureCount + 1
     if (exists('a:1'))
-        call <SID>MsgSink('AssertFail','MSG: '.a:1)
+        call vimunit#util#MsgSink('AssertFail','MSG: '.a:1)
     else
-        call <SID>MsgSink('AssertFail','')
+        call vimunit#util#MsgSink('AssertFail','')
     endif
     let s:lastAssertionResult = FALSE()
 	return FALSE()	
@@ -352,7 +356,7 @@ endfunction
 " 	msg : The debug message
 " ---------------------------------------------------------------------
 function! VUTraceMsg(msg) 
-    call <SID>MsgSink('', a:msg)
+    call vimunit#util#MsgSink('', a:msg)
 endfunction
 
 " VURunner {{{1
@@ -469,105 +473,13 @@ function! VURunnerExpectFailure(...) "{{{2
 	"if (a:caller == s:msgSink[-1][0] && s:lastAssertionResult == 0)
 	if (s:lastAssertionResult)
 		if (len(s:msgSink) > 0)
-			throw "Expected failure, but last assertion passed: ".string(s:msgSink[-1])
+			throw "Expected failure, but last assertion passed: ".s:str(s:msgSink[-1])
 		else
 			throw "Expected failure, but last assertion passed."
 		endif
 	endif
 endfunction
 
-function! <sid>MsgSink(caller,msg) "{{{2
-    " recording of the last failure
-	let trace = split(expand("<sfile>"), '\.\.')
-	let msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
-	if g:vimUnitFailFast
-		throw string(msg[0][0] .": ". msg[0][1])
-	endif
-	if g:vimUnitVerbosity > 0
-		let s:msgSink = s:msgSink + msg
-		"echo a:caller.': '.a:msg
-	endif
-endfunction
-
-"staale - GetCurrentFunctionName()
-"Extract the function name the cursor is inside
-function! <SID>GetCurrentFunctionName() "{{{2
-	"call s:FindBlock('\s*fu\%[nction]\>!\=\s.*(\%([^)]*)\|\%(\n\s*\\[^)]*\)*\n)\)', '', '', '^\s*endf\%[unction]', 0)
-	"bWn ==> b=Search backward, W=Don't wrap around end of file,n=Do not move cursor.
-	let nTop = searchpair('^\s*fu\%[nction]\%[!]\ .*','','^\s*endf\%[unction].*','bWn')
-	let sLine = getline(nTop)
-	return sLine
-endfunction
-
-" TODO this is great function that should be all over the place (in a general
-" utility library)
-function! <SID>searchallpair(start,middle,end, ...)
-	let flags = ''
-	let stopline = 0
-	let timeout = 0
-	if a:0 > 0
-		let flags = a:1
-	endif
-	if a:0 > 1
-		let stopline = a:2
-	endif
-	if a:0 > 2
-		let timeout = a:3
-	endif
-	" Return all matches in a file. Just like 'searchpair' but returns a list
-	" of the matches in the file..
-	" save the old position.
-	let origpos = getpos('.')
-	" go to line 1
-	if matchstr(flags,'b')
-		1
-		let cmp='<='
-	else
-		$
-		let cmp='>='
-	endif
-
-	if matchstr(flags,'W') == "" | let flags = flags .'W' | endif
-	let lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.line('.'))
-	let results = []
-	while 1
-		if lastcall != 0
-			call add(results,lastcall)
-		endif
-		let curline = line('.')
-		if cmp == '<='
-			let nextStart = search(a:start,'W')
-			if !nextStart
-				break
-			endif
-		else
-			let nextEnd = search(a:end,'bW')
-			if !nextEnd
-				break
-			endif
-		endif
-		let lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
-	endwhile
-	call setpos('.',origpos)
-	return results
-endfunction
-
-" Get all lines that have function definitions in the file.
-" Returns a list of integers (line numbers).
-function! <SID>GetCurrentFunctionLocations() "{{{2
-	" Get all functions in the file.
-	return <SID>searchallpair('^\s*fu\%[nction]\%[!]\ .*','','^\s*endf\%[unction].*','Wb')
-endfunction
-
-function! <SID>ExtractFunctionName(strLine) "{{{2
-" This used to be part of the GetCurrentFunctionName() routine
-" But to make as much as possible of the code testable we have to isolate code
-" that do any kind of buffer or window interaction.
-	let lStart = matchend(a:strLine,'\s*fu\%[nction]\%[!]\s')
-	let sFoo = matchstr(a:strLine,".*(",lStart)
-	let sFuncName =strpart(sFoo ,0,strlen(sFoo)-1)
-	return sFuncName
-endfunction
 "function VURunAllTests {{{2
 " -----------------------------------------
 " FUNCTION: VURunAllTests
@@ -602,13 +514,13 @@ function! VURunAllTests(...)
 	let badTests = 0
 	let goodAssertions = 0
 	let badAssertions = 0
-	for fn in <SID>GetCurrentFunctionLocations()
-		let sFoo = <SID>ExtractFunctionName(getline(fn))
+	for fn in vimunit#util#GetCurrentFunctionLocations()
+		let sFoo = vimunit#util#ExtractFunctionName(getline(fn))
 		if match(sFoo,'^Test') > -1
 			if exists( '*'.sFoo)
 				try
 					call VURunnerInit()
-					" TODO make the verbose file a temp file.
+					" TODO Make the verbose file a temp file.
 					" Get the line number of this particular function
 					" then grep the verbose file for the offset.
 					exe "silent !rm -f vfile.txt"
@@ -619,16 +531,36 @@ function! VURunAllTests(...)
 				catch /.*/
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
-					exec "silent !grep -A 2 'continuing in function.*". sFoo ."$' vfile.txt | grep line | tail -n 1 > vline.txt"
-					"exec "!cp vfile.txt verr.txt"
+					" for debugging an error, save the output for later use...
+					"exec "silent !cp vfile.txt verr-". sFoo .".txt"
 					call add(messages,printf("%-25s| Good assertions: %3d",sFoo,s:testRunSuccessCount))
-					call add(messages,"    Error: ". v:exception)
+					call add(messages,"  Error: ". v:exception)
+					" Extract the line where the test failed (if there was an exception)
+					exec "silent !grep -B 3 'function .*". sFoo ."\.\..* aborted' vfile.txt > vline.txt"
+					let lineNo = ''
+					let lineDesc = ''
+					let fun  = ''
+					for line in readfile('vline.txt')
+						let matches = matchlist(line,'^\v\s*line (\d+):\s*(.*)$')
+						if  len(matches) > 2
+							let lineNo = matches[1]
+							let lineDesc = matches[2]
+						endif
+						let matches = matchlist(line,'^\v\s*function .*'. sFoo .'\.\.(.*) aborted')
+						if len(matches) > 0
+							let fun = matches[1]
+						endif
+					endfor
+					call add(messages,printf('  %-20s offset %3d: %s',fun,lineNo,lineDesc))
+
+					" Extract the line of test function:
+					exec "silent !grep -A 2 'continuing in function.*". sFoo ."$' vfile.txt | grep line | tail -n 1 > vline.txt"
 					let vline = readfile('vline.txt')
 					if len(vline) > 0
 						let lineno = vline[0]
 						let matches = matchlist(lineno,'^\v\s*line (\d+):\s*(.*)$')
 						if len(matches) > 2
-							call add(messages,"    Line ". (str2nr(matches[1])+fn) .": ". matches[2])
+							call add(messages,printf('  %-20s   line %3d: %s',sFoo,str2nr(matches[1])+fn,matches[2]))
 						endif
 					endif
 					let badTests = badTests + 1
@@ -653,7 +585,9 @@ function! VURunAllTests(...)
 
 	call add(messages, "")
 	call add(messages, "----------------------------------------------")
-	call add(messages, "Summary:")
+	" TODO add a differentiation between failed assertions and un expected
+	" exceptions. simpletest does this:
+	" Test cases run: 1/1, Passes: 0, Failures: 2, Exceptions: 0
 	call add(messages, printf(" OK (%3d tests, %3d assertions)",goodTests,goodAssertions))
 	if badTests > 0
 		call add(messages, printf("BAD (%3d tests)",badTests))
@@ -688,7 +622,7 @@ function! VUAutoRun()
 	let b:currentVimSelfTest = g:vimUnitSelfTest
 	let g:vimUnitSelfTest = 0
 	"Locate function line on line with or above current line
-	let sFoo = <SID>ExtractFunctionName(<SID>GetCurrentFunctionName())
+	let sFoo = vimunit#util#ExtractFunctionName(vimunit#util#GetCurrentFunctionName())
 	if match(sFoo,'^Test') > -1 
 		"We found the function name and it starts with Test so we source the
 		"file and call VURunnerRunTest to run the test
@@ -707,293 +641,4 @@ function! VUAutoRun()
 endfunction
 endif
 
-" SelfTest VUAssert {{{1
-function! TestVUAssertEquals() "{{{2
-	let sSelf = 'TestVUAssertEquals'
-	call VUAssertEquals(1,1)
-	try
-		call VUAssertEquals(1,2)
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-
-	call VUAssertEquals('str1','str1','Simple test comparing two strings')
-	call VUAssertEquals('str1',"str1",'Simple test comparing two strings')
-	try
-		call VUAssertEquals('str1','str2','Simple test comparing two diffrent strings,expect failure')	
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-
-	call VUAssertEquals(123,'123','Simple test comparing number and string containing number')
-	try
-		call VUAssertEquals(123,'321','Simple test comparing number and string containing diffrent number,expect failure')
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-	
-	let arg1 = 1
-	let arg2 = 1
-	call VUAssertEquals(arg1,arg2,'Simple test comparing two variables containing the same number')
-	let arg2 = 2
-	try
-		call VUAssertEquals(arg1,arg2,'Simple test comparing two variables containing diffrent numbers,expect failure')
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-
-	let arg1 = "test1"
-	let arg2 = "test1"
-	call VUAssertEquals(arg1,arg2,'Simple test comparing two variables containing equal strings')
-	let arg2 = "test2"
-	try
-		call VUAssertEquals(arg1,arg2,'Simple test comparing two variables containing diffrent strings,expect failure')
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-
-	call VUAssertEquals([],[])
-	try
-		call VUAssertEquals([1],[])
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-	try
-		call VUAssertEquals([],[1])
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-	try
-		call VUAssertEquals([],[[1]])
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-	try
-		call VUAssertEquals([[1]],[])
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-
-	call VUAssertEquals({},{})
-	try
-		call VUAssertEquals({1:1},{})
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-	call VUAssertEquals({1:{}},{1:{}})
-	try
-		call VUAssertEquals({1:{2:2}},{1:{}})
-		call VUAssertFail()
-	catch /AssertEquals/
-	endtry
-	call VUAssertEquals({'1':{'count':1, 'pluginCount':1, 'text':'..', 'hi':'testhi', 'plugins':['Test2'], 'line':1}},{'1':{'count':1, 'pluginCount':1, 'text':'..', 'hi':'testhi', 'plugins':['Test2'], 'line':1}})
-endfunction
-
-function! TestVUAssertTrue() "{{{2
-	let sSelf = 'TestVUAssertTrue'
-	call VUAssertTrue(TRUE())
-	try
-		call VUAssertTrue(FALSE())
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-
-	call VUAssertTrue(1,'Simple test passing 1')
-	try
-		call VUAssertTrue(0, 'Simple test passing 0,expect failure')	
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-
-	let arg1 = 1
-	call VUAssertTrue(arg1,'Simple test arg1 = 1')
-	let arg1 = 0
-	try
-		call VUAssertTrue(arg1, 'Simple test passing arg1=0,expect failure')		
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-
-	
-	try
-		call VUAssertTrue("test",'Simple test passing string')
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-	try
-		call VUAssertTrue("", 'Simple test passing empty string,expect failure')	
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-
-	let arg1 = 'test'
-	try
-		call VUAssertTrue(arg1,'Simple test passing arg1 = test')
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-	try
-		call VUAssertTrue(arg1, 'Simple test passing arg1="",expect failure')	
-		call VUAssertFail()
-	catch /AssertTrue/
-	endtry
-endfunction
-
-function! TestVUAssertFalse() "{{{2
-	let sSelf = 'TestVUAssertFalse'
-	call VUAssertFalse(FALSE())
-	try
-		call VUAssertFalse(TRUE())
-		call VUAssertFail()
-	catch /AssertFalse/
-	endtry
-
-	call VUAssertFalse(0,'Simple test passing 0')
-	try
-		call VUAssertFalse(1, 'Simple test passing 1,expect failure')	
-		call VUAssertFail()
-	catch /AssertFalse/
-	endtry
-
-	let arg1 = 0
-	call VUAssertFalse(arg1,'Simple test arg1 = 0')
-	let arg1 = 1
-	try
-		call VUAssertFalse(arg1, 'Simple test passing arg1=1,expect failure')		
-		call VUAssertFail()
-	catch /AssertFalse/
-	endtry
-
-	call VUAssertFalse("test",'Simple test passing string')
-	call VUAssertFalse("", 'Simple test passing empty string,expect failure')
-	let arg1 = 'test'
-	call VUAssertFalse(arg1,'Simple test passing arg1 = test')
-	call VUAssertFalse(arg1, 'Simple test passing arg1="",expect failure')
-endfunction
-function! TestVUAssertNotNull() "{{{2
-	"NOTE: I do not think we will have a situation in a vim-script where we
-	"can pass a variable containing a null as I understand it that is a 
-	"uninitiated variable. 
-	"
-	"vim will give a warning (error) msg when we try to do this.
-	"
-	"BUT: We can have situations where we try to do this. Especeialy if we are
-	"using on-the-fly variable names. :help curly-braces-names
-	"
-	let sSelf = 'TestVUAssertNotNull'
-	try
-		let sTest = ""
-		unlet sTest
-		call VUAssertNotNull(sTest,'Trying to pass a uninitiated variable')
-	catch /E121/
-		" actual vim error. Nothing we can do about that.
-	endtry
-	
-	try
-		call VUAssertNotNull(sTest2,'Trying to pass a uninitated variable sTest2')	
-	catch /E121/
-		" actual vim error. Nothing we can do about that.
-	endtry
-	
-endfunction
-
-function! TestVUAssertNotSame() "{{{2
-	" VUAssert the two arguments does not reference the same memory
-	" NOTE: I do not know how to test this in vim.
-	" TODO: Write more relevant test's
-	let sSelf = 'TestVUAssertNotSame'
-	let arg1 = 'test'
-	let arg2 = 'test2'
-	call VUAssertNotSame(arg1,arg2,'Check to se if arg1 and arg2 reference the same memory')
-	call VUAssertNotSame(arg1,arg2)
-	let arg2 = arg1
-	try
-		call VUAssertNotSame(arg1,arg2,'arg1 = arg2 reference the same memory, expected to fail')
-		call VUAssertFail()
-	catch /AssertNotSame/
-	endtry
-endfunction
-
-function! TestVUAssertSame() "{{{2
-	" VUAssert the two arguments does reference the same memory
-	" NOTE: I do not know how to test this in vim.
-	" TODO: Write more relevant test's
-	let sSelf = 'TestVUAssertSame'
-	let arg1 = 'test'
-	let arg2 = arg1
-	call VUAssertSame(arg1,arg2,'Verify that arg1 and arg2 reference the same memory')
-	call VUAssertSame(arg1,arg2)
-	let arg2 = 'test2'
-	try
-		call VUAssertSame(arg1,arg2,'arg1=test != arg2=test2: Does not reference the same memory, expected to fail')	
-		call VUAssertFail()
-	catch /AssertSame/
-	endtry
-endfunction
-
-function! TestVUAssertFail() "{{{2
-	let sSelf = 'testAssertFail'
-	try
-		call VUAssertFail('Expected failure')
-	catch /AssertFail/
-	endtry
-	try
-		call VUAssertFail()
-	catch /AssertFail/
-	endtry
-endfunction
-
-
-function! TestExtractFunctionName() "{{{1
-	let sSelf = 'TestExtractFunctionName'
-	"Testing legal function declarations
-	"NOTE: The markers in the test creates a bit of cunfusion
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('func TestFunction()'),'straight function declaration')
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('func! TestFunction()'),'func with !')
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName(' func TestFunction()'),'space before func')
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('		func TestFunction()'),'Two embeded tabs before func') "Two embeded tabs
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('func TestFunction()	"{{{3'),'Declaration with folding marker in comment' )
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('   func TestFunction()	"{{{3'),'Declaration starting with space and ending with commented folding marker')
-	let sFoo = VUAssertEquals('TestFunction',<SID>ExtractFunctionName('func TestFunction(arg1, funcarg1, ..)'),'arguments contain func')
-endfunction	"}}}
-function! TestGetCurrentFunctionNames() "{{{1
-	let sSelf = 'TestExtractFunctionNames'
-	"Testing legal function declarations
-	" TODO apparently this function isn't perfect ... the following functions
-	" should have been found:
-"\ 'function! VURunAllTests() ', <---
-"\ 'function! <SID>GetCurrentFunctionLocations() "{{{2', <----
-"\ 'function! VURunnerPrintStatistics(caller,...) "{{{2', <----
-	let sFoo = VUAssertEquals(<SID>GetCurrentFunctionLocations(),[
-		\ 'function! TestSuiteVimUnitSelfTest() "{{{1',
-		\ 'function! TestGetCurrentFunctionNames() "{{{1',
-		\ 'function! TestExtractFunctionName() "{{{1',
-		\ 'function! TestVUAssertFail() "{{{2',
-		\ 'function! TestVUAssertSame() "{{{2',
-		\ 'function! TestVUAssertNotSame() "{{{2',
-		\ 'function! TestVUAssertNotNull() "{{{2',
-		\ 'function! TestVUAssertFalse() "{{{2',
-		\ 'function! TestVUAssertTrue() "{{{2',
-		\ 'function! TestVUAssertEquals() "{{{2',
-		\ 'function! VUAutoRun() ',
-		\ 'function! <SID>ExtractFunctionName(strLine) "{{{2',
-		\ 'function! <SID>searchallpair(start,middle,end, ...) ',
-		\ 'function! <SID>GetCurrentFunctionName() "{{{2',
-		\ 'function! <sid>MsgSink(caller,msg) "{{{2',
-		\ 'function! VURunnerExpectFailure(...) "{{{2',
-		\ 'function! VURunnerStopSuite(caller) "{{{2',
-		\ 'function! VURunnerStartSuite(caller) "{{{2',
-		\ 'function! VURunnerInit() "{{{2',
-		\ 'function! VURunnerRunTest(test) ',
-		\ 'function! VUTraceMsg(msg) ',
-		\ 'function! VUAssertFail(...) "{{{2',
-		\ 'function! VUAssertSame(arg1, arg2, ...) "{{{2',
-		\ 'function! VUAssertNotSame(arg1,arg2,...) "{{{2',
-		\ 'function! VUAssertNotNull(arg1, ...) "{{{2	',
-		\ 'function! VUAssertFalse(arg1, ...) "{{{2',
-		\ 'function! VUAssertTrue(arg1, ...) "{{{2',
-		\ 'function! VUAssertEquals(arg1, arg2, ...) "{{{2',
-		\ 'function! TODO(funcName) "{{{2'
-		\ ])
-endfunction	"}}}
-" vim: set noet:
+" vim: set noet fdm=marker:
