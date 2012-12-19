@@ -151,12 +151,26 @@ if !exists('s:suiteRunning')
 endif
 
 " convert an object to a string smartly
-fun s:str(str)
+fun! s:str(str)
   if type(a:str) != 1
     return string(a:str)
   end
   return a:str
 endf
+
+function! s:MsgSink(caller,msg)
+    " recording of the last failure
+	let trace = split(expand("<sfile>"), '\.\.')
+	let msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+	if g:vimUnitFailFast
+		throw string(msg[0][0] .": ". msg[0][1])
+	endif
+	if g:vimUnitVerbosity > 0
+		let s:msgSink = s:msgSink + msg
+		"echo a:caller.': '.a:msg
+	endif
+endfunction
+
 "}}}
 " VUAssertEquals"{{{
 " PURPOSE:
@@ -187,9 +201,9 @@ function! VUAssertEquals(arg1, arg2, ...) "
 		endif
 		let diffs = vimunit#util#diff(a:arg1,a:arg2)
 		if len(diffs) > 0
-			call vimunit#util#MsgSink('AssertEquals',diffs[0])
+			call s:MsgSink('AssertEquals',diffs[0])
 		else
-			call vimunit#util#MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+			call s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
 		endif
 	endif
 	let s:lastAssertionResult = bFoo
@@ -214,9 +228,9 @@ function! VUAssertTrue(arg1, ...) "
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
         if (exists('a:1'))
-            call vimunit#util#MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE()." MSG: ".a:1)
+            call s:MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE()." MSG: ".a:1)
         else
-            call vimunit#util#MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
+            call s:MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
         endif
 	endif	
     let s:lastAssertionResult = bFoo
@@ -241,9 +255,9 @@ function! VUAssertFalse(arg1, ...) "
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
 		if (exists('a:1'))
-			call vimunit#util#MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE()." MSG: ".a:1)
+			call s:MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE()." MSG: ".a:1)
 		else
-			call vimunit#util#MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE())
+			call s:MsgSink('AssertFalse','arg1='.a:arg1.'!='.FALSE())
 		endif
 	endif	
 	let s:lastAssertionResult = bFoo
@@ -270,7 +284,7 @@ function! VUAssertNotNull(arg1, ...) "
 	else
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
-		call vimunit#util#MsgSink('AssertNotNull','arg1: Does not exist')
+		call s:MsgSink('AssertNotNull','arg1: Does not exist')
 	endif	
     let s:lastAssertionResult = bFoo
 	return bFoo		
@@ -289,9 +303,9 @@ function! VUAssertNotSame(arg1,arg2,...) "
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
         if (exists('a:1'))
-            call vimunit#util#MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:1)
+            call s:MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2." MSG: ".a:1)
         else
-            call vimunit#util#MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2)
+            call s:MsgSink('AssertNotSame','arg1='.a:arg1.' == arg2='.a:arg2)
         endif
 	endif	
     let s:lastAssertionResult = bFoo
@@ -311,9 +325,9 @@ function! VUAssertSame(arg1, arg2, ...) "
 		let s:testRunFailureCount = s:testRunFailureCount + 1
 		let bFoo = FALSE()
         if (exists('a:1'))
-            call vimunit#util#MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:1)
+            call s:MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2." MSG: ".a:1)
         else
-            call vimunit#util#MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2)
+            call s:MsgSink('AssertSame','arg1='.a:arg1.' != arg2='.a:arg2)
         endif
 	endif	
     let s:lastAssertionResult = bFoo
@@ -326,9 +340,9 @@ function! VUAssertFail(...) "
 	let s:testRunCount = s:testRunCount + 1	
 	let s:testRunFailureCount = s:testRunFailureCount + 1
     if (exists('a:1'))
-        call vimunit#util#MsgSink('AssertFail','MSG: '.a:1)
+        call s:MsgSink('AssertFail','MSG: '.a:1)
     else
-        call vimunit#util#MsgSink('AssertFail','')
+        call s:MsgSink('AssertFail','')
     endif
     let s:lastAssertionResult = FALSE()
 	return FALSE()	
@@ -343,7 +357,7 @@ endfunction
 " 	msg : The debug message
 " ---------------------------------------------------------------------
 function! VUTraceMsg(msg) 
-    call vimunit#util#MsgSink('', a:msg)
+    call s:MsgSink('', a:msg)
 endfunction
 
 " VURunner 
@@ -351,7 +365,7 @@ function! VURunnerRunTest(test)
 	try
 		let did_vim_unit_vim = 1
 		"exe "call ".sFoo.'()'
-		call VURunnerInit()
+		call s:VURunnerInit()
 		echo "Running: ".a:test
 		call {a:test}()
 		call VURunnerPrintStatistics('VUAutoRun:'.a:test)
@@ -400,7 +414,7 @@ function! VURunnerPrintStatistics(caller,...) "
 	endif
 endfunction"}}}
 
-function! VURunnerInit() "
+function! s:VURunnerInit() "
 	if exists('s:suiteRunning') && s:suiteRunning == FALSE()
 		let s:lastAssertionResult = TRUE()
 		let s:msgSink = []
@@ -412,7 +426,7 @@ function! VURunnerInit() "
 endfunction
 
 " doc -------------------------------------
-" FUNCTION:	VURunnerStartSuite
+" FUNCTION:	s:VURunnerStartSuite
 " PURPOSE:
 "	When we run a UnitTestSuite we do not want statistics to be corrupted by
 "	the TestGroup.
@@ -421,13 +435,13 @@ endfunction
 " RETURNS:
 "	
 " -----------------------------------------
-function! VURunnerStartSuite(caller) "
-	call VURunnerInit()
+function! s:VURunnerStartSuite(caller) "
+	call s:VURunnerInit()
 	let s:suiteRunning = TRUE()
 endfunction
 
 " -----------------------------------------
-" FUNCTION:	 VURunnerStopSuite
+" FUNCTION:	 s:VURunnerStopSuite
 " PURPOSE:
 "	
 " ARGUMENTS:
@@ -435,7 +449,7 @@ endfunction
 " RETURNS:
 "	
 " -----------------------------------------
-function! VURunnerStopSuite(caller) "
+function! s:VURunnerStopSuite(caller) "
 	let s:suiteRunning = FALSE()
 endfunction
 
@@ -504,7 +518,7 @@ function! VURunAllTests(...)
 		if match(sFoo,'^Test') > -1
 			if exists( '*'.sFoo)
 				try
-					call VURunnerInit()
+					call s:VURunnerInit()
 					" TODO Make the verbose file a temp file.
 					" Get the line number of this particular function
 					" then grep the verbose file for the offset.

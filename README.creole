@@ -9,8 +9,10 @@ on the [[vim.org|http://vim.org]] site.
 
 ----
 
-See the (vimUnit website)[http://dsummersl.github.com/vimunit/] (and vimdocs) for more information.
+See the [vimUnit website](http://dsummersl.github.com/vimunit/) for more information.
+
+----
 
 To run vim_unit's own tests type the following:
 
-    ./vutest.sh plugin/vim_unit.vim
+    ./vutest.sh autoload/vimunit/test.vim

@@ -1,16 +1,3 @@
-function! vimunit#util#MsgSink(caller,msg) "{{{2
-    " recording of the last failure
-	let trace = split(expand("<sfile>"), '\.\.')
-	let msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
-	if g:vimUnitFailFast
-		throw string(msg[0][0] .": ". msg[0][1])
-	endif
-	if g:vimUnitVerbosity > 0
-		let s:msgSink = s:msgSink + msg
-		"echo a:caller.': '.a:msg
-	endif
-endfunction
-
 "staale - GetCurrentFunctionName()
 "Extract the function name the cursor is inside
 function! vimunit#util#GetCurrentFunctionName() "{{{2
