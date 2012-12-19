@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>~/environment/vim/bundle/vimunit/test2.vim.html</title>
+<meta name="Generator" content="Vim/7.3">
+<meta name="plugin-version" content="vim7.3_v10">
+<meta name="syntax" content="vim">
+<meta name="settings" content="use_css,pre_wrap,expand_tabs">
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #657b83; background-color: #fdf6e3; }
+body { font-family: monospace; color: #657b83; background-color: #fdf6e3; }
+.Constant { color: #2aa198; }
+.Identifier { color: #268bd2; }
+.Special { color: #dc322f; }
+.vimCommand { color: #b58900; }
+.Comment { color: #93a1a1; font-style: italic; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="Comment">&quot; Check the most basic functionality</span>
+<span class="vimCommand">function</span>! TestBaseCase<span class="Special">()</span>
+  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">0</span>,<span class="Constant">0</span><span class="Special">)</span>,<span class="Constant">0</span><span class="Special">)</span>
+<span class="vimCommand">endfunction</span>
+
+<span class="Comment">&quot; Try one basic comparison</span>
+<span class="vimCommand">function</span>! TestGreater<span class="Special">()</span>
+  <span class="vimCommand">call</span> <span class="Identifier">VUAssertTrue</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
+  <span class="vimCommand">call</span> <span class="Identifier">VUAssertTrue</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">2</span>,<span class="Constant">3</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
+<span class="vimCommand">endfunction</span>
+</pre>
+</body>
+</html>

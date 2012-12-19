@@ -42,7 +42,7 @@ testing and command line testing are supported.</p>
 isn't working:</p>
 
 autoload/example.vim
-<iframe src="autoload/example.vim.html" width="100%" height="120px" scrolling="no" seamless="true"></iframe>
+<iframe src="autoload/example.vim.html" width="100%" height="80px" scrolling="no" seamless="true"></iframe>
 <br/>
 
 <p>Whenever you use the function sometimes it doesn't return anything. At first its
@@ -59,6 +59,34 @@ bundled shell script to run your tests outside of your editor:</p>
 
 Command Line:
 <pre><code>~/.vim/bundle/vimunit/vutest.sh test.vim
+TestGreater              | Good assertions:   0
+  Error: 'VUAssertTrue: arg1=0!=1'
+  VUAssertTrue         offset   5: ^I^Ithrow string(msg[0][0] .": ". msg[0][1])
+
+----------------------------------------------
+ OK (  1 tests,   1 assertions)
+BAD (  1 tests)
+</code></pre>
+
+<p>
+Clearly something isn't right. Splitting out the test cases helps isolate the
+problem:</p>
+
+test.vim
+<iframe src="test2.vim.html" width="100%" height="180px" scrolling="no" seamless="true"></iframe>
+<br/>
+
+<p>Ah ha! The second assertion returns <code>-1 != 1</code>...we need to be positive/negative
+number aware. A simple fix to example.vim and all the tess pass:</p>
+
+autoload/example.vim
+<iframe src="autoload/example2.vim.html" width="100%" height="150px" scrolling="no" seamless="true"></iframe>
+<br/>
+
+Command Line:
+<pre><code>~/.vim/bundle/vimunit/vutest.sh test.vim
+----------------------------------------------
+ OK (  2 tests,   3 assertions)
 </code></pre>
 
 <h3>Installation</h3>
