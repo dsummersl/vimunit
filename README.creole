@@ -1,6 +1,6 @@
 **vimUnit**    
 
-A plugin to write unit tests for vim scripts.
+A plugin to write unit tests for the vimscript language.
 
 ----
 
@@ -8,6 +8,8 @@ This plugin was originally written by Staale Flock, which is [[script #1125|http
 on the [[vim.org|http://vim.org]] site.
 
 ----
+
+See the (vimUnit website)[http://dsummersl.github.com/vimunit/] (and vimdocs) for more information.
 
 To run vim_unit's own tests type the following:
 
