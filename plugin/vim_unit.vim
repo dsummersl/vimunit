@@ -162,18 +162,27 @@ function! s:MsgSink(caller,msg)
     " recording of the last failure
 	let trace = split(expand("<sfile>"), '\.\.')
 	let msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
-	if g:vimUnitFailFast
-		throw string(msg[0][0] .": ". msg[0][1])
-	endif
 	if g:vimUnitVerbosity > 0
 		let s:msgSink = s:msgSink + msg
 		"echo a:caller.': '.a:msg
 	endif
+	if g:vimUnitFailFast
+		throw string(msg[0][0] .": ". msg[0][1])
+	endif
 endfunction
 
 "}}}
-" VUAssertEquals"{{{
+" VULog "{{{
 " PURPOSE:
+"	Log a message for a test.
+" ARGUMENTS:
+" 	msg :
+" PURPOSE:
+function! VULog(msg)
+	call add(s:msgSink,"VULog: ". a:msg)
+endfunction
+" }}}
+" VUAssertEquals"{{{
 "	Compare arguments
 " ARGUMENTS:
 " 	arg1 : Argument to be tested.
@@ -485,23 +494,20 @@ endfunction"}}}
 " PURPOSE:  Runs all the tests in the current file.
 "
 " ARGUMENTS:
-"   optional boolean. If true, then this function will exit vim with an error
+"   - optional boolean. If true, then this function will exit vim with an error
 "   code. Suitable for scripting unit tests ala
 "
 "       vim -nc 'so %' <filename>
 "
-"   optional output file. If set, then the output is saved to the output file
+"   - optional output file. If set, then the output is saved to the output file
 "   specified. Meant to be used with the former option set to true.
 "
 " RETURNS:
 "
-"   Prints out the test results.
+"   Echos the test results.
 "
 " -----------------------------------------
 function! VURunAllTests(...)
-	" Run all the tests that exist in this file.
-	" NOTE:If you change this code you must manualy source the file!
-
 	let oldFailFast = g:vimUnitFailFast
 	let g:vimUnitFailFast = 1
 	let oldvfile = &verbosefile
@@ -532,8 +538,10 @@ function! VURunAllTests(...)
 					exec "set verbosefile=".oldvfile
 					" for debugging an error, save the output for later use...
 					" exec "silent !cp vfile.txt verr-". sFoo .".txt"
+					call add(messages,"\n")
 					call add(messages,printf("%-25s| Good assertions: %3d",sFoo,s:testRunSuccessCount))
 					call add(messages,"  Error: ". v:exception)
+					call extend(messages, s:msgSink)
 
 					" TODO this parsing of the verbose file is very hacky. We need an
 					" actual solution that:
