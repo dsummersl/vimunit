@@ -156,6 +156,9 @@ CONTENT                                                      *vimUnit-contents*
 		VUAssert that arg1 and arg2 are from the same memory.
 	VUAssertFail(...)
 		Log a user defined failure.
+	VULog(message)
+        Log a message. These messages are displayed when g:vimUnitVerbosity is
+        set to 1, and a test fails.
 		
 ==============================================================================
 5. vimUnit Tips                                                 *vimUnit-tips*
