@@ -97,6 +97,32 @@ fun! s:str(str)
   return a:str
 endf
 
+" recursive add of lists to a string.
+function! s:addelements(elements,indent)
+  let results = ''
+  for ad in a:elements
+    if len(results) > 0
+      let results = results .'\n'
+    endif
+    if type(ad) == 1
+      let results = results . repeat(' ',a:indent) . ad
+    else
+      let results = results . s:addelements(ad,a:indent+2)
+    endif
+    unlet ad
+  endfor
+  return results
+endfunction
+
+" Return a formatted string of differences between two objects.
+"
+" Returns:
+"     String of differences.
+function! vimunit#util#diff2str(arg1,arg2,...)
+  let diffs = vimunit#util#diff(a:arg1,a:arg2)
+  return s:addelements(diffs,0)
+endfunction
+
 " Report the differences between two objects.
 "
 " Returns:
@@ -130,7 +156,8 @@ function! vimunit#util#diff(arg1,arg2)
         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
         "if len(sub) > 0
         if a:arg1[key] != a:arg2[key]
-          call add(results,'Different values for key "'. key .'": '. s:str(a:arg1[key]) .' != '. s:str(a:arg2[key]))
+          call add(results,'Different values for key "'. key .'"')
+          call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
         endif
       endif
     endfor

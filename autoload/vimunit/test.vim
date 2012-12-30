@@ -274,8 +274,11 @@ fun TestDiff()
   call VUAssertEquals(vimunit#util#diff([3],[]),['Different sized lists: 1 != 0'])
   call VUAssertEquals(vimunit#util#diff({},{}),[])
   call VUAssertEquals(vimunit#util#diff({3: 1},{3: 1}),[])
-  call VUAssertEquals(vimunit#util#diff({3: 1},{3: 2}),['Different values for key "3": 1 != 2'])
+	call VULog(string(vimunit#util#diff({3: 1},{3: 2})))
+	call VULog(vimunit#util#diff2str({3: 1},{3: 2}))
+  call VUAssertEquals(vimunit#util#diff({3: 1},{3: 2}),['Different values for key "3"',['1 != 2']])
+	call VULog(vimunit#util#diff2str({3: 1, 1:2},{3: 2}))
   call VUAssertEquals(vimunit#util#diff({3: 1, 1:2},{3: 2}),
-        \[ 'Only in first dictionary: {1: 2}', 'Different values for key "3": 1 != 2'])
+        \[ 'Only in first dictionary: {1: 2}', 'Different values for key "3"',['1 != 2']])
 endf
 " vim: set noet fdm=marker:

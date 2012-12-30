@@ -611,7 +611,14 @@ function! VURunAllTests(...)
 		call add(messages, printf("BAD (%3d tests)",badTests))
 	endif
 	if a:0 > 1
-		call writefile(messages,a:000[1])
+		" check for carriage returns.
+		let forwrite = []
+		for m in messages
+			for part in split(m,'\\n')
+				call add(forwrite,part)
+			endfor
+		endfor
+		call writefile(forwrite,a:000[1])
 	else
 		for line in messages
 			echo line
