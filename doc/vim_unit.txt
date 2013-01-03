@@ -35,6 +35,7 @@ CONTENT                                                      *vimUnit-contents*
         Bundle 'dsummersl/vimunit'
 
     In Vim:
+        :Bundle 'dsummersl/vimunit'
         :BundleInstall
 	
 ==============================================================================
@@ -61,6 +62,14 @@ CONTENT                                                      *vimUnit-contents*
 		
 	Will give you the statistics.
 	
+                                                           *vimUnit-makeprg*
+
+    By default the makeprg and errorformat settings are configured for files
+    matching '*[tT]est.vim'. You can include any of your own formats by modifying
+    the following variable:
+
+        let g:vimUnitTestFilePattern = '*[Tt]est.vim'
+
                                                            *vimUnit-verbosity*
 
     When we are running test cases to much output can be annoying. Turn
@@ -83,8 +92,7 @@ CONTENT                                                      *vimUnit-contents*
 1.1 vimUnit Requirements                                *vimUnit-requirements*
 															|vimUnit-content|
 	
-	A vim7 environment (autoload feature), and basic unix tools: grep, head,
-    tail.
+	A Vim7 environment (autoload feature).
 	
 ==============================================================================
 2. vimUnit Intro                                      *VU* *VimUnit* *vimUnit*
@@ -114,6 +122,9 @@ CONTENT                                                      *vimUnit-contents*
 			return nFoo
 		endfunc
 		
+        "Best: Use make. You must setup makeprg/errorformat. See vimUnit-makeprg
+        ":make
+
         "Best: run your tests outside of your vim editor:
         ~/.vim/bundle/vimunit/vutest.sh yourtestcases.vim
 
@@ -164,9 +175,9 @@ CONTENT                                                      *vimUnit-contents*
 5. vimUnit Tips                                                 *vimUnit-tips*
 															|vimUnit-content|
 
-    Use vutest.sh -- Testing your application inside your editor can
+    Use vutest.sh or :make -- Testing your application inside your editor can
     problematic in that any window/global/etc variables that your functions
-    under test setup will affect your future editing actions. Don't risk it.
+    under test change will affect your future editing actions. Don't risk it.
     Use vutest.sh to run your tests in separate sessions outside of your main
     editor.
 
@@ -208,7 +219,7 @@ DS = Dane Summers, dsummersl -- yahoo .. com
 ------------------------------------------------------------------------------
 By	Date		Description, if version nr changes place it first.
 ------------------------------------------------------------------------------
-DS	19 Dec 2012	1.0	Support for 'fail fast' unit tests. Added command line
+DS	5 Jan 2013	1.0	Support for 'fail fast' unit tests. Added command line
                     program (vutest.sh) and a VURunAllTests.
 SF	8 Nov 2004	0.1	Initial upload
 ==============================================================================

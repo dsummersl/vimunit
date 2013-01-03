@@ -111,6 +111,23 @@ if !exists('g:vimUnitFailFast')
 	"Defaults to false (legacy behavior)
 	let g:vimUnitFailFast = 0
 endif
+
+if !exists('g:vimUnitTestFilePattern')
+	"What to setup :make support for:
+	let g:vimUnitTestFilePattern = '*[Tt]est.vim'
+endif
+
+if has("autocmd")
+	" Automatically determine where the vutest.sh script is based on the
+	" location of this script:
+	exe "autocmd BufNewFile,BufRead ". g:vimUnitTestFilePattern ." set makeprg=".
+				\substitute(expand('<sfile>'),"\\v\\w+\/[^\/]+$","","")
+				\."vutest.sh\\\ %"
+	" This was helpful: http://stackoverflow.com/questions/1525377/vim-errorformat
+	exe "autocmd BufNewFile,BufRead ". g:vimUnitTestFilePattern 
+				\.' set errorformat=%PFile:\ %f,%.%#\|line\ %l\|%m,%-G%.%#,%Q'
+endif
+
 "}}}
 " Script only support variables and functions"{{{
 
@@ -607,7 +624,7 @@ function! VURunAllTests(...)
 	" TODO add a differentiation between failed assertions and un expected
 	" exceptions. simpletest does this:
 	" Test cases run: 1/1, Passes: 0, Failures: 2, Exceptions: 0
-	call add(messages, printf(" Passed: %d (%d assertions) Failed: %d, Exceptions: %d",goodTests,goodAssertions,failedTests,exceptTests))
+	call add(messages, printf("Passed: %d (%d assertions) Failed: %d, Exceptions: %d",goodTests,goodAssertions,failedTests,exceptTests))
 	" write to a file?
 	if a:0 > 1
 		" check for carriage returns first.
@@ -630,17 +647,6 @@ function! VURunAllTests(...)
 		endif
 	endif
 endfunction"}}}
-function! VUMake()
-	let oldmake = &makeprg
-	let olderrfmt = &errorformat
-	" TODO this redirection doesn't work. We need to use the result of the 
-	" file saved by vutest.sh
-	set makeprg=~/.vim/bundle/vimunit/vutest.sh\ %\ >\ /tmp/vutest.out
-	set errorformat=%+PFile:\ %f,line\ %l:\ %m
-	make
-	exe "set makeprg=". oldmake
-	exe "set errorformat=". olderrfmt
-endfunction
 function! VUAutoRun() "{{{
 	"NOTE:If you change this code you must manualy source the file!
 
