@@ -70,14 +70,15 @@ sandbox ( a instance of Vim) and are navigable via <code>:cn</code>,
 <code>:cl</code> and the like.  </p>
 
 Output:
-<pre><code>~/.vim/bundle/vimunit/vutest.sh test.vim
-TestGreater              | Good assertions:   0
-  Error: 'VUAssertTrue: arg1=0!=1'
-  VUAssertTrue         offset   5: ^I^Ithrow string(msg[0][0] .": ". msg[0][1])
+<pre><code>
+File: test.vim
 
+Failure: TestGreater (assertions 0)
+  <SNR>31_MsgSink|offset 9| 'VU VUAssertTrue: arg1=0!=1'
+  VUAssertTrue|offset 11|            call s:MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
+  TestGreater|line 8|fun example#diff(a,b)
 ----------------------------------------------
- OK (  1 tests,   1 assertions)
-BAD (  1 tests)
+Passed: 1 (1 assertions) Failed: 1, Exceptions: 0
 </code></pre>
 
 <p>
@@ -87,6 +88,18 @@ problem:</p>
 test.vim
 <iframe src="test2.vim.html" width="100%" height="180px" scrolling="no" seamless="true"></iframe>
 <br/>
+
+Output:
+<pre><code>
+File: test.vim
+
+Failure: TestGreater (assertions 0)
+  <SNR>31_MsgSink|offset 9| 'VU VUAssertTrue: arg1=0!=1'
+  VUAssertTrue|offset 11|            call s:MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
+  TestGreater|line 8|fun example#diff(a,b)
+----------------------------------------------
+Passed: 1 (1 assertions) Failed: 1, Exceptions: 0
+</code></pre>
 
 <p>Ah ha! The second assertion returns <code>-1 != 1</code>...we need to be positive/negative
 number aware. A simple fix to test.vim and all the tess pass:</p>

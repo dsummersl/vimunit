@@ -6,11 +6,12 @@
 <meta name="Generator" content="Vim/7.3">
 <meta name="plugin-version" content="vim7.3_v10">
 <meta name="syntax" content="vim">
-<meta name="settings" content="use_css,pre_wrap,expand_tabs">
+<meta name="settings" content="number_lines,use_css,expand_tabs">
 <style type="text/css">
 <!--
-pre { white-space: pre-wrap; font-family: monospace; color: #657b83; background-color: #fdf6e3; }
+pre { font-family: monospace; color: #657b83; background-color: #fdf6e3; }
 body { font-family: monospace; color: #657b83; background-color: #fdf6e3; }
+.lnr { color: #93a1a1; background-color: #eee8d5; }
 .Statement { color: #719e07; }
 .Constant { color: #2aa198; }
 .Identifier { color: #268bd2; }
@@ -22,17 +23,16 @@ body { font-family: monospace; color: #657b83; background-color: #fdf6e3; }
 </head>
 <body>
 <pre>
-
-<span class="Comment">&quot; Check the most basic functionality</span>
-<span class="vimCommand">function</span>! TestBaseCase<span class="Special">()</span>
-  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">0</span>,<span class="Constant">0</span><span class="Special">)</span>,<span class="Constant">0</span><span class="Special">)</span>
-<span class="vimCommand">endfunction</span>
-
-<span class="Comment">&quot; Try one basic comparison</span>
-<span class="vimCommand">function</span>! TestGreater<span class="Special">()</span>
-  <span class="vimCommand">call</span> <span class="Identifier">VUAssertTrue</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span> <span class="Statement">==</span> example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">2</span>,<span class="Constant">3</span><span class="Special">))</span>
-  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
-<span class="vimCommand">endfunction</span>
+<span class="lnr"> 1 </span><span class="Comment">&quot; Check the most basic functionality</span>
+<span class="lnr"> 2 </span><span class="vimCommand">function</span>! TestBaseCase<span class="Special">()</span>
+<span class="lnr"> 3 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">0</span>,<span class="Constant">0</span><span class="Special">)</span>,<span class="Constant">0</span><span class="Special">)</span>
+<span class="lnr"> 4 </span><span class="vimCommand">endfunction</span>
+<span class="lnr"> 5 </span>
+<span class="lnr"> 6 </span><span class="Comment">&quot; Try one basic comparison</span>
+<span class="lnr"> 7 </span><span class="vimCommand">function</span>! TestGreater<span class="Special">()</span>
+<span class="lnr"> 8 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertTrue</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span> <span class="Statement">==</span> example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">2</span>,<span class="Constant">3</span><span class="Special">))</span>
+<span class="lnr"> 9 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
+<span class="lnr">10 </span><span class="vimCommand">endfunction</span>
 </pre>
 </body>
 </html>
