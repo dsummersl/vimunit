@@ -11,6 +11,18 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <title>Vimunit by dsummersl</title>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-37402741-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </head>
 
   <body>
@@ -31,10 +43,10 @@
         <section id="main_content">
           <h3>Introduction</h3>
 
-<p>VimUnit is <a href="http://en.wikipedia.org/wiki/Unit_testing">unit
-  testing</a> library that lets you easily test your vimscripts. Its goal is to
-be simple to use and provide good useful error messages. 'In Editor'
-testing and command line testing are supported.</p>
+<p>VimUnit is a <a href="http://en.wikipedia.org/wiki/Unit_testing">unit
+  testing</a> library that lets you easily test vimscript. Its goal is to
+be simple to use and provide good, useful error messages. 'In Editor'
+testing as well as command line testing are supported.</p>
 
 <h3>Example</h3>
 
@@ -45,19 +57,19 @@ autoload/example.vim
 <iframe src="autoload/example.vim.html" width="100%" height="80px" scrolling="no" seamless="true"></iframe>
 <br/>
 
-<p>Whenever you use the function sometimes it doesn't return anything. At first its
-not quit true. So fire up vimUnit and write up some tests:</p>
+<p>You notice that whenever you use the function sometimes it doesn't return
+anything. Whats going on? Fire up Vim and write up a test:</p>
 
 test.vim
 <iframe src="test.vim.html" width="100%" height="180px" scrolling="no" seamless="true"></iframe>
 <br/>
 
-<p>To run the tests you can type <code>:call VURunAllTests()</code>. But, this
-isn't recommended. When you test inside your editor you have to ensure that your
-functions have been properly loaded (ie, <code>:so %</code>). Rather, use the
-bundled shell script to run your tests outside of your editor:</p>
+<p>To run the tests you can use Vim's built-in quickfix commands. Type
+<code>:make</code>. Your test cases are automatically executed in their own
+sandbox ( a instance of Vim) and are navigable via <code>:cn</code>,
+<code>:cl</code> and the like.  </p>
 
-Command Line:
+Output:
 <pre><code>~/.vim/bundle/vimunit/vutest.sh test.vim
 TestGreater              | Good assertions:   0
   Error: 'VUAssertTrue: arg1=0!=1'
@@ -77,9 +89,9 @@ test.vim
 <br/>
 
 <p>Ah ha! The second assertion returns <code>-1 != 1</code>...we need to be positive/negative
-number aware. A simple fix to example.vim and all the tess pass:</p>
+number aware. A simple fix to test.vim and all the tess pass:</p>
 
-autoload/example.vim
+autoload/test.vim
 <iframe src="autoload/example2.vim.html" width="100%" height="150px" scrolling="no" seamless="true"></iframe>
 <br/>
 
