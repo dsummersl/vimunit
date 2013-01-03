@@ -20,6 +20,8 @@ help() {
 	echo ""
   echo "Options:"
   echo " -v Verbose. If set, then messages passed to MsgSink will be displayed when tests fail." 
+  echo " -f <output> Save output to a specific file rather than STDOUT."
+  echo " -e <VIM>    Specific path to the VIM program."
   echo ""
 	echo "Example:"
 	echo "  vutest.sh ~/.vim/bundle/vimunit/plugin/vim_unit.vim"
@@ -27,10 +29,20 @@ help() {
 } 
 
 VERBOSE=0
-while getopts "v" opt; do
+VIM='vim'
+FILE=`mktemp -t log.txt`
+TOSTDOUT=1
+while getopts "vf:e:" opt; do
   case $opt in
     v )
       VERBOSE=1
+      ;;
+    f )
+      FILE=$OPTARG
+      TOSTDOUT=0
+      ;;
+    e )
+      VIM=$OPTARG
       ;;
     \?)
       help
@@ -42,11 +54,12 @@ if [[ $# -lt 1 ]]; then
   help
 fi
 
-tmpfile=`mktemp -t log.txt`
-
 shift $((OPTIND-1))
-vim -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests(true,'$tmpfile')" $1
+$VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests(true,'$FILE')" $1
 returncode=$?
-cat $tmpfile
+
+if [[ $TOSTDOUT -eq 1 ]]; then
+  cat $FILE
+fi
 
 exit $returncode

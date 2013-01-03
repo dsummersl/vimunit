@@ -167,7 +167,7 @@ function! s:MsgSink(caller,msg)
 		"echo a:caller.': '.a:msg
 	endif
 	if g:vimUnitFailFast
-		throw string(msg[0][0] .": ". msg[0][1])
+		throw string("VU " . msg[0][0] .": ". msg[0][1])
 	endif
 endfunction
 
@@ -513,9 +513,10 @@ function! VURunAllTests(...)
 	"Locate function line on line with or above current line
 	let messages = []
 	let goodTests = 0
-	let badTests = 0
+	let failedTests = 0
+	let exceptTests = 0
 	let goodAssertions = 0
-	let badAssertions = 0
+	let failedAssertions = 0
 	for fn in vimunit#util#GetCurrentFunctionLocations()
 		let sFoo = vimunit#util#ExtractFunctionName(getline(fn))
 		if match(sFoo,'^Test') > -1
@@ -531,12 +532,21 @@ function! VURunAllTests(...)
 					call {sFoo}()
 					let goodTests = goodTests + 1
 				catch /.*/
+					let failtype = 'Failure'
+					if v:exception =~ 'VU'
+						let failedTests = failedTests + 1
+					else
+						let exceptTests = exceptTests + 1
+						let failtype = 'Exception'
+					endif
+
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
 					" for debugging an error, save the output for later use...
-					exec "silent !cp vfile.txt verr-". sFoo .".txt"
+					" exec "silent !cp vfile.txt verr-". sFoo .".txt"
+
 					call add(messages,"\n")
-					call add(messages,printf("%-25s| Good assertions: %3d",sFoo,s:testRunSuccessCount))
+					call add(messages,printf("%s: %s (assertions %d)",failtype,sFoo,s:testRunSuccessCount))
 					call extend(messages, s:msgSink)
 
 					" TODO this parsing of the verbose file is very hacky. We need an
@@ -563,7 +573,6 @@ function! VURunAllTests(...)
 					let recurses = 0
 					while has_key(verbosefile[curFunction],'child') && recurses < 10
 						let curFunction = verbosefile[curFunction]['child']
-						call add(messages,'curFunction = '. curFunction)
 						let recurses = recurses + 1
 						" TODO find the file that the function is in, and then compute the
 						" line number of the function definition.
@@ -573,13 +582,11 @@ function! VURunAllTests(...)
 					endwhile
 
 					call extend(messages,reverse(stacktrace))
-
-					let badTests = badTests + 1
 				finally
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
 					let goodAssertions = goodAssertions + s:testRunSuccessCount
-					let badAssertions = badAssertions + s:testRunFailureCount
+					let failedAssertions = failedAssertions + s:testRunFailureCount
 				endtry
 			else
 				call confirm ("ERROR: VUAutoRunner. Function name: ".sFoo." Could not be found by function exists(".sFoo.")")
@@ -600,10 +607,7 @@ function! VURunAllTests(...)
 	" TODO add a differentiation between failed assertions and un expected
 	" exceptions. simpletest does this:
 	" Test cases run: 1/1, Passes: 0, Failures: 2, Exceptions: 0
-	call add(messages, printf(" OK (%3d tests, %3d assertions)",goodTests,goodAssertions))
-	if badTests > 0
-		call add(messages, printf("BAD (%3d tests)",badTests))
-	endif
+	call add(messages, printf(" Passed: %d (%d assertions) Failed: %d, Exceptions: %d",goodTests,goodAssertions,failedTests,exceptTests))
 	" write to a file?
 	if a:0 > 1
 		" check for carriage returns first.
@@ -619,7 +623,7 @@ function! VURunAllTests(...)
 		endfor
 	endif
 	if a:0 > 0 && a:000[0]
-		if badTests > 0
+		if failedTests > 0
 			cquit
 		else
 			quit
