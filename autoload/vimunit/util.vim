@@ -97,30 +97,30 @@ fun! s:str(str)
   return a:str
 endf
 
-" recursive add of lists to a string.
-function! s:addelements(elements,indent)
+" Return the contenxt of the 'vimunit#util#diff' method as a
+" human readable string.
+"
+" Arguments:
+"     - elements: the array returned by vimunit#util#diff
+"     -      ...: optional indent level.
+function! vimunit#util#diff2str(elements,...)
+  let indent = 0
+  if exists('a:1')
+    let indent = a:1
+  endif
   let results = ''
   for ad in a:elements
     if len(results) > 0
       let results = results .'\n'
     endif
     if type(ad) == 1
-      let results = results . repeat(' ',a:indent) . ad
+      let results = results . repeat(' ',indent) . ad
     else
-      let results = results . s:addelements(ad,a:indent+2)
+      let results = results . vimunit#util#diff2str(ad,indent+2)
     endif
     unlet ad
   endfor
   return results
-endfunction
-
-" Return a formatted string of differences between two objects.
-"
-" Returns:
-"     String of differences.
-function! vimunit#util#diff2str(arg1,arg2,...)
-  let diffs = vimunit#util#diff(a:arg1,a:arg2)
-  return s:addelements(diffs,0)
 endfunction
 
 " Report the differences between two objects.
@@ -142,12 +142,18 @@ function! vimunit#util#diff(arg1,arg2)
     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
   endif
   let results = []
-  " differences between two different lists
+  " differences between two lists
   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
     if len(a:arg1) != len(a:arg2)
       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+    else
+      for idx in range(len(a:arg1))
+        if a:arg1[idx] != a:arg2[idx]
+          call add(results,'Different values for index '. idx)
+          call add(results,vimunit#util#diff(a:arg1[idx],a:arg2[idx]))
+        endif
+      endfor
     endif
-    " TODO check each element in the list
   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
     for key in keys(a:arg1)
       if !has_key(a:arg2,key)
@@ -171,5 +177,66 @@ function! vimunit#util#diff(arg1,arg2)
       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
     endif
   endif
+  return results
+endfunction
+
+" Parses the file created by the 'verbose' vim option. Returns
+" a map for each function with the last line that was reached
+" in that function.
+"
+" Each key points to another dictionary with two values:
+" - offset: offset into function
+" - detail: the line as printed
+" - status: unknown/returned/aborted
+" - child: if this function aborted, this key will contain the child function
+"   name (which should be in this dictionary)
+function! vimunit#util#parseVerboseFile(filename)
+  let results = {}
+  let currentfunction = ''
+  for line in readfile(a:filename)
+    if currentfunction != '' && !has_key(results,currentfunction)
+      let results[currentfunction] = {}
+      let results[currentfunction]['status'] = 'unknown'
+      let results[currentfunction]['detail'] = ''
+    endif
+    if line =~ '^\v\s*calling function.*\.\.[^(]+\([^)]*\)$'
+      let currentfunction = substitute(line,'^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$','\=submatch(1)','')
+      "call VULog('currentfunction = "'. currentfunction .'"')
+    elseif line =~ 'continuing in function.*\v<\w+$'
+      let currentfunction = substitute(line,'^\v\s*continuing in function.*\.\.([^(]+)$','\=submatch(1)','')
+      "call VULog('currentfunction = "'. currentfunction .'"')
+    elseif line =~ '^\s*function .* returning' && currentfunction != ''
+      let matches = matchlist(line,'^\s*function .* returning\v(.*)$')
+      if len(matches) > 0
+        let results[currentfunction]['detail'] = matches[1]
+      endif
+      let results[currentfunction]['status'] = 'returned'
+      " for the root function that fails, it has no child..
+    elseif line =~ 'Exception thrown:' && currentfunction != ''
+      let matches = matchlist(line,'Exception thrown:\v(.*)$')
+      let results[currentfunction]['status'] = 'aborted'
+      let results[currentfunction]['detail'] = matches[1]
+      " for the root function that fails, it has no child..
+    elseif line =~ '\vfunction .*\.\.[^.]*\.\.[^.]* aborted'
+      " record an aborted function, and note its child function (if its
+      " bubbling up the stack)
+      let matches = matchlist(line,'\vfunction .*\.\.([^.]*)\.\.([^.]*) aborted')
+      let results[matches[1]]['status'] = 'aborted'
+      let results[matches[1]]['child'] = matches[2]
+    elseif currentfunction != ''
+      " we are within a file, if the line starts with line then we'll want to
+      " parse that.
+      if line =~ '^\s*line '
+        "call VULog('line = '. line)
+        let results[currentfunction]['offset'] = str2nr(substitute(line,'^\v\s*line (\d+):','\=submatch(1)',''))
+        let results[currentfunction]['detail'] = substitute(line,'^\v.*: (.*)$','\=submatch(1)','')
+      else
+        "call VULog('unused line (cf): '. line)
+      endif
+    else
+      " throw away...
+      "call VULog('unused line: '. line)
+    endif
+  endfor
   return results
 endfunction

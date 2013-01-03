@@ -187,7 +187,7 @@ endfunction
 " ARGUMENTS:
 " 	arg1 : Argument to be tested.
 " 	arg2 : Argument to test against.
-"	...  : Optional message.
+"	  ...  : Optional message.
 " RETURNS:
 "	1 if arg1 == arg2
 "	0 if arg1 != arg2
@@ -208,12 +208,9 @@ function! VUAssertEquals(arg1, arg2, ...) "
 		if (exists('a:1'))
 			let msg = " MSG: ". a:1
 		endif
-		let diffs = vimunit#util#diff(a:arg1,a:arg2)
-		if len(diffs) > 0
-			call s:MsgSink('AssertEquals',diffs[0])
-		else
-			call s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
-		endif
+		" TODO provide some 'verbose' option that prints out all the differences
+		" between the objects.
+		call s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
 	endif
 	let s:lastAssertionResult = bFoo
 	return bFoo
@@ -537,10 +534,9 @@ function! VURunAllTests(...)
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
 					" for debugging an error, save the output for later use...
-					" exec "silent !cp vfile.txt verr-". sFoo .".txt"
+					exec "silent !cp vfile.txt verr-". sFoo .".txt"
 					call add(messages,"\n")
 					call add(messages,printf("%-25s| Good assertions: %3d",sFoo,s:testRunSuccessCount))
-					call add(messages,"  Error: ". v:exception)
 					call extend(messages, s:msgSink)
 
 					" TODO this parsing of the verbose file is very hacky. We need an
@@ -554,33 +550,30 @@ function! VURunAllTests(...)
 					" doesn't.
 
 					" Extract the line where the test failed (if there was an exception)
-					exec "silent !grep -B 3 'function .*". sFoo ."\.\..* aborted' vfile.txt > vline.txt"
-					let lineNo = ''
-					let lineDesc = ''
-					let fun  = ''
-					for line in readfile('vline.txt')
-						let matches = matchlist(line,'^\v\s*line (\d+):\s*(.*)$')
-						if  len(matches) > 2
-							let lineNo = matches[1]
-							let lineDesc = matches[2]
-						endif
-						let matches = matchlist(line,'^\v\s*function .*'. sFoo .'\.\.(.*) aborted')
-						if len(matches) > 0
-							let fun = matches[1]
-						endif
-					endfor
-					call add(messages,printf('  %-20s offset %3d: %s',fun,lineNo,lineDesc))
+					let verbosefile = vimunit#util#parseVerboseFile('vfile.txt')
+					let stacktrace = []
+					let lineNo = verbosefile[sFoo]['offset'] + fn
+					let lineDesc = verbosefile[sFoo]['detail']
+					call add(stacktrace,printf('  %s|line %3d|%s',sFoo,lineNo,lineDesc))
+					let curFunction = sFoo
 
-					" Extract the line of test function:
-					exec "silent !grep -A 2 'continuing in function.*". sFoo ."$' vfile.txt | grep line | tail -n 1 > vline.txt"
-					let vline = readfile('vline.txt')
-					if len(vline) > 0
-						let lineno = vline[0]
-						let matches = matchlist(lineno,'^\v\s*line (\d+):\s*(.*)$')
-						if len(matches) > 2
-							call add(messages,printf('  %-20s   line %3d: %s',sFoo,str2nr(matches[1])+fn,matches[2]))
-						endif
-					endif
+					" The vimunit#util#parseVerboseFile function does not handly
+					" recursive calls to the same function correctly. To prevent any
+					" potential errors from that...cap the recursion:
+					let recurses = 0
+					while has_key(verbosefile[curFunction],'child') && recurses < 10
+						let curFunction = verbosefile[curFunction]['child']
+						call add(messages,'curFunction = '. curFunction)
+						let recurses = recurses + 1
+						" TODO find the file that the function is in, and then compute the
+						" line number of the function definition.
+						let lineNo = verbosefile[curFunction]['offset']
+						let lineDesc = verbosefile[curFunction]['detail']
+						call add(stacktrace,printf('  %s|offset %d|%s',curFunction,lineNo,lineDesc))
+					endwhile
+
+					call extend(messages,reverse(stacktrace))
+
 					let badTests = badTests + 1
 				finally
 					exec "set verbose=".oldverbose
@@ -601,6 +594,7 @@ function! VURunAllTests(...)
 	exe "silent !rm -f vline.txt"
 	let g:vimUnitFailFast = oldFailFast
 
+	call insert(messages, "File: ". expand('%'))
 	call add(messages, "")
 	call add(messages, "----------------------------------------------")
 	" TODO add a differentiation between failed assertions and un expected
@@ -610,13 +604,13 @@ function! VURunAllTests(...)
 	if badTests > 0
 		call add(messages, printf("BAD (%3d tests)",badTests))
 	endif
+	" write to a file?
 	if a:0 > 1
-		" check for carriage returns.
+		" check for carriage returns first.
+		" TODO something is causing this this to write VULog entries twice
 		let forwrite = []
 		for m in messages
-			for part in split(m,'\\n')
-				call add(forwrite,part)
-			endfor
+			call extend(forwrite,split(m,'\\n'))
 		endfor
 		call writefile(forwrite,a:000[1])
 	else
@@ -632,6 +626,17 @@ function! VURunAllTests(...)
 		endif
 	endif
 endfunction"}}}
+function! VUMake()
+	let oldmake = &makeprg
+	let olderrfmt = &errorformat
+	" TODO this redirection doesn't work. We need to use the result of the 
+	" file saved by vutest.sh
+	set makeprg=~/.vim/bundle/vimunit/vutest.sh\ %\ >\ /tmp/vutest.out
+	set errorformat=%+PFile:\ %f,line\ %l:\ %m
+	make
+	exe "set makeprg=". oldmake
+	exe "set errorformat=". olderrfmt
+endfunction
 function! VUAutoRun() "{{{
 	"NOTE:If you change this code you must manualy source the file!
 

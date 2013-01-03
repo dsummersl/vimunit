@@ -253,10 +253,6 @@ function! TestExtractFunctionName()
 	let sFoo = VUAssertEquals('TestFunction',vimunit#util#ExtractFunctionName('func TestFunction(arg1, funcarg1, ..)'),'arguments contain func')
 endfunction	
 
-function! TestGetCurrentFunctionNames() 
-	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[266, 256, 252, 239, 225, 208, 191, 164, 133, 83, 2])
-endfunction	
-
 fun TestSubStr()
   call VUAssertEquals(vimunit#util#substr('',0,'A'),'')
   call VUAssertEquals(vimunit#util#substr('',5,'A'),'')
@@ -271,14 +267,45 @@ fun TestDiff()
   call VUAssertEquals(vimunit#util#diff('',''),[])
   call VUAssertEquals(vimunit#util#diff(3,''),['Number(3) != String()'])
   call VUAssertEquals(vimunit#util#diff([],[]),[])
-  call VUAssertEquals(vimunit#util#diff([3],[]),['Different sized lists: 1 != 0'])
+  call VUAssertEquals(vimunit#util#diff([3],[]),['len([3])(1) != len([])(0)'])
   call VUAssertEquals(vimunit#util#diff({},{}),[])
   call VUAssertEquals(vimunit#util#diff({3: 1},{3: 1}),[])
-	call VULog(string(vimunit#util#diff({3: 1},{3: 2})))
-	call VULog(vimunit#util#diff2str({3: 1},{3: 2}))
   call VUAssertEquals(vimunit#util#diff({3: 1},{3: 2}),['Different values for key "3"',['1 != 2']])
-	call VULog(vimunit#util#diff2str({3: 1, 1:2},{3: 2}))
   call VUAssertEquals(vimunit#util#diff({3: 1, 1:2},{3: 2}),
         \[ 'Only in first dictionary: {1: 2}', 'Different values for key "3"',['1 != 2']])
+	let a = {'1': { 'plugins': [{ 'fg': '000000', 'plugins': ['mvom#test#test1plugin'], 'text': 'XX'}], 'text': 'XX', 'visible': 1}}
+	let b = {'1': { 'plugins': [{ 'fg': '000000', 'plugin': 'mvom#test#test1plugin', 'text': 'XX'}], 'text': 'XX', 'visible': 1}}
+	call VULog(string(vimunit#util#diff(a,b)))
+	call VUAssertEquals(vimunit#util#diff(a,b),
+				\['Different values for key "1"', ['Different values for key "plugins"', ['Different values for index 0', ['Only in first dictionary: {plugins: [''mvom#test#test1plugin'']}', 'Only in second dictionary: {plugin: mvom#test#test1plugin}']]]])
 endf
+
+fun TestParseVerboseFile()
+	" test one version that failed for our previous implementation.
+	let lines = vimunit#util#parseVerboseFile('verr-TestConvertToModuloOffset.txt-noline')
+	call VUAssertEquals(lines['TestConvertToModuloOffset']['offset'],1)
+	call VUAssertEquals(lines['TestConvertToModuloOffset']['detail'],'  call VUAssertEquals(mvom#util#location#ConvertToModuloOffset(1,1,2,2),0)')
+	call VUAssertEquals(lines['TestConvertToModuloOffset']['status'],'aborted')
+	call VUAssertEquals(lines['TestConvertToModuloOffset']['child'],'VUAssertEquals')
+
+	call VUAssertEquals(lines['<SNR>31_MsgSink']['status'],'aborted')
+	call VUAssertEquals(lines['<SNR>31_MsgSink']['offset'],9)
+	call VUAssertTrue(!has_key(lines['<SNR>31_MsgSink'],'child'))
+	" TODO returned vs aborted
+
+	" test another scenario not working in the new implementation
+	let lines = vimunit#util#parseVerboseFile('verr-TestGetCurrentFunctionNames.txt')
+	call VULog(string(lines))
+	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['offset'],1)
+	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['detail'],'^Ilet sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2])')
+	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['status'],'aborted')
+	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['child'],'VUAssertEquals')
+
+	call VUAssertEquals(lines['vimunit#util#searchallpair']['status'],'returned')
+endf
+
+function! TestGetCurrentFunctionNames() 
+	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[307, 283, 266, 256, 243, 230, 213, 196, 169, 138, 88, 2])
+endfunction	
+
 " vim: set noet fdm=marker:
