@@ -5,6 +5,6 @@ endfunction
 
 " Try one basic comparison
 function! TestGreater()
-  call VUAssertEqual(example#diff(3,2),1)
-  call VUAssertEqual(example#diff(2,3),1)
+  call VUAssertEquals(example#diff(3,2),1)
+  call VUAssertEquals(example#diff(2,3),1)
 endfunction

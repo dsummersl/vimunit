@@ -29,8 +29,8 @@ body { font-family: monospace; color: #657b83; background-color: #fdf6e3; }
 <span class="lnr"> 5 </span>
 <span class="lnr"> 6 </span><span class="Comment">&quot; Try one basic comparison</span>
 <span class="lnr"> 7 </span><span class="vimCommand">function</span>! TestGreater<span class="Special">()</span>
-<span class="lnr"> 8 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEqual</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
-<span class="lnr"> 9 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEqual</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">2</span>,<span class="Constant">3</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
+<span class="lnr"> 8 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">3</span>,<span class="Constant">2</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
+<span class="lnr"> 9 </span>  <span class="vimCommand">call</span> <span class="Identifier">VUAssertEquals</span><span class="Special">(</span>example#<span class="Identifier">diff</span><span class="Special">(</span><span class="Constant">2</span>,<span class="Constant">3</span><span class="Special">)</span>,<span class="Constant">1</span><span class="Special">)</span>
 <span class="lnr">10 </span><span class="vimCommand">endfunction</span>
 </pre>
 </body>

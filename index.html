@@ -66,8 +66,9 @@ test.vim
 
 <p>To run the tests you can use Vim's built-in quickfix commands. Type
 <code>:make</code>. Your test cases are automatically executed in their own
-sandbox ( a instance of Vim) and are navigable via <code>:cn</code>,
-<code>:cl</code> and the like.  </p>
+sandbox (an instance of Vim) and are navigable via <code>:cn</code>,
+<code>:cl</code> and the like. You can run your tests via the command line, or
+in the editor (but its not recommended). See vim help docs for more information.</p>
 
 Output:
 <pre><code>
@@ -91,14 +92,14 @@ test.vim
 
 Output:
 <pre><code>
-File: test.vim
+File: atest.vim
 
-Failure: TestGreater (assertions 0)
-  <SNR>31_MsgSink|offset 9| 'VU VUAssertTrue: arg1=0!=1'
-  VUAssertTrue|offset 11|            call s:MsgSink('VUAssertTrue','arg1='.a:arg1.'!='.TRUE())
-  TestGreater|line 8|fun example#diff(a,b)
+Failure: TestGreater (assertions 1)
+  <SNR>30_MsgSink|offset 9| 'VU AssertEquals: arg1=-1!=1'
+  VUAssertEquals|offset 18|^I^Icall s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+  TestGreater|line  10|  call VUAssertEquals(example#diff(2,3),1)
 ----------------------------------------------
-Passed: 1 (1 assertions) Failed: 1, Exceptions: 0
+Passed: 1 (2 assertions) Failed: 1, Exceptions: 0
 </code></pre>
 
 <p>Ah ha! The second assertion returns <code>-1 != 1</code>...we need to be positive/negative
@@ -109,9 +110,10 @@ autoload/test.vim
 <br/>
 
 Command Line:
-<pre><code>~/.vim/bundle/vimunit/vutest.sh test.vim
+<pre><code>
+File: atest.vim
 ----------------------------------------------
- OK (  2 tests,   3 assertions)
+Passed: 2 (3 assertions) Failed: 0, Exceptions: 0
 </code></pre>
 
 <h3>Installation</h3>
