@@ -560,10 +560,10 @@ function! VURunAllTests(...)
 					exec "set verbose=".oldverbose
 					exec "set verbosefile=".oldvfile
 					" for debugging an error, save the output for later use...
-					" exec "silent !cp vfile.txt verr-". sFoo .".txt"
+					exec "silent !cp vfile.txt verr-". sFoo .".txt"
 
 					call add(messages,"\n")
-					call add(messages,printf("%s: %s (assertions %d)",failtype,sFoo,s:testRunSuccessCount))
+					call add(messages,printf("%s| %s (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
 					call extend(messages, s:msgSink)
 
 					" TODO this parsing of the verbose file is very hacky. We need an
@@ -578,6 +578,7 @@ function! VURunAllTests(...)
 
 					" Extract the line where the test failed (if there was an exception)
 					let verbosefile = vimunit#util#parseVerboseFile('vfile.txt')
+					call writefile([string(verbosefile)],'out'. sFoo .'.txt')
 					let stacktrace = []
 					let lineNo = verbosefile[sFoo]['offset'] + fn
 					let lineDesc = verbosefile[sFoo]['detail']
@@ -621,9 +622,6 @@ function! VURunAllTests(...)
 	call insert(messages, "File: ". expand('%'))
 	call add(messages, "")
 	call add(messages, "----------------------------------------------")
-	" TODO add a differentiation between failed assertions and un expected
-	" exceptions. simpletest does this:
-	" Test cases run: 1/1, Passes: 0, Failures: 2, Exceptions: 0
 	call add(messages, printf("Passed: %d (%d assertions) Failed: %d, Exceptions: %d",goodTests,goodAssertions,failedTests,exceptTests))
 	" write to a file?
 	if a:0 > 1

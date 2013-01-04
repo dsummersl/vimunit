@@ -1,0 +1,443 @@
+
+                                       line 24: ^I^I^I^I^Icall {sFoo}()
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames()
+
+                                       line 1: ^Ilet sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2])
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..vimunit#util#GetCurrentFunctionLocations()
+
+                                       line 1: ^I" Get all functions in the file.
+                                       line 2: ^Ireturn vimunit#util#searchallpair('^\s*fu\%[nction]\%[!]\ .*','','^\s*endf\%[unction].*','Wb')
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..vimunit#util#GetCurrentFunctionLocations..vimunit#util#searchallpair('^\s*fu\%[nction]\%[!]\ .*', '', '^\s*endf\%[unction].*', 'Wb')
+
+                                       line 1: ^Ilet flags = ''
+                                       line 2: ^Ilet stopline = 0
+                                       line 3: ^Ilet timeout = 0
+                                       line 4: ^Iif a:0 > 0
+                                       line 5: ^I^Ilet flags = a:1
+                                       line 6: ^Iendif
+                                       line 7: ^Iif a:0 > 1
+                                       line 8: ^I^Ilet stopline = a:2
+                                       line 9: ^Iendif
+                                       line 10: ^Iif a:0 > 2
+                                       line 11: ^I^Ilet timeout = a:3
+                                       line 12: ^Iendif
+                                       line 13: ^I" Return all matches in a file. Just like 'searchpair' but returns a list
+                                       line 14: ^I" of the matches in the file..
+                                       line 15: ^I" save the old position.
+                                       line 16: ^Ilet origpos = getpos('.')
+                                       line 17: ^I" go to line 1
+                                       line 18: ^Iif matchstr(flags,'b')
+                                       line 19: ^I^I1
+                                       line 20: ^I^Ilet cmp='<='
+                                       line 21: ^Ielse
+                                       line 22: ^I^I$
+                                       line 23: ^I^Ilet cmp='>='
+                                       line 24: ^Iendif
+                                       line 25: 
+                                       line 26: ^Iif matchstr(flags,'W') == "" | let flags = flags .'W' | endif
+                                       line 26:  let flags = flags .'W' | endif
+                                       line 26:  endif
+                                       line 27: ^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.line('.'))
+                                       line 28: ^Ilet results = []
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 29: ^Iwhile 1
+                                       line 30: ^I^Iif lastcall != 0
+                                       line 31: ^I^I^Icall add(results,lastcall)
+                                       line 32: ^I^Iendif
+                                       line 33: ^I^Ilet curline = line('.')
+                                       line 34: ^I^Iif cmp == '<='
+                                       line 35: ^I^I^Ilet nextStart = search(a:start,'W')
+                                       line 36: ^I^I^Iif !nextStart
+                                       line 37: ^I^I^I^Ibreak
+                                       line 38: ^I^I^Iendif
+                                       line 39: ^I^Ielse
+                                       line 40: ^I^I^Ilet nextEnd = search(a:end,'bW')
+                                       line 41: ^I^I^Iif !nextEnd
+                                       line 42: ^I^I^I^Ibreak
+                                       line 43: ^I^I^Iendif
+                                       line 44: ^I^Iendif
+                                       line 45: ^I^Ilet lastcall = searchpair(a:start,a:middle,a:end,flags,stopline,timeout,'line(".")'.cmp.lastcall)
+                                       line 46: ^Iendwhile
+                                       line 47: ^Icall setpos('.',origpos)
+                                       line 48: ^Ireturn results
+                                       function VURunAllTests..TestGetCurrentFunctionNames..vimunit#util#GetCurrentFunctionLocations..vimunit#util#searchallpair returning [287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2]
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..vimunit#util#GetCurrentFunctionLocations
+
+                                       function VURunAllTests..TestGetCurrentFunctionNames..vimunit#util#GetCurrentFunctionLocations returning [287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2]
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames
+
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals([287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2], [270, 260, 256, 243, 230, 213, 196, 1...56, 243, 230, 213, 196, 169, 138, 88, 2])
+
+                                       line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff([287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2], [270, 260, 256, 243, 230, 213, 196, 1...56, 243, 230, 213, 196, 169, 138, 88, 2])
+
+                                       line 1:   let maxstrlen = 10
+                                       line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+                                       line 10:   " easy: the types are different
+                                       line 11:   if type(a:arg1) != type(a:arg2)
+                                       line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+                                       line 13:   endif
+                                       line 14:   let results = []
+                                       line 15:   " differences between two lists
+                                       line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+                                       line 17:     if len(a:arg1) != len(a:arg2)
+                                       line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr([287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2], 10, '...')
+
+                                       line 1:   let str = s:str(a:str)
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr..<SNR>74_str([287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2])
+
+                                       line 1:   if type(a:str) != 1
+                                       line 2:     return string(a:str)
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr..<SNR>74_str returning '[287, 270, 260, 256, 243, 230, 213, ...6, 243, 230, 213, 196, 169, 138, 88, 2]'
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr
+
+                                       line 2:   if len(str) > a:maxlen
+                                       line 3:     return strpart(str,0,a:maxlen) . a:append
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr returning '[287, 270,...'
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff
+
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr([270, 260, 256, 243, 230, 213, 196, 1...56, 243, 230, 213, 196, 169, 138, 88, 2], 10, '...')
+
+                                       line 1:   let str = s:str(a:str)
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr..<SNR>74_str([270, 260, 256, 243, 230, 213, 196, 1...56, 243, 230, 213, 196, 169, 138, 88, 2])
+
+                                       line 1:   if type(a:str) != 1
+                                       line 2:     return string(a:str)
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr..<SNR>74_str returning '[270, 260, 256, 243, 230, 213, 196, ...6, 243, 230, 213, 196, 169, 138, 88, 2]'
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr
+
+                                       line 2:   if len(str) > a:maxlen
+                                       line 3:     return strpart(str,0,a:maxlen) . a:append
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff..vimunit#util#substr returning '[270, 260,...'
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff
+
+                                       line 19:     else
+                                       line 20:       for idx in range(len(a:arg1))
+                                       line 21:         if a:arg1[idx] != a:arg2[idx]
+                                       line 22:           call add(results,'Different values for index '. idx)
+                                       line 23:           call add(results,vimunit#util#diff(a:arg1[idx],a:arg2[idx]))
+                                       line 24:         endif
+                                       line 25:       endfor
+                                       line 26:     endif
+                                       line 27:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+                                       line 28:     for key in keys(a:arg1)
+                                       line 29:       if !has_key(a:arg2,key)
+                                       line 30:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                       line 31:       else
+                                       line 32:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                       line 33:         "if len(sub) > 0
+                                       line 34:         if a:arg1[key] != a:arg2[key]
+                                       line 35:           call add(results,'Different values for key "'. key .'"')
+                                       line 36:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                       line 37:         endif
+                                       line 38:       endif
+                                       line 39:     endfor
+                                       line 40:     for key in keys(a:arg2)
+                                       line 41:       if !has_key(a:arg1,key)
+                                       line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+                                       line 43:       endif
+                                       line 44:     endfor
+                                       line 45:   else
+                                       line 46:     if a:arg1 != a:arg2
+                                       line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+                                       line 48:     endif
+                                       line 49:   endif
+                                       line 50:   return results
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..vimunit#util#diff returning ['len([287, 270,...)(12) != len([270,...270,...)(12) != len([270, 260,...)(11)']
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals
+
+                                       line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+                                       line 3: ^I" check the types..."
+                                       line 4: ^Iif len(diffs) == 0
+                                       line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+                                       line 6: ^I^Ilet bFoo = TRUE()
+                                       line 7: ^Ielse
+                                       line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+                                       line 9: ^I^Ilet bFoo = FALSE()
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..FALSE()
+
+                                       line 1: ^I^Ilet sFoo = (1 != 1)
+                                       line 2: ^I^Ireturn sFoo
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..FALSE returning #0
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals
+
+                                       line 10: ^I^Ilet arg1text = s:str(a:arg1)
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..<SNR>31_str([287, 270, 260, 256, 243, 230, 213, 1...56, 243, 230, 213, 196, 169, 138, 88, 2])
+
+                                       line 1:   if type(a:str) != 1
+                                       line 2:     return string(a:str)
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..<SNR>31_str returning '[287, 270, 260, 256, 243, 230, 213, ...6, 243, 230, 213, 196, 169, 138, 88, 2]'
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals
+
+                                       line 11: ^I^Ilet arg2text = s:str(a:arg2)
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..<SNR>31_str([270, 260, 256, 243, 230, 213, 196, 1...56, 243, 230, 213, 196, 169, 138, 88, 2])
+
+                                       line 1:   if type(a:str) != 1
+                                       line 2:     return string(a:str)
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..<SNR>31_str returning '[270, 260, 256, 243, 230, 213, 196, ...6, 243, 230, 213, 196, 169, 138, 88, 2]'
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals
+
+                                       line 12: ^I^Ilet msg = ''
+                                       line 13: ^I^Iif (exists('a:1'))
+                                       line 14: ^I^I^Ilet msg = " MSG: ". a:1
+                                       line 15: ^I^Iendif
+                                       line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+                                       line 17: ^I^I" between the objects.
+                                       line 18: ^I^Icall s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+                                       calling function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..<SNR>31_MsgSink('AssertEquals', 'arg1=[287, 270, 260, 256, 243, 230, ...6, 243, 230, 213, 196, 169, 138, 88, 2]')
+
+                                       line 1:     " recording of the last failure
+                                       line 2: ^Ilet trace = split(expand("<sfile>"), '\.\.')
+                                       line 3: ^Ilet msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+                                       line 4: ^Iif g:vimUnitVerbosity > 0
+                                       line 5: ^I^Ilet s:msgSink = s:msgSink + msg
+                                       line 6: ^I^I"echo a:caller.': '.a:msg
+                                       line 7: ^Iendif
+                                       line 8: ^Iif g:vimUnitFailFast
+                                       line 9: ^I^Ithrow string(msg[0][0] .": ". msg[0][1])
+                                       Exception thrown: 'AssertEquals: arg1=[287, 270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2]!=[270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2]'
+
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals..<SNR>31_MsgSink aborted
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals
+
+                                       function VURunAllTests..TestGetCurrentFunctionNames..VUAssertEquals aborted
+
+                                       continuing in function VURunAllTests..TestGetCurrentFunctionNames
+
+                                       function VURunAllTests..TestGetCurrentFunctionNames aborted
+
+                                       continuing in function VURunAllTests
+
+                                       line 25: ^I^I^I^I^Ilet goodTests = goodTests + 1
+                                       line 26: ^I^I^I^Icatch /.*/
+                                       Exception caught: 'AssertEquals: arg1=[287, 270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2]!=[270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2]'
+
+                                       line 27: ^I^I^I^I^Iexec "set verbose=".oldverbose
+                                       line 27: set verbose=0

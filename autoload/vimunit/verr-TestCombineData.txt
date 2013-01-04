@@ -1,0 +1,426 @@
+
+                                     line 25: ^I^I^I^I^Icall {sFoo}()
+                                     calling function VURunAllTests..TestCombineData()
+
+                                     line 1:   " put your curser in this block somewhere and then type ":call VUAutoRun()"
+                                     line 2: ^I" TODO these are still NOT passing.
+                                     line 3: ^Ilet w:save_cursor = winsaveview()
+                                     line 4: ^Icall VUAssertEquals(mvom#renderer#CombineData([ {'plugin':'mvom#test#test1plugin', 'options': { 'render': 'mvom#test#test1paint' }} ]), {})
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData([{'options': {'render': 'mvom#test#te...t'}, 'plugin': 'mvom#test#test1plugin'}])
+
+                                     line 1: ^Ilet allData = {}
+                                     line 2:   " Generate data for each plugin (if its enabled), and combine it into one master list:
+                                     line 3: ^Ifor pluginInstance in a:plugins"{{{
+                                     line 4: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 5: ^I^Ilet options = pluginInstance['options']
+                                     line 6: ^I^Iif !{plugin}#enabled(options)
+                                     Searching for "autoload/mvom/test/test1plugin.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vimplugin-macromatches,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/indenthl,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bund
+                                     Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/mvom/test/test1plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test1plugin.vim"
+                                     chdir(/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test)
+                                     fchdir() to previous dir
+                                     line 6: sourcing "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test1plugin.vim"
+                                     line 1: function! mvom#test#test1plugin#enabled(options)
+                                     line 4: 
+                                     line 5: function! mvom#test#test1plugin#deinit()
+                                     line 7: 
+                                     line 8: function! mvom#test#test1plugin#data(options)
+                                     line 11: 
+                                     line 12: function! mvom#test#test1plugin#init(options)
+                                     finished sourcing /Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test1plugin.vim
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test1plugin#enabled({'render': 'mvom#test#test1paint'})
+
+                                     line 1: ^Ireturn 1
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test1plugin#enabled returning #1
+
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+
+                                     line 7: ^I^I^Icontinue
+                                     line 8: ^I^Iendif
+                                     line 9: ^I^Icall winrestview(w:save_cursor) " so the plugins all get to start from the same 'window'
+                                     line 10: ^I^Ilet data={plugin}#data(options)
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test1plugin#data({'render': 'mvom#test#test1paint'})
+
+                                     line 1: ^Ireturn {}
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test1plugin#data returning {}
+
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+
+                                     line 11: ^I^Ifor line in keys(data) " loop through all the data and add it to my own master list.
+                                     line 12: ^I^I^Iif has_key(allData,line)
+                                     line 13:         call add(allData[line],data[line])
+                                     line 14: ^I^I^Ielse
+                                     line 15:         " do we have the current plugin already? If not:
+                                     line 16: ^I^I^I^Ilet allData[line] = []
+                                     line 17: ^I^I^I^Ilet data[line]['line'] = line+0
+                                     line 18: ^I^I^I^Ilet data[line]['plugin'] = plugin
+                                     line 19:         call add(allData[line],data[line])
+                                     line 20: ^I^I^Iendif
+                                     line 21: ^I^Iendfor
+                                     line 22: ^Iendfor"}}}
+                                     line 3: ^Ifor pluginInstance in a:plugins"{{{
+                                     line 4: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 5: ^I^Ilet options = pluginInstance['options']
+                                     line 6: ^I^Iif !{plugin}#enabled(options)
+                                     line 7: ^I^I^Icontinue
+                                     line 8: ^I^Iendif
+                                     line 9: ^I^Icall winrestview(w:save_cursor) " so the plugins all get to start from the same 'window'
+                                     line 10: ^I^Ilet data={plugin}#data(options)
+                                     line 11: ^I^Ifor line in keys(data) " loop through all the data and add it to my own master list.
+                                     line 12: ^I^I^Iif has_key(allData,line)
+                                     line 13:         call add(allData[line],data[line])
+                                     line 14: ^I^I^Ielse
+                                     line 15:         " do we have the current plugin already? If not:
+                                     line 16: ^I^I^I^Ilet allData[line] = []
+                                     line 17: ^I^I^I^Ilet data[line]['line'] = line+0
+                                     line 18: ^I^I^I^Ilet data[line]['plugin'] = plugin
+                                     line 19:         call add(allData[line],data[line])
+                                     line 20: ^I^I^Iendif
+                                     line 21: ^I^Iendfor
+                                     line 22: ^Iendfor"}}}
+                                     line 23: ^Ilet resultData = {}
+                                     line 24:   " Generate the paint data"{{{
+                                     line 25: ^Ifor pluginInstance in a:plugins " now render everything
+                                     line 26: ^I^Ilet render = pluginInstance['options']['render']
+                                     line 27: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 28: ^I^Ilet pluginData = {}
+                                     line 29:     " Make a list of the lines that actually have plugin data present:
+                                     line 30: ^I^Ifor line in keys(allData)
+                                     line 31: ^I^I^Iif count(allData[line],plugin) > 0
+                                     line 32: ^I^I^I^Ilet pluginData[line] = allData[line]
+                                     line 33: ^I^I^Iendif
+                                     line 34: ^I^Iendfor
+                                     line 35: ^I^Ilet paintData = {render}#paint(pluginInstance['options'],pluginData)
+                                     Searching for "autoload/mvom/test/test1paint.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vimplugin-macromatches,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/indenthl,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bundl
+                                     Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/mvom/test/test1paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test1paint.vim"
+                                     chdir(/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test)
+                                     fchdir() to previous dir
+                                     line 35: sourcing "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test1paint.vim"
+                                     line 1: function! mvom#test#test1paint#paint(options,data)
+                                     finished sourcing /Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test1paint.vim
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test1paint#paint({'render': 'mvom#test#test1paint'}, {})
+
+                                     line 1: ^Ireturn {}
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test1paint#paint returning {}
+
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+
+                                     line 36:     " once painted, store the results.
+                                     line 37: ^I^Ifor line in keys(paintData)
+                                     line 38: ^I^I^Iif has_key(resultData,line)
+                                     line 39: ^I^I^I^Ilet resultData[line] = extend(resultData[line],allData[line])
+                                     line 40: ^I^I^Ielse
+                                     line 41: ^I^I^I^Ilet resultData[line] = copy(allData[line])
+                                     line 42: ^I^I^Iendif
+                                     line 43:       for key in ["text","fg","bg","iconcolor","iconwidth","iconalign"]
+                                     line 44:         if has_key(paintData[line],key)
+                                     line 45:           let resultData[line][key] = paintData[line][key]
+                                     line 46:           let pluginData[line][key] = paintData[line][key]
+                                     line 47:         endif
+                                     line 48:       endfor
+                                     line 49: ^I^Iendfor
+                                     line 50: ^Iendfor"}}}
+                                     line 25: ^Ifor pluginInstance in a:plugins " now render everything
+                                     line 26: ^I^Ilet render = pluginInstance['options']['render']
+                                     line 27: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 28: ^I^Ilet pluginData = {}
+                                     line 29:     " Make a list of the lines that actually have plugin data present:
+                                     line 30: ^I^Ifor line in keys(allData)
+                                     line 31: ^I^I^Iif count(allData[line],plugin) > 0
+                                     line 32: ^I^I^I^Ilet pluginData[line] = allData[line]
+                                     line 33: ^I^I^Iendif
+                                     line 34: ^I^Iendfor
+                                     line 35: ^I^Ilet paintData = {render}#paint(pluginInstance['options'],pluginData)
+                                     line 36:     " once painted, store the results.
+                                     line 37: ^I^Ifor line in keys(paintData)
+                                     line 38: ^I^I^Iif has_key(resultData,line)
+                                     line 39: ^I^I^I^Ilet resultData[line] = extend(resultData[line],allData[line])
+                                     line 40: ^I^I^Ielse
+                                     line 41: ^I^I^I^Ilet resultData[line] = copy(allData[line])
+                                     line 42: ^I^I^Iendif
+                                     line 43:       for key in ["text","fg","bg","iconcolor","iconwidth","iconalign"]
+                                     line 44:         if has_key(paintData[line],key)
+                                     line 45:           let resultData[line][key] = paintData[line][key]
+                                     line 46:           let pluginData[line][key] = paintData[line][key]
+                                     line 47:         endif
+                                     line 48:       endfor
+                                     line 49: ^I^Iendfor
+                                     line 50: ^Iendfor"}}}
+                                     line 51: ^Ireturn resultData
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData returning {}
+
+                                     continuing in function VURunAllTests..TestCombineData
+
+                                     calling function VURunAllTests..TestCombineData..VUAssertEquals({}, {})
+
+                                     line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+                                     calling function VURunAllTests..TestCombineData..VUAssertEquals..vimunit#util#diff({}, {})
+
+                                     line 1:   let maxstrlen = 10
+                                     line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+                                     line 10:   " easy: the types are different
+                                     line 11:   if type(a:arg1) != type(a:arg2)
+                                     line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+                                     line 13:   endif
+                                     line 14:   let results = []
+                                     line 15:   " differences between two lists
+                                     line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+                                     line 17:     if len(a:arg1) != len(a:arg2)
+                                     line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+                                     line 19:     else
+                                     line 20:       for idx in range(len(a:arg1))
+                                     line 21:         if a:arg1[idx] != a:arg2[idx]
+                                     line 22:           call add(results,'Different values for index '. idx)
+                                     line 23:           call add(results,vimunit#util#diff(a:arg1[idx],a:arg2[idx]))
+                                     line 24:         endif
+                                     line 25:       endfor
+                                     line 26:     endif
+                                     line 27:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+                                     line 28:     for key in keys(a:arg1)
+                                     line 29:       if !has_key(a:arg2,key)
+                                     line 30:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 31:       else
+                                     line 32:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 33:         "if len(sub) > 0
+                                     line 34:         if a:arg1[key] != a:arg2[key]
+                                     line 35:           call add(results,'Different values for key "'. key .'"')
+                                     line 36:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                     line 37:         endif
+                                     line 38:       endif
+                                     line 39:     endfor
+                                     line 40:     for key in keys(a:arg2)
+                                     line 41:       if !has_key(a:arg1,key)
+                                     line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+                                     line 43:       endif
+                                     line 44:     endfor
+                                     line 45:   else
+                                     line 46:     if a:arg1 != a:arg2
+                                     line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+                                     line 48:     endif
+                                     line 49:   endif
+                                     line 50:   return results
+                                     function VURunAllTests..TestCombineData..VUAssertEquals..vimunit#util#diff returning []
+
+                                     continuing in function VURunAllTests..TestCombineData..VUAssertEquals
+
+                                     line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+                                     line 3: ^I" check the types..."
+                                     line 4: ^Iif len(diffs) == 0
+                                     line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+                                     line 6: ^I^Ilet bFoo = TRUE()
+                                     calling function VURunAllTests..TestCombineData..VUAssertEquals..TRUE()
+
+                                     line 1: ^I^Ilet sFoo = (1 == 1)
+                                     line 2: ^I^Ireturn sFoo
+                                     function VURunAllTests..TestCombineData..VUAssertEquals..TRUE returning #1
+
+                                     continuing in function VURunAllTests..TestCombineData..VUAssertEquals
+
+                                     line 7: ^Ielse
+                                     line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+                                     line 9: ^I^Ilet bFoo = FALSE()
+                                     line 10: ^I^Ilet arg1text = s:str(a:arg1)
+                                     line 11: ^I^Ilet arg2text = s:str(a:arg2)
+                                     line 12: ^I^Ilet msg = ''
+                                     line 13: ^I^Iif (exists('a:1'))
+                                     line 14: ^I^I^Ilet msg = " MSG: ". a:1
+                                     line 15: ^I^Iendif
+                                     line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+                                     line 17: ^I^I" between the objects.
+                                     line 18: ^I^Icall s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+                                     line 19: ^Iendif
+                                     line 20: ^Ilet s:lastAssertionResult = bFoo
+                                     line 21: ^Ireturn bFoo
+                                     function VURunAllTests..TestCombineData..VUAssertEquals returning #1
+
+                                     continuing in function VURunAllTests..TestCombineData
+
+                                     line 9:   let diff = vimunit#util#diff(mvom#renderer#CombineData([ {'plugin':'mvom#test#test2plugin', 'options': { 'render': 'mvom#test#test2paint'}} ]), {'1':[{   'plugin': 'mvom#test#test2plugin',   'line': 1,   'bg': 'testbg',   'fg': 'testhi',   'text': '..' }]})
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData([{'options': {'render': 'mvom#test#te...t'}, 'plugin': 'mvom#test#test2plugin'}])
+
+                                     line 1: ^Ilet allData = {}
+                                     line 2:   " Generate data for each plugin (if its enabled), and combine it into one master list:
+                                     line 3: ^Ifor pluginInstance in a:plugins"{{{
+                                     line 4: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 5: ^I^Ilet options = pluginInstance['options']
+                                     line 6: ^I^Iif !{plugin}#enabled(options)
+                                     Searching for "autoload/mvom/test/test2plugin.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vimplugin-macromatches,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/indenthl,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bund
+                                     Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/mvom/test/test2plugin.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test2plugin.vim"
+                                     chdir(/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test)
+                                     fchdir() to previous dir
+                                     line 6: sourcing "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test2plugin.vim"
+                                     line 1: function! mvom#test#test2plugin#data(options)
+                                     line 4: 
+                                     line 5: function! mvom#test#test2plugin#init(options)
+                                     line 7: 
+                                     line 8: function! mvom#test#test2plugin#deinit()
+                                     line 10: 
+                                     line 11: function! mvom#test#test2plugin#enabled(options)
+                                     finished sourcing /Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test2plugin.vim
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test2plugin#enabled({'render': 'mvom#test#test2paint'})
+
+                                     line 1: ^Ireturn 1 
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test2plugin#enabled returning #1
+
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+
+                                     line 7: ^I^I^Icontinue
+                                     line 8: ^I^Iendif
+                                     line 9: ^I^Icall winrestview(w:save_cursor) " so the plugins all get to start from the same 'window'
+                                     line 10: ^I^Ilet data={plugin}#data(options)
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test2plugin#data({'render': 'mvom#test#test2paint'})
+
+                                     line 1: ^Ireturn {'1':{'count':1}}
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test2plugin#data returning {'1': {'count': 1}}
+
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+
+                                     line 11: ^I^Ifor line in keys(data) " loop through all the data and add it to my own master list.
+                                     line 12: ^I^I^Iif has_key(allData,line)
+                                     line 13:         call add(allData[line],data[line])
+                                     line 14: ^I^I^Ielse
+                                     line 15:         " do we have the current plugin already? If not:
+                                     line 16: ^I^I^I^Ilet allData[line] = []
+                                     line 17: ^I^I^I^Ilet data[line]['line'] = line+0
+                                     line 18: ^I^I^I^Ilet data[line]['plugin'] = plugin
+                                     line 19:         call add(allData[line],data[line])
+                                     line 20: ^I^I^Iendif
+                                     line 21: ^I^Iendfor
+                                     line 11: ^I^Ifor line in keys(data) " loop through all the data and add it to my own master list.
+                                     line 12: ^I^I^Iif has_key(allData,line)
+                                     line 13:         call add(allData[line],data[line])
+                                     line 14: ^I^I^Ielse
+                                     line 15:         " do we have the current plugin already? If not:
+                                     line 16: ^I^I^I^Ilet allData[line] = []
+                                     line 17: ^I^I^I^Ilet data[line]['line'] = line+0
+                                     line 18: ^I^I^I^Ilet data[line]['plugin'] = plugin
+                                     line 19:         call add(allData[line],data[line])
+                                     line 20: ^I^I^Iendif
+                                     line 21: ^I^Iendfor
+                                     line 22: ^Iendfor"}}}
+                                     line 3: ^Ifor pluginInstance in a:plugins"{{{
+                                     line 4: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 5: ^I^Ilet options = pluginInstance['options']
+                                     line 6: ^I^Iif !{plugin}#enabled(options)
+                                     line 7: ^I^I^Icontinue
+                                     line 8: ^I^Iendif
+                                     line 9: ^I^Icall winrestview(w:save_cursor) " so the plugins all get to start from the same 'window'
+                                     line 10: ^I^Ilet data={plugin}#data(options)
+                                     line 11: ^I^Ifor line in keys(data) " loop through all the data and add it to my own master list.
+                                     line 12: ^I^I^Iif has_key(allData,line)
+                                     line 13:         call add(allData[line],data[line])
+                                     line 14: ^I^I^Ielse
+                                     line 15:         " do we have the current plugin already? If not:
+                                     line 16: ^I^I^I^Ilet allData[line] = []
+                                     line 17: ^I^I^I^Ilet data[line]['line'] = line+0
+                                     line 18: ^I^I^I^Ilet data[line]['plugin'] = plugin
+                                     line 19:         call add(allData[line],data[line])
+                                     line 20: ^I^I^Iendif
+                                     line 21: ^I^Iendfor
+                                     line 22: ^Iendfor"}}}
+                                     line 23: ^Ilet resultData = {}
+                                     line 24:   " Generate the paint data"{{{
+                                     line 25: ^Ifor pluginInstance in a:plugins " now render everything
+                                     line 26: ^I^Ilet render = pluginInstance['options']['render']
+                                     line 27: ^I^Ilet plugin = pluginInstance['plugin']
+                                     line 28: ^I^Ilet pluginData = {}
+                                     line 29:     " Make a list of the lines that actually have plugin data present:
+                                     line 30: ^I^Ifor line in keys(allData)
+                                     line 31: ^I^I^Iif count(allData[line],plugin) > 0
+                                     line 32: ^I^I^I^Ilet pluginData[line] = allData[line]
+                                     line 33: ^I^I^Iendif
+                                     line 34: ^I^Iendfor
+                                     line 30: ^I^Ifor line in keys(allData)
+                                     line 31: ^I^I^Iif count(allData[line],plugin) > 0
+                                     line 32: ^I^I^I^Ilet pluginData[line] = allData[line]
+                                     line 33: ^I^I^Iendif
+                                     line 34: ^I^Iendfor
+                                     line 35: ^I^Ilet paintData = {render}#paint(pluginInstance['options'],pluginData)
+                                     Searching for "autoload/mvom/test/test2paint.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vimplugin-macromatches,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/indenthl,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bundl
+                                     Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/mvom/test/test2paint.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test2paint.vim"
+                                     chdir(/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test)
+                                     fchdir() to previous dir
+                                     line 35: sourcing "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test2paint.vim"
+                                     line 1: function! mvom#test#test2paint#paint(options,data)
+                                     finished sourcing /Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/test/test2paint.vim
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+                                     calling function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test2paint#paint({'render': 'mvom#test#test2paint'}, {})
+
+                                     line 1: ^Ireturn {'1':{'text':'..', 'fg':'testhi', 'bg':'testbg'}}
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData..mvom#test#test2paint#paint returning {'1': {'bg': 'testbg', 'fg': 'testhi'...'testbg', 'fg': 'testhi', 'text': '..'}}
+
+                                     continuing in function VURunAllTests..TestCombineData..mvom#renderer#CombineData
+
+                                     line 36:     " once painted, store the results.
+                                     line 37: ^I^Ifor line in keys(paintData)
+                                     line 38: ^I^I^Iif has_key(resultData,line)
+                                     line 39: ^I^I^I^Ilet resultData[line] = extend(resultData[line],allData[line])
+                                     line 40: ^I^I^Ielse
+                                     line 41: ^I^I^I^Ilet resultData[line] = copy(allData[line])
+                                     line 42: ^I^I^Iendif
+                                     line 43:       for key in ["text","fg","bg","iconcolor","iconwidth","iconalign"]
+                                     line 44:         if has_key(paintData[line],key)
+                                     line 45:           let resultData[line][key] = paintData[line][key]
+                                     line 46:           let pluginData[line][key] = paintData[line][key]
+                                     Exception thrown: Vim(let):E716: Key not present in Dictionary: 1
+
+                                     function VURunAllTests..TestCombineData..mvom#renderer#CombineData aborted
+
+                                     continuing in function VURunAllTests..TestCombineData
+
+                                     function VURunAllTests..TestCombineData aborted
+
+                                     continuing in function VURunAllTests
+
+                                     line 26: ^I^I^I^I^Ilet goodTests = goodTests + 1
+                                     line 27: ^I^I^I^Icatch /.*/
+                                     Exception caught: Vim(let):E716: Key not present in Dictionary: 1
+
+                                     line 28: ^I^I^I^I^Ilet failtype = 'Failure'
+                                     line 29: ^I^I^I^I^Iif v:exception =~ 'VU'
+                                     line 30: ^I^I^I^I^I^Ilet failedTests = failedTests + 1
+                                     line 31: ^I^I^I^I^Ielse
+                                     line 32: ^I^I^I^I^I^Ilet exceptTests = exceptTests + 1
+                                     line 33: ^I^I^I^I^I^Ilet failtype = 'Exception'
+                                     line 34: ^I^I^I^I^Iendif
+                                     line 35: 
+                                     line 36: ^I^I^I^I^Iexec "set verbose=".oldverbose
+                                     line 36: set verbose=0

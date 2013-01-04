@@ -194,18 +194,22 @@ function! vimunit#util#parseVerboseFile(filename)
   let results = {}
   let currentfunction = ''
   for line in readfile(a:filename)
+    "call VULog('line = '. line)
+
     if currentfunction != '' && !has_key(results,currentfunction)
       let results[currentfunction] = {}
       let results[currentfunction]['status'] = 'unknown'
       let results[currentfunction]['detail'] = ''
     endif
+
     if line =~ '^\v\s*calling function.*\.\.[^(]+\([^)]*\)$'
       let currentfunction = substitute(line,'^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$','\=submatch(1)','')
       "call VULog('currentfunction = "'. currentfunction .'"')
-    elseif line =~ 'continuing in function.*\v<\w+$'
-      let currentfunction = substitute(line,'^\v\s*continuing in function.*\.\.([^(]+)$','\=submatch(1)','')
+    elseif line =~ 'continuing in function'
+      let currentfunction = substitute(line,'^\v\s*continuing in function .*<([^. (]+)$','\=submatch(1)','')
       "call VULog('currentfunction = "'. currentfunction .'"')
     elseif line =~ '^\s*function .* returning' && currentfunction != ''
+      "call VULog('returning '. currentfunction)
       let matches = matchlist(line,'^\s*function .* returning\v(.*)$')
       if len(matches) > 0
         let results[currentfunction]['detail'] = matches[1]
@@ -213,21 +217,29 @@ function! vimunit#util#parseVerboseFile(filename)
       let results[currentfunction]['status'] = 'returned'
       " for the root function that fails, it has no child..
     elseif line =~ 'Exception thrown:' && currentfunction != ''
+      "call VULog('except for '. currentfunction)
       let matches = matchlist(line,'Exception thrown:\v(.*)$')
       let results[currentfunction]['status'] = 'aborted'
       let results[currentfunction]['detail'] = matches[1]
       " for the root function that fails, it has no child..
-    elseif line =~ '\vfunction .*\.\.[^.]*\.\.[^.]* aborted'
+    elseif line =~ '\vfunction .*\.\.([^.]*)\.\.([^.]*) aborted'
       " record an aborted function, and note its child function (if its
       " bubbling up the stack)
       let matches = matchlist(line,'\vfunction .*\.\.([^.]*)\.\.([^.]*) aborted')
+      if !has_key(results,matches[1])
+        "call VULog("tempcurrentfunction = ". matches[1])
+        let results[matches[1]] = {}
+        let results[matches[1]]['status'] = 'unknown'
+        let results[matches[1]]['detail'] = ''
+      endif
+      "call VULog("ugcurrentfunction = ". matches[1])
       let results[matches[1]]['status'] = 'aborted'
       let results[matches[1]]['child'] = matches[2]
     elseif currentfunction != ''
       " we are within a file, if the line starts with line then we'll want to
       " parse that.
       if line =~ '^\s*line '
-        "call VULog('line = '. line)
+        "call VULog('line')
         let results[currentfunction]['offset'] = str2nr(substitute(line,'^\v\s*line (\d+):','\=submatch(1)',''))
         let results[currentfunction]['detail'] = substitute(line,'^\v.*: (.*)$','\=submatch(1)','')
       else

@@ -282,7 +282,7 @@ endf
 
 fun TestParseVerboseFile()
 	" test one version that failed for our previous implementation.
-	let lines = vimunit#util#parseVerboseFile('verr-TestConvertToModuloOffset.txt-noline')
+	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestConvertToModuloOffset.txt-noline')
 	call VUAssertEquals(lines['TestConvertToModuloOffset']['offset'],1)
 	call VUAssertEquals(lines['TestConvertToModuloOffset']['detail'],'  call VUAssertEquals(mvom#util#location#ConvertToModuloOffset(1,1,2,2),0)')
 	call VUAssertEquals(lines['TestConvertToModuloOffset']['status'],'aborted')
@@ -294,18 +294,22 @@ fun TestParseVerboseFile()
 	" TODO returned vs aborted
 
 	" test another scenario not working in the new implementation
-	let lines = vimunit#util#parseVerboseFile('verr-TestGetCurrentFunctionNames.txt')
-	call VULog(string(lines))
+	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestGetCurrentFunctionNames.txt')
 	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['offset'],1)
 	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['detail'],'^Ilet sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[270, 260, 256, 243, 230, 213, 196, 169, 138, 88, 2])')
 	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['status'],'aborted')
 	call VUAssertEquals(lines['TestGetCurrentFunctionNames']['child'],'VUAssertEquals')
 
 	call VUAssertEquals(lines['vimunit#util#searchallpair']['status'],'returned')
+
+	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestCombineData.txt')
+	call VULog(string(lines))
+	call VUAssertEquals(lines['mvom#renderer#CombineData']['status'],'aborted')
+	call VUAssertEquals(lines['mvom#renderer#CombineData']['offset'], 46)
 endf
 
 function! TestGetCurrentFunctionNames() 
-	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[307, 283, 266, 256, 243, 230, 213, 196, 169, 138, 88, 2])
+	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[311, 283, 266, 256, 243, 230, 213, 196, 169, 138, 88, 2])
 endfunction	
 
 " vim: set noet fdm=marker:

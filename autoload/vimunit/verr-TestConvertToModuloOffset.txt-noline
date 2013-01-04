@@ -1,0 +1,154 @@
+
+                                     line 24: ^I^I^I^I^Icall {sFoo}()
+                                     calling function VURunAllTests..TestConvertToModuloOffset()
+
+                                     line 1:   call VUAssertEquals(mvom#util#location#ConvertToModuloOffset(1,1,2,2),0)
+                                     calling function VURunAllTests..TestConvertToModuloOffset..mvom#util#location#ConvertToModuloOffset(1, 1, 2, 2)
+
+                                     line 1: ^Ilet percent = a:line / str2float(a:total)
+                                     line 2: ^Ilet lines = a:end - a:start
+                                     line 3: ^Ireturn float2nr(percent * lines * 100) % 100
+                                     function VURunAllTests..TestConvertToModuloOffset..mvom#util#location#ConvertToModuloOffset returning #50
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset
+
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals(50, 0)
+
+                                     line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff(50, 0)
+
+                                     line 1:   let maxstrlen = 10
+                                     line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+                                     line 10:   " easy: the types are different
+                                     line 11:   if type(a:arg1) != type(a:arg2)
+                                     line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+                                     line 13:   endif
+                                     line 14:   let results = []
+                                     line 15:   " differences between two lists
+                                     line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+                                     line 17:     if len(a:arg1) != len(a:arg2)
+                                     line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+                                     line 19:     else
+                                     line 20:       for idx in range(len(a:arg1))
+                                     line 21:         if a:arg1[idx] != a:arg2[idx]
+                                     line 22:           call add(results,'Different values for index '. idx)
+                                     line 23:           call add(results,vimunit#util#diff(a:arg1[idx],a:arg2[idx]))
+                                     line 24:         endif
+                                     line 25:       endfor
+                                     line 26:     endif
+                                     line 27:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+                                     line 28:     for key in keys(a:arg1)
+                                     line 29:       if !has_key(a:arg2,key)
+                                     line 30:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 31:       else
+                                     line 32:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 33:         "if len(sub) > 0
+                                     line 34:         if a:arg1[key] != a:arg2[key]
+                                     line 35:           call add(results,'Different values for key "'. key .'"')
+                                     line 36:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                     line 37:         endif
+                                     line 38:       endif
+                                     line 39:     endfor
+                                     line 40:     for key in keys(a:arg2)
+                                     line 41:       if !has_key(a:arg1,key)
+                                     line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+                                     line 43:       endif
+                                     line 44:     endfor
+                                     line 45:   else
+                                     line 46:     if a:arg1 != a:arg2
+                                     line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff..<SNR>74_str(50)
+
+                                     line 1:   if type(a:str) != 1
+                                     line 2:     return string(a:str)
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff..<SNR>74_str returning '50'
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff
+
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff..<SNR>74_str(0)
+
+                                     line 1:   if type(a:str) != 1
+                                     line 2:     return string(a:str)
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff..<SNR>74_str returning '0'
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff
+
+                                     line 48:     endif
+                                     line 49:   endif
+                                     line 50:   return results
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..vimunit#util#diff returning ['50 != 0']
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals
+
+                                     line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+                                     line 3: ^I" check the types..."
+                                     line 4: ^Iif len(diffs) == 0
+                                     line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+                                     line 6: ^I^Ilet bFoo = TRUE()
+                                     line 7: ^Ielse
+                                     line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+                                     line 9: ^I^Ilet bFoo = FALSE()
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..FALSE()
+
+                                     line 1: ^I^Ilet sFoo = (1 != 1)
+                                     line 2: ^I^Ireturn sFoo
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..FALSE returning #0
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals
+
+                                     line 10: ^I^Ilet arg1text = s:str(a:arg1)
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..<SNR>31_str(50)
+
+                                     line 1:   if type(a:str) != 1
+                                     line 2:     return string(a:str)
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..<SNR>31_str returning '50'
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals
+
+                                     line 11: ^I^Ilet arg2text = s:str(a:arg2)
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..<SNR>31_str(0)
+
+                                     line 1:   if type(a:str) != 1
+                                     line 2:     return string(a:str)
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..<SNR>31_str returning '0'
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals
+
+                                     line 12: ^I^Ilet msg = ''
+                                     line 13: ^I^Iif (exists('a:1'))
+                                     line 14: ^I^I^Ilet msg = " MSG: ". a:1
+                                     line 15: ^I^Iendif
+                                     line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+                                     line 17: ^I^I" between the objects.
+                                     line 18: ^I^Icall s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+                                     calling function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..<SNR>31_MsgSink('AssertEquals', 'arg1=50!=0')
+
+                                     line 1:     " recording of the last failure
+                                     line 2: ^Ilet trace = split(expand("<sfile>"), '\.\.')
+                                     line 3: ^Ilet msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+                                     line 4: ^Iif g:vimUnitVerbosity > 0
+                                     line 5: ^I^Ilet s:msgSink = s:msgSink + msg
+                                     line 6: ^I^I"echo a:caller.': '.a:msg
+                                     line 7: ^Iendif
+                                     line 8: ^Iif g:vimUnitFailFast
+                                     line 9: ^I^Ithrow string(msg[0][0] .": ". msg[0][1])
+                                     Exception thrown: 'AssertEquals: arg1=50!=0'
+
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals..<SNR>31_MsgSink aborted
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals
+
+                                     function VURunAllTests..TestConvertToModuloOffset..VUAssertEquals aborted
+
+                                     continuing in function VURunAllTests..TestConvertToModuloOffset
+
+                                     function VURunAllTests..TestConvertToModuloOffset aborted
+
+                                     continuing in function VURunAllTests
+
+                                     line 25: ^I^I^I^I^Ilet goodTests = goodTests + 1
+                                     line 26: ^I^I^I^Icatch /.*/
+                                     Exception caught: 'AssertEquals: arg1=50!=0'
+
+                                     line 27: ^I^I^I^I^Iexec "set verbose=".oldverbose
+                                     line 27: set verbose=0
