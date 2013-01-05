@@ -516,6 +516,8 @@ endfunction"}}}
 "   - optional output file. If set, then the output is saved to the output file
 "   specified. Meant to be used with the former option set to true.
 "
+"   - TODO a test pattern 
+"
 " RETURNS:
 "
 "   Echos the test results.
@@ -563,8 +565,8 @@ function! VURunAllTests(...)
 					exec "silent !cp vfile.txt verr-". sFoo .".txt"
 
 					call add(messages,"\n")
-					call add(messages,printf("%s| %s (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
 					call extend(messages, s:msgSink)
+					call add(messages,printf("%s| %s (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
 
 					" TODO this parsing of the verbose file is very hacky. We need an
 					" actual solution that:
@@ -594,6 +596,9 @@ function! VURunAllTests(...)
 						let recurses = recurses + 1
 						" TODO find the file that the function is in, and then compute the
 						" line number of the function definition.
+						if !has_key(verbosefile,curFunction)
+							break
+						endif
 						let lineNo = verbosefile[curFunction]['offset']
 						let lineDesc = verbosefile[curFunction]['detail']
 						call add(stacktrace,printf('  %s|offset %d|%s',curFunction,lineNo,lineDesc))
