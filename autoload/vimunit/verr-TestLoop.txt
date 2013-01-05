@@ -1,0 +1,744 @@
+
+                                     line 25: ^I^I^I^I^Icall {sFoo}()
+                                     calling function VURunAllTests..TestDoPaintMatches()
+
+                                     line 1:   " TODO make mocks of paint and unpaint. verify that unpaint and paint were never
+                                     line 2:   " called.
+                                     line 3:   let g:mvom_alpha = 1
+                                     line 4: 
+                                     line 5: ^Icall VUAssertEquals(mvom#renderer#DoPaintMatches(5,1,5,{},"UnpaintTestStub","PaintTestStub"),{})
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches(5, 1, 5, {}, 'UnpaintTestStub', 'PaintTestStub')
+
+                                     line 1: ^Iif !exists('b:cached_signs') | let b:cached_signs = {} | endif
+                                     line 1:  let b:cached_signs = {} | endif
+                                     line 1:  endif
+                                     line 2: ^Ilet results = {}
+                                     line 3: 
+                                     line 4:   " compute the current 'height' of the window. that would be used by an
+                                     line 5:   " icon so that a line can be accurately rendered (TODO if the height is big it
+                                     line 6:   " should really 'fall' into the next line).
+                                     line 7:   let pixelsperline = float2nr(10 / (a:totalLines / (1.0*(a:lastVisible - a:firstVisible + 1))))
+                                     line 8: 
+                                     line 9: ^I" First collate all of the search results into one hash where the 'macro line'
+                                     line 10:   " number points to all matching search results.
+                                     line 11:   "
+                                     line 12:   " Additional keys added:
+                                     line 13:   " - plugins: all matching search results
+                                     line 14:   " - visible: if 1, then the results are currently visible in the window.
+                                     line 15: ^Ifor [line, data] in items(a:searchResults)
+                                     line 16: ^I^Ilet locinInFile = mvom#util#location#ConvertToPercentOffset(str2nr(line),a:firstVisible,a:lastVisible,a:totalLines)
+                                     line 17:     let modulo = float2nr(mvom#util#location#ConvertToModuloOffset(str2nr(line),a:firstVisible,a:lastVisible,a:totalLines) / 10.0)
+                                     line 18: 
+                                     line 19: ^I^Iif !has_key(results,locinInFile)
+                                     line 20: ^I^I^Ilet results[locinInFile] = {}
+                                     line 21: ^I^I^Ilet results[locinInFile]['plugins'] = {}
+                                     line 22: ^I^Iendif
+                                     line 23: 
+                                     line 24:     " if the line is within the visible range, set it so:
+                                     line 25:     let results[locinInFile]['visible'] = (line >= a:firstVisible && line <= a:lastVisible) ? 1:0
+                                     line 26:     call extend(results[locinInFile]['plugins'],data)
+                                     line 27: 
+                                     line 28:     " setup the top level data values that are ultimately used for the signs
+                                     line 29:     " (the combination of all the plugins).
+                                     line 30:     for plugin in keys(data)
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 34:       let results[locinInFile]['plugins'][plugin]['modulo'] = modulo
+                                     line 35:     endfor
+                                     line 36: 
+                                     line 37: ^Iendfor
+                                     line 38: 
+                                     line 39:   " For those lines that have more than one plugin match at this point,
+                                     line 40:   " we'll want to call the Reconcile method to get proper UI looks.
+                                     line 41:   " paint any new things:
+                                     line 42: ^Ifor [line, val] in items(results)
+                                     line 43: ^I^Iif len(keys(val['plugins'])) > 1
+                                     line 44: ^I^I^Ifor [p,plugindata] in keys(val['plugins'])
+                                     line 45:         let render = mvom#renderers#util#FindRenderForPlugin(p)
+                                     line 46:         let plugin = mvom#renderers#util#FindPlugin(p)
+                                     line 47:         let results[line] = {render}#reconcile(plugin['options'],plugindata)
+                                     line 48:       endfor
+                                     line 49: ^I^Iendif
+                                     line 50: ^Iendfor
+                                     line 51: 
+                                     line 52:   " Setup highlighting and signs
+                                     line 53: ^Ifor [line,val] in items(results)
+                                     line 54:     " Ensure there are defaults.
+                                     line 55: ^I^Iif !has_key(val,'text') | let val['text'] = '..' | endif
+                                     line 55:  let val['text'] = '..' | endif
+                                     line 55:  endif
+                                     line 56: ^I^Iif !has_key(val,'fg') | let val['fg'] = val['bg'] | endif
+                                     line 56:  let val['fg'] = val['bg'] | endif
+                                     line 56:  endif
+                                     line 57: 
+                                     line 58:     " Create the fg/bg highlighting for non-icon signs
+                                     line 59:     exe "highlight! ".mvom#util#color#GetHighlightName(val)." guifg=#".val['fg']." guibg=#".val['bg']
+                                     line 60: 
+                                     line 61:     let fname = mvom#util#color#GetSignName(val)
+                                     line 62:     if !exists('g:mvom_sign_'. fname)
+                                     line 63:       call VULog( "let g:mvom_sign_". fname ."=1")
+                                     line 64:       exe "let g:mvom_sign_". fname ."=1"
+                                     line 65:       if exists('g:mvom_alpha') && g:mvom_alpha
+                                     line 66:         " if an icon doesn't exist yet, generate it.
+                                     line 67:         if !filereadable(g:mvom_icon_cache . fname .'.png')
+                                     line 68:           let image = mvom#renderers#icon#makeImage(10,10)
+                                     line 69:           call image.addRectangle(val['bg'],0,0,10,10)
+                                     line 70:           for pl in val['plugins']
+                                     line 71:             if has_key(pl,'iconcolor')
+                                     line 72:               " TODO provide a generic key 'iconfunction' that allows plugins
+                                     line 73:               " to provide their own custom icons. Move this into the 'slash'
+                                     line 74:               " definition.
+                                     line 75:               "
+                                     line 76:               " TODO use one SVG image for the entire gutter. All the plugins
+                                     line 77:               " can then paint to that one image.
+                                     line 78:               " - provide a method to save to png one region defined by a
+                                     line 79:               "   window (matching some offset down the gutter).
+                                     line 80:               " - provide a method for naming the png based on the contents in
+                                     line 81:               "   some unique way (so we can do the same !exists() don't save
+                                     line 82:               "   method).
+                                     line 83:               "
+                                     line 84:               " TODO fix combine data so each plugin has its own data.
+                                     line 85:               call image.placeRectangle(pl['iconcolor'],pl['modulo'],pl['iconwidth'],pixelsperline,pl['iconalign'])
+                                     line 86:             endif
+                                     line 87:           endfor
+                                     line 88:           call image.generatePNGFile(g:mvom_icon_cache . fname)
+                                     line 89:         endif
+                                     line 90:         let results[line]['icon'] = g:mvom_icon_cache . fname .'.png'
+                                     line 91:         exe "sign define ". fname ." icon=". results[line]['icon'] ." text=".val['text']." texthl=".mvom#util#color#GetHighlightName(val)
+                                     line 92:       else
+                                     line 93:         exe "sign define ". fname ." text=".val['text']." texthl=".mvom#util#color#GetHighlightName(val)
+                                     line 94:       endif
+                                     line 95:     endif
+                                     line 96:     " did we paint this line previously?
+                                     line 97:     if has_key(b:cached_signs,line)
+                                     line 98:       " did we paint something different this time?
+                                     line 99:       if b:cached_signs[line] != val
+                                     line 100:         " if so, unpaint what we did before, and paint the new thing.
+                                     line 101:         call {a:unpaintFunction}(line,b:cached_signs[line])
+                                     line 102:         call {a:paintFunction}(line,val)
+                                     line 103:       endif
+                                     line 104:     else
+                                     line 105:       " something new, paint it.
+                                     line 106:       call {a:paintFunction}(line,val)
+                                     line 107:     endif
+                                     line 108: ^Iendfor
+                                     line 109: 
+                                     line 110:   " Finally, is there anything old that doesn't exist anymore?
+                                     line 111: ^Ifor [line,val] in items(b:cached_signs)
+                                     line 112:     if !has_key(results,line)
+                                     line 113:       call {a:unpaintFunction}(line,b:cached_signs[line])
+                                     line 114:     endif
+                                     line 115:   endfor
+                                     line 116: 
+                                     line 117: ^Ilet b:cached_signs = results
+                                     line 118: ^Ireturn results
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches returning {}
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches
+
+                                     calling function VURunAllTests..TestDoPaintMatches..VUAssertEquals({}, {})
+
+                                     line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+                                     calling function VURunAllTests..TestDoPaintMatches..VUAssertEquals..vimunit#util#diff({}, {})
+
+                                     line 1:   let maxstrlen = 10
+                                     line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+                                     line 10:   " easy: the types are different
+                                     line 11:   if type(a:arg1) != type(a:arg2)
+                                     line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+                                     line 13:   endif
+                                     line 14:   let results = []
+                                     line 15:   " differences between two lists
+                                     line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+                                     line 17:     if len(a:arg1) != len(a:arg2)
+                                     line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+                                     line 19:     else
+                                     line 20:       for idx in range(len(a:arg1))
+                                     line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+                                     line 22:         if len(idxdiff) > 0
+                                     line 23:           call add(results,'Different values for index '. idx)
+                                     line 24:           call add(results,idxdiff)
+                                     line 25:         endif
+                                     line 26:       endfor
+                                     line 27:     endif
+                                     line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+                                     line 29:     for key in keys(a:arg1)
+                                     line 30:       if !has_key(a:arg2,key)
+                                     line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 32:       else
+                                     line 33:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 34:         "if len(sub) > 0
+                                     line 35:         if a:arg1[key] != a:arg2[key]
+                                     line 36:           call add(results,'Different values for key "'. key .'"')
+                                     line 37:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                     line 38:         endif
+                                     line 39:       endif
+                                     line 40:     endfor
+                                     line 41:     for key in keys(a:arg2)
+                                     line 42:       if !has_key(a:arg1,key)
+                                     line 43:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+                                     line 44:       endif
+                                     line 45:     endfor
+                                     line 46:   else
+                                     line 47:     if a:arg1 != a:arg2
+                                     line 48:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+                                     line 49:     endif
+                                     line 50:   endif
+                                     line 51:   return results
+                                     function VURunAllTests..TestDoPaintMatches..VUAssertEquals..vimunit#util#diff returning []
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..VUAssertEquals
+
+                                     line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+                                     line 3: ^I" check the types..."
+                                     line 4: ^Iif len(diffs) == 0
+                                     line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+                                     line 6: ^I^Ilet bFoo = TRUE()
+                                     calling function VURunAllTests..TestDoPaintMatches..VUAssertEquals..TRUE()
+
+                                     line 1: ^I^Ilet sFoo = (1 == 1)
+                                     line 2: ^I^Ireturn sFoo
+                                     function VURunAllTests..TestDoPaintMatches..VUAssertEquals..TRUE returning #1
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..VUAssertEquals
+
+                                     line 7: ^Ielse
+                                     line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+                                     line 9: ^I^Ilet bFoo = FALSE()
+                                     line 10: ^I^Ilet arg1text = s:str(a:arg1)
+                                     line 11: ^I^Ilet arg2text = s:str(a:arg2)
+                                     line 12: ^I^Ilet msg = ''
+                                     line 13: ^I^Iif (exists('a:1'))
+                                     line 14: ^I^I^Ilet msg = " MSG: ". a:1
+                                     line 15: ^I^Iendif
+                                     line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+                                     line 17: ^I^I" between the objects.
+                                     line 18: ^I^Icall s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+                                     line 19: ^Iendif
+                                     line 20: ^Ilet s:lastAssertionResult = bFoo
+                                     line 21: ^Ireturn bFoo
+                                     function VURunAllTests..TestDoPaintMatches..VUAssertEquals returning #1
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches
+
+                                     line 6: ^I" if all lines are currently visible, don't do anything:
+                                     line 7: ^I" first just paint one line. We expect that the line '1' would be painted,
+                                     line 8: ^I" and that the highlight group is created (and 'mvom#test#test1plugin' is called).
+                                     line 9: ^Iunlet! b:cached_signs
+                                     line 10:   let diff = vimunit#util#diff(mvom#renderer#DoPaintMatches(6,1,5,{1:{'mvom#test#test1plugin': {  'line':1,'text':'XX','fg':'000000','bg':'000000','iconwidth':50,'iconalign':'left','iconcolor':'000000'} }},"UnpaintTestStub","PaintTestStub"),{1:{'plugins':[ { 'plugin': 'mvom#test#test1plugin',  'line': 1, 'modulo': 0, 'text':'XX','fg':'000000','bg':'000000','iconwidth':50,'iconalign':'left','iconcolor':'000000'}],  'line': 1, 'icon': g:mvom_icon_cache .'MVOM_0_00000050left.png',  'text':'XX','fg':'000000','bg':'000000','visible':1,  'iconwidth':50,'iconalign':'left','iconcolor':'000000'}})
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches(6, 1, 5, {'1': {'mvom#test#test1plugin': {'ico...50, 'iconalign': 'left', 'text': 'XX'}}}, 'UnpaintTestStub', 'PaintTestStub')
+
+                                     line 1: ^Iif !exists('b:cached_signs') | let b:cached_signs = {} | endif
+                                     line 1:  let b:cached_signs = {} | endif
+                                     line 1:  endif
+                                     line 2: ^Ilet results = {}
+                                     line 3: 
+                                     line 4:   " compute the current 'height' of the window. that would be used by an
+                                     line 5:   " icon so that a line can be accurately rendered (TODO if the height is big it
+                                     line 6:   " should really 'fall' into the next line).
+                                     line 7:   let pixelsperline = float2nr(10 / (a:totalLines / (1.0*(a:lastVisible - a:firstVisible + 1))))
+                                     line 8: 
+                                     line 9: ^I" First collate all of the search results into one hash where the 'macro line'
+                                     line 10:   " number points to all matching search results.
+                                     line 11:   "
+                                     line 12:   " Additional keys added:
+                                     line 13:   " - plugins: all matching search results
+                                     line 14:   " - visible: if 1, then the results are currently visible in the window.
+                                     line 15: ^Ifor [line, data] in items(a:searchResults)
+                                     line 16: ^I^Ilet locinInFile = mvom#util#location#ConvertToPercentOffset(str2nr(line),a:firstVisible,a:lastVisible,a:totalLines)
+                                     Searching for "autoload/mvom/util/location.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vimplugin-macromatches,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/indenthl,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bundle/
+                                     Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/mvom/util/location.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util/location.vim"
+                                     chdir(/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util)
+                                     fchdir() to previous dir
+                                     line 16: sourcing "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util/location.vim"
+                                     line 1: " functions that help with location activities
+                                     line 2: 
+                                     line 3: " Return a list of the state of all the registers.
+                                     line 4: function! mvom#util#location#SaveRegisters()
+                                     line 15: 
+                                     line 16: function! mvom#util#location#LoadRegisters(datum)
+                                     line 22: 
+                                     line 23: " This function takes in some line number that is <= the total
+                                     line 24: " possible lines, and places it somewhere on the range between
+                                     line 25: " [start,end] depending on what percent of the match it is.
+                                     line 26: function! mvom#util#location#ConvertToPercentOffset(line,start,end,total)
+                                     line 31: 
+                                     line 32: " Same as ConvertToPercentOffset but return only the module value
+                                     line 33: " rather than the line. Down to the 100th
+                                     line 34: "
+                                     line 35: " It just says what hte partial percent would have been
+                                     line 36: " from 0..99 (.00 to .99).
+                                     line 37: "
+                                     line 38: function! mvom#util#location#ConvertToModuloOffset(line,start,end,total)
+                                     line 43: 
+                                     line 44: function! mvom#util#location#GetHumanReadables(chars)
+                                     line 65: 
+                                     line 66: " Get specific details of window dimensions as a dictionary:
+                                     line 67: function! mvom#util#location#getwindowdimensions(data)
+                                     line 77: 
+                                     finished sourcing /Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util/location.vim
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#location#ConvertToPercentOffset(1, 1, 5, 6)
+
+                                     line 1: ^Ilet percent = (a:line-1) / str2float(a:total)
+                                     line 2: ^Ilet lines = a:end - a:start + 1
+                                     line 3: ^Ireturn float2nr(percent * lines + a:start)
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#location#ConvertToPercentOffset returning #1
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 17:     let modulo = float2nr(mvom#util#location#ConvertToModuloOffset(str2nr(line),a:firstVisible,a:lastVisible,a:totalLines) / 10.0)
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#location#ConvertToModuloOffset(1, 1, 5, 6)
+
+                                     line 1: ^Ilet percent = (a:line-1) / str2float(a:total)
+                                     line 2: ^Ilet lines = a:end - a:start + 1
+                                     line 3: ^Ireturn float2nr(percent * lines * 100) % 100
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#location#ConvertToModuloOffset returning #0
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 18: 
+                                     line 19: ^I^Iif !has_key(results,locinInFile)
+                                     line 20: ^I^I^Ilet results[locinInFile] = {}
+                                     line 21: ^I^I^Ilet results[locinInFile]['plugins'] = {}
+                                     line 22: ^I^Iendif
+                                     line 23: 
+                                     line 24:     " if the line is within the visible range, set it so:
+                                     line 25:     let results[locinInFile]['visible'] = (line >= a:firstVisible && line <= a:lastVisible) ? 1:0
+                                     line 26:     call extend(results[locinInFile]['plugins'],data)
+                                     line 27: 
+                                     line 28:     " setup the top level data values that are ultimately used for the signs
+                                     line 29:     " (the combination of all the plugins).
+                                     line 30:     for plugin in keys(data)
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 34:       let results[locinInFile]['plugins'][plugin]['modulo'] = modulo
+                                     line 35:     endfor
+                                     line 30:     for plugin in keys(data)
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 34:       let results[locinInFile]['plugins'][plugin]['modulo'] = modulo
+                                     line 35:     endfor
+                                     line 36: 
+                                     line 37: ^Iendfor
+                                     line 15: ^Ifor [line, data] in items(a:searchResults)
+                                     line 16: ^I^Ilet locinInFile = mvom#util#location#ConvertToPercentOffset(str2nr(line),a:firstVisible,a:lastVisible,a:totalLines)
+                                     line 17:     let modulo = float2nr(mvom#util#location#ConvertToModuloOffset(str2nr(line),a:firstVisible,a:lastVisible,a:totalLines) / 10.0)
+                                     line 18: 
+                                     line 19: ^I^Iif !has_key(results,locinInFile)
+                                     line 20: ^I^I^Ilet results[locinInFile] = {}
+                                     line 21: ^I^I^Ilet results[locinInFile]['plugins'] = {}
+                                     line 22: ^I^Iendif
+                                     line 23: 
+                                     line 24:     " if the line is within the visible range, set it so:
+                                     line 25:     let results[locinInFile]['visible'] = (line >= a:firstVisible && line <= a:lastVisible) ? 1:0
+                                     line 26:     call extend(results[locinInFile]['plugins'],data)
+                                     line 27: 
+                                     line 28:     " setup the top level data values that are ultimately used for the signs
+                                     line 29:     " (the combination of all the plugins).
+                                     line 30:     for plugin in keys(data)
+                                     line 31:       for key in keys(data[plugin])
+                                     line 32:         let results[locinInFile][key] = data[plugin][key]
+                                     line 33:       endfor
+                                     line 34:       let results[locinInFile]['plugins'][plugin]['modulo'] = modulo
+                                     line 35:     endfor
+                                     line 36: 
+                                     line 37: ^Iendfor
+                                     line 38: 
+                                     line 39:   " For those lines that have more than one plugin match at this point,
+                                     line 40:   " we'll want to call the Reconcile method to get proper UI looks.
+                                     line 41:   " paint any new things:
+                                     line 42: ^Ifor [line, val] in items(results)
+                                     line 43: ^I^Iif len(keys(val['plugins'])) > 1
+                                     line 44: ^I^I^Ifor [p,plugindata] in keys(val['plugins'])
+                                     line 45:         let render = mvom#renderers#util#FindRenderForPlugin(p)
+                                     line 46:         let plugin = mvom#renderers#util#FindPlugin(p)
+                                     line 47:         let results[line] = {render}#reconcile(plugin['options'],plugindata)
+                                     line 48:       endfor
+                                     line 49: ^I^Iendif
+                                     line 50: ^Iendfor
+                                     line 42: ^Ifor [line, val] in items(results)
+                                     line 43: ^I^Iif len(keys(val['plugins'])) > 1
+                                     line 44: ^I^I^Ifor [p,plugindata] in keys(val['plugins'])
+                                     line 45:         let render = mvom#renderers#util#FindRenderForPlugin(p)
+                                     line 46:         let plugin = mvom#renderers#util#FindPlugin(p)
+                                     line 47:         let results[line] = {render}#reconcile(plugin['options'],plugindata)
+                                     line 48:       endfor
+                                     line 49: ^I^Iendif
+                                     line 50: ^Iendfor
+                                     line 51: 
+                                     line 52:   " Setup highlighting and signs
+                                     line 53: ^Ifor [line,val] in items(results)
+                                     line 54:     " Ensure there are defaults.
+                                     line 55: ^I^Iif !has_key(val,'text') | let val['text'] = '..' | endif
+                                     line 55:  let val['text'] = '..' | endif
+                                     line 55:  endif
+                                     line 56: ^I^Iif !has_key(val,'fg') | let val['fg'] = val['bg'] | endif
+                                     line 56:  let val['fg'] = val['bg'] | endif
+                                     line 56:  endif
+                                     line 57: 
+                                     line 58:     " Create the fg/bg highlighting for non-icon signs
+                                     line 59:     exe "highlight! ".mvom#util#color#GetHighlightName(val)." guifg=#".val['fg']." guibg=#".val['bg']
+                                     Searching for "autoload/mvom/util/color.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vimplugin-macromatches,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/indenthl,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bundle/vim
+                                     Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/mvom/util/color.vim"
+                                     Searching for "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util/color.vim"
+                                     chdir(/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util)
+                                     fchdir() to previous dir
+                                     line 59: sourcing "/Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util/color.vim"
+                                     line 1: function! mvom#util#color#GetHighlightName(dictionary)
+                                     line 5: 
+                                     line 6: " Create a key that uniquely describes all the marks that would be
+                                     line 7: " on an icon.
+                                     line 8: function! mvom#util#color#GetSignName(dictionary)
+                                     line 23: 
+                                     line 24: " Convert a 6 character hex RGB to a 3 part (0-255) array.
+                                     line 25: function! mvom#util#color#HexToRGB(hex)
+                                     line 28: 
+                                     line 29: " Convert a 3 part (0-255) array to a 6 char hex equivalent.
+                                     line 30: function! mvom#util#color#RGBToHex(hex)
+                                     line 33: 
+                                     line 34: " Make an array of HSV values from an array to RGB values.
+                                     line 35: function! mvom#util#color#RGBToHSV(rgb)
+                                     line 67: 
+                                     line 68: function! mvom#util#color#HSVToRGB(hsv)
+                                     line 99: 
+                                     line 100: " Return the unique elements in a list.
+                                     line 101: function! mvom#util#color#Uniq(list)
+                                     line 110: 
+                                     line 111: function! mvom#util#color#darker(color)
+                                     line 116: 
+                                     line 117: function! mvom#util#color#lighter(color)
+                                     finished sourcing /Users/danesummers/.vim/bundle/vimplugin-macromatches/autoload/mvom/util/color.vim
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#color#GetHighlightName({'bg': '000000', 'fg': '000000', 'plu...': '000000', 'text': 'XX', 'visible': 1})
+
+                                     line 1:   " TODO include icon attributes if in gui mode
+                                     line 2: ^Ireturn "MVOM_".a:dictionary['fg'].a:dictionary['bg']
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#color#GetHighlightName returning 'MVOM_000000000000'
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 59: highlight! MVOM_000000000000 guifg=#000000 guibg=#000000
+                                     line 60: 
+                                     line 61:     let fname = mvom#util#color#GetSignName(val)
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#color#GetSignName({'bg': '000000', 'fg': '000000', 'plu...': '000000', 'text': 'XX', 'visible': 1})
+
+                                     line 1: ^Ilet result = "MVOM"
+                                     line 2:     for [key,pl] in items(a:dictionary['plugins'])
+                                     line 3:       if has_key(pl,'iconcolor')
+                                     line 4:         let result = result."_". pl['modulo'] ."_".pl['iconcolor'].pl['iconwidth'].pl['iconalign']
+                                     line 9:       else
+                                     line 10:         let result = result .'x'
+                                     line 11:       endif
+                                     line 12:     endfor
+                                     line 2:     for [key,pl] in items(a:dictionary['plugins'])
+                                     line 3:       if has_key(pl,'iconcolor')
+                                     line 4:         let result = result."_". pl['modulo'] ."_".pl['iconcolor'].pl['iconwidth'].pl['iconalign']
+                                     line 9:       else
+                                     line 10:         let result = result .'x'
+                                     line 11:       endif
+                                     line 12:     endfor
+                                     line 13:     return result
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#color#GetSignName returning 'MVOM_0_00000050left'
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 62:     if !exists('g:mvom_sign_'. fname)
+                                     line 63:       call VULog( "let g:mvom_sign_". fname ."=1")
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..VULog('let g:mvom_sign_MVOM_0_00000050left=...'let g:mvom_sign_MVOM_0_00000050left=1')
+
+                                     line 1: ^Icall add(s:msgSink,"VULog: ". a:msg)
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..VULog returning #0
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 64:       exe "let g:mvom_sign_". fname ."=1"
+                                     line 64: let g:mvom_sign_MVOM_0_00000050left=1
+                                     line 65:       if exists('g:mvom_alpha') && g:mvom_alpha
+                                     line 66:         " if an icon doesn't exist yet, generate it.
+                                     line 67:         if !filereadable(g:mvom_icon_cache . fname .'.png')
+                                     line 68:           let image = mvom#renderers#icon#makeImage(10,10)
+                                     line 69:           call image.addRectangle(val['bg'],0,0,10,10)
+                                     line 70:           for pl in val['plugins']
+                                     line 71:             if has_key(pl,'iconcolor')
+                                     line 72:               " TODO provide a generic key 'iconfunction' that allows plugins
+                                     line 73:               " to provide their own custom icons. Move this into the 'slash'
+                                     line 74:               " definition.
+                                     line 75:               "
+                                     line 76:               " TODO use one SVG image for the entire gutter. All the plugins
+                                     line 77:               " can then paint to that one image.
+                                     line 78:               " - provide a method to save to png one region defined by a
+                                     line 79:               "   window (matching some offset down the gutter).
+                                     line 80:               " - provide a method for naming the png based on the contents in
+                                     line 81:               "   some unique way (so we can do the same !exists() don't save
+                                     line 82:               "   method).
+                                     line 83:               "
+                                     line 84:               " TODO fix combine data so each plugin has its own data.
+                                     line 85:               call image.placeRectangle(pl['iconcolor'],pl['modulo'],pl['iconwidth'],pixelsperline,pl['iconalign'])
+                                     line 86:             endif
+                                     line 87:           endfor
+                                     line 88:           call image.generatePNGFile(g:mvom_icon_cache . fname)
+                                     line 89:         endif
+                                     line 90:         let results[line]['icon'] = g:mvom_icon_cache . fname .'.png'
+                                     line 91:         exe "sign define ". fname ." icon=". results[line]['icon'] ." text=".val['text']." texthl=".mvom#util#color#GetHighlightName(val)
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#color#GetHighlightName({'bg': '000000', 'fg': '000000', 'plu...': '000000', 'text': 'XX', 'visible': 1})
+
+                                     line 1:   " TODO include icon attributes if in gui mode
+                                     line 2: ^Ireturn "MVOM_".a:dictionary['fg'].a:dictionary['bg']
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..mvom#util#color#GetHighlightName returning 'MVOM_000000000000'
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 91: sign define MVOM_0_00000050left icon=/Users/danesummers/environment/vim/bundle/vimplugin-macromatches/plugin/mvom-cache/MVOM_0_00000050left.png text=XX texthl=MVOM_000000000000
+                                     line 92:       else
+                                     line 93:         exe "sign define ". fname ." text=".val['text']." texthl=".mvom#util#color#GetHighlightName(val)
+                                     line 94:       endif
+                                     line 95:     endif
+                                     line 96:     " did we paint this line previously?
+                                     line 97:     if has_key(b:cached_signs,line)
+                                     line 98:       " did we paint something different this time?
+                                     line 99:       if b:cached_signs[line] != val
+                                     line 100:         " if so, unpaint what we did before, and paint the new thing.
+                                     line 101:         call {a:unpaintFunction}(line,b:cached_signs[line])
+                                     line 102:         call {a:paintFunction}(line,val)
+                                     line 103:       endif
+                                     line 104:     else
+                                     line 105:       " something new, paint it.
+                                     line 106:       call {a:paintFunction}(line,val)
+                                     calling function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..PaintTestStub('1', {'bg': '000000', 'fg': '000000', 'plu...': '000000', 'text': 'XX', 'visible': 1})
+
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches..PaintTestStub returning #0
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches
+
+                                     line 107:     endif
+                                     line 108: ^Iendfor
+                                     line 53: ^Ifor [line,val] in items(results)
+                                     line 54:     " Ensure there are defaults.
+                                     line 55: ^I^Iif !has_key(val,'text') | let val['text'] = '..' | endif
+                                     line 55:  let val['text'] = '..' | endif
+                                     line 55:  endif
+                                     line 56: ^I^Iif !has_key(val,'fg') | let val['fg'] = val['bg'] | endif
+                                     line 56:  let val['fg'] = val['bg'] | endif
+                                     line 56:  endif
+                                     line 57: 
+                                     line 58:     " Create the fg/bg highlighting for non-icon signs
+                                     line 59:     exe "highlight! ".mvom#util#color#GetHighlightName(val)." guifg=#".val['fg']." guibg=#".val['bg']
+                                     line 60: 
+                                     line 61:     let fname = mvom#util#color#GetSignName(val)
+                                     line 62:     if !exists('g:mvom_sign_'. fname)
+                                     line 63:       call VULog( "let g:mvom_sign_". fname ."=1")
+                                     line 64:       exe "let g:mvom_sign_". fname ."=1"
+                                     line 65:       if exists('g:mvom_alpha') && g:mvom_alpha
+                                     line 66:         " if an icon doesn't exist yet, generate it.
+                                     line 67:         if !filereadable(g:mvom_icon_cache . fname .'.png')
+                                     line 68:           let image = mvom#renderers#icon#makeImage(10,10)
+                                     line 69:           call image.addRectangle(val['bg'],0,0,10,10)
+                                     line 70:           for pl in val['plugins']
+                                     line 71:             if has_key(pl,'iconcolor')
+                                     line 72:               " TODO provide a generic key 'iconfunction' that allows plugins
+                                     line 73:               " to provide their own custom icons. Move this into the 'slash'
+                                     line 74:               " definition.
+                                     line 75:               "
+                                     line 76:               " TODO use one SVG image for the entire gutter. All the plugins
+                                     line 77:               " can then paint to that one image.
+                                     line 78:               " - provide a method to save to png one region defined by a
+                                     line 79:               "   window (matching some offset down the gutter).
+                                     line 80:               " - provide a method for naming the png based on the contents in
+                                     line 81:               "   some unique way (so we can do the same !exists() don't save
+                                     line 82:               "   method).
+                                     line 83:               "
+                                     line 84:               " TODO fix combine data so each plugin has its own data.
+                                     line 85:               call image.placeRectangle(pl['iconcolor'],pl['modulo'],pl['iconwidth'],pixelsperline,pl['iconalign'])
+                                     line 86:             endif
+                                     line 87:           endfor
+                                     line 88:           call image.generatePNGFile(g:mvom_icon_cache . fname)
+                                     line 89:         endif
+                                     line 90:         let results[line]['icon'] = g:mvom_icon_cache . fname .'.png'
+                                     line 91:         exe "sign define ". fname ." icon=". results[line]['icon'] ." text=".val['text']." texthl=".mvom#util#color#GetHighlightName(val)
+                                     line 92:       else
+                                     line 93:         exe "sign define ". fname ." text=".val['text']." texthl=".mvom#util#color#GetHighlightName(val)
+                                     line 94:       endif
+                                     line 95:     endif
+                                     line 96:     " did we paint this line previously?
+                                     line 97:     if has_key(b:cached_signs,line)
+                                     line 98:       " did we paint something different this time?
+                                     line 99:       if b:cached_signs[line] != val
+                                     line 100:         " if so, unpaint what we did before, and paint the new thing.
+                                     line 101:         call {a:unpaintFunction}(line,b:cached_signs[line])
+                                     line 102:         call {a:paintFunction}(line,val)
+                                     line 103:       endif
+                                     line 104:     else
+                                     line 105:       " something new, paint it.
+                                     line 106:       call {a:paintFunction}(line,val)
+                                     line 107:     endif
+                                     line 108: ^Iendfor
+                                     line 109: 
+                                     line 110:   " Finally, is there anything old that doesn't exist anymore?
+                                     line 111: ^Ifor [line,val] in items(b:cached_signs)
+                                     line 112:     if !has_key(results,line)
+                                     line 113:       call {a:unpaintFunction}(line,b:cached_signs[line])
+                                     line 114:     endif
+                                     line 115:   endfor
+                                     line 116: 
+                                     line 117: ^Ilet b:cached_signs = results
+                                     line 118: ^Ireturn results
+                                     function VURunAllTests..TestDoPaintMatches..mvom#renderer#DoPaintMatches returning {'1': {'bg': '000000', 'fg': '000000'...: '000000', 'text': 'XX', 'visible': 1}}
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches
+
+                                     calling function VURunAllTests..TestDoPaintMatches..vimunit#util#diff({'1': {'bg': '000000', 'fg': '000000'...: '000000', 'text': 'XX', 'visible': 1}}, {'1': {'iconcolor': '000000', 'bg': '...n': 'left', 'text': 'XX', 'visible': 1}})
+
+                                     line 1:   let maxstrlen = 10
+                                     line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+                                     line 10:   " easy: the types are different
+                                     line 11:   if type(a:arg1) != type(a:arg2)
+                                     line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+                                     line 13:   endif
+                                     line 14:   let results = []
+                                     line 15:   " differences between two lists
+                                     line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+                                     line 17:     if len(a:arg1) != len(a:arg2)
+                                     line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+                                     line 19:     else
+                                     line 20:       for idx in range(len(a:arg1))
+                                     line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+                                     line 22:         if len(idxdiff) > 0
+                                     line 23:           call add(results,'Different values for index '. idx)
+                                     line 24:           call add(results,idxdiff)
+                                     line 25:         endif
+                                     line 26:       endfor
+                                     line 27:     endif
+                                     line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+                                     line 29:     for key in keys(a:arg1)
+                                     line 30:       if !has_key(a:arg2,key)
+                                     line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 32:       else
+                                     line 33:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 34:         "if len(sub) > 0
+                                     line 35:         if a:arg1[key] != a:arg2[key]
+                                     line 36:           call add(results,'Different values for key "'. key .'"')
+                                     line 37:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                     calling function VURunAllTests..TestDoPaintMatches..vimunit#util#diff..vimunit#util#diff({'bg': '000000', 'fg': '000000', 'plu...': '000000', 'text': 'XX', 'visible': 1}, {'iconcolor': '000000', 'bg': '000000...gn': 'left', 'text': 'XX', 'visible': 1})
+
+                                     line 1:   let maxstrlen = 10
+                                     line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+                                     line 10:   " easy: the types are different
+                                     line 11:   if type(a:arg1) != type(a:arg2)
+                                     line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+                                     line 13:   endif
+                                     line 14:   let results = []
+                                     line 15:   " differences between two lists
+                                     line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+                                     line 17:     if len(a:arg1) != len(a:arg2)
+                                     line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+                                     line 19:     else
+                                     line 20:       for idx in range(len(a:arg1))
+                                     line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+                                     line 22:         if len(idxdiff) > 0
+                                     line 23:           call add(results,'Different values for index '. idx)
+                                     line 24:           call add(results,idxdiff)
+                                     line 25:         endif
+                                     line 26:       endfor
+                                     line 27:     endif
+                                     line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+                                     line 29:     for key in keys(a:arg1)
+                                     line 30:       if !has_key(a:arg2,key)
+                                     line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 32:       else
+                                     line 33:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 34:         "if len(sub) > 0
+                                     line 35:         if a:arg1[key] != a:arg2[key]
+                                     line 36:           call add(results,'Different values for key "'. key .'"')
+                                     line 37:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                     line 38:         endif
+                                     line 39:       endif
+                                     line 40:     endfor
+                                     line 29:     for key in keys(a:arg1)
+                                     line 30:       if !has_key(a:arg2,key)
+                                     line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 32:       else
+                                     line 33:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 34:         "if len(sub) > 0
+                                     line 35:         if a:arg1[key] != a:arg2[key]
+                                     line 36:           call add(results,'Different values for key "'. key .'"')
+                                     line 37:           call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+                                     line 38:         endif
+                                     line 39:       endif
+                                     line 40:     endfor
+                                     line 29:     for key in keys(a:arg1)
+                                     line 30:       if !has_key(a:arg2,key)
+                                     line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+                                     line 32:       else
+                                     line 33:         "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+                                     line 34:         "if len(sub) > 0
+                                     line 35:         if a:arg1[key] != a:arg2[key]
+                                     Exception thrown: Vim(if):E691: Can only compare List with List
+
+                                     function VURunAllTests..TestDoPaintMatches..vimunit#util#diff..vimunit#util#diff aborted
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches..vimunit#util#diff
+
+                                     function VURunAllTests..TestDoPaintMatches..vimunit#util#diff aborted
+
+                                     continuing in function VURunAllTests..TestDoPaintMatches
+
+                                     function VURunAllTests..TestDoPaintMatches aborted
+
+                                     continuing in function VURunAllTests
+
+                                     line 26: ^I^I^I^I^Ilet goodTests = goodTests + 1
+                                     line 27: ^I^I^I^Icatch /.*/
+                                     Exception caught: Vim(if):E691: Can only compare List with List
+
+                                     line 28: ^I^I^I^I^Ilet failtype = 'Failure'
+                                     line 29: ^I^I^I^I^Iif v:exception =~ 'VU'
+                                     line 30: ^I^I^I^I^I^Ilet failedTests = failedTests + 1
+                                     line 31: ^I^I^I^I^Ielse
+                                     line 32: ^I^I^I^I^I^Ilet exceptTests = exceptTests + 1
+                                     line 33: ^I^I^I^I^I^Ilet failtype = 'Exception'
+                                     line 34: ^I^I^I^I^Iendif
+                                     line 35: 
+                                     line 36: ^I^I^I^I^Iexec "set verbose=".oldverbose
+                                     line 36: set verbose=0

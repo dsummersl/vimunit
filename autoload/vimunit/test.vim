@@ -281,7 +281,16 @@ fun TestDiff()
 endf
 
 fun TestParseVerboseFile()
-	" test one version that failed for our previous implementation.
+
+	" recursive call to diff function called twice
+	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestLoop.txt')
+	call VULog(string(lines))
+	call VUAssertEquals(lines['TestDoPaintMatches']['status'],'aborted')
+	call VUAssertEquals(lines['TestDoPaintMatches']['offset'], 46)
+	call VUAssertEquals(lines['TestDoPaintMatches']['child'],'vimunit#util#diff')
+	call VUAssertEquals(lines['_count_vimunit#util#diff'],2)
+	call VUAssertTrue(has_key('vimunit#util#diff (2)'))
+
 	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestConvertToModuloOffset.txt-noline')
 	call VUAssertEquals(lines['TestConvertToModuloOffset']['offset'],1)
 	call VUAssertEquals(lines['TestConvertToModuloOffset']['detail'],'  call VUAssertEquals(mvom#util#location#ConvertToModuloOffset(1,1,2,2),0)')
