@@ -321,4 +321,8 @@ function! TestGetCurrentFunctionNames()
 	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[311, 283, 266, 256, 243, 230, 213, 196, 169, 138, 88, 2])
 endfunction	
 
+function! TestMap()
+ 	call VUAssertEquals(sort(vimunit#util#map({'a': 5, 'b': 6},'let result = val')),sort([5,6]))
+endfunction
+
 " vim: set noet fdm=marker:

@@ -227,7 +227,7 @@ function! VUAssertEquals(arg1, arg2, ...) "
 		endif
 		" TODO provide some 'verbose' option that prints out all the differences
 		" between the objects.
-		call s:MsgSink('AssertEquals','arg1='. arg1text .'!='. arg2text . msg)
+		call s:MsgSink('AssertEquals', arg1text .'!='. arg2text . msg)
 	endif
 	let s:lastAssertionResult = bFoo
 	return bFoo
@@ -566,7 +566,7 @@ function! VURunAllTests(...)
 
 					call add(messages,"\n")
 					call extend(messages, s:msgSink)
-					call add(messages,printf("%s| %s (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
+					call add(messages,printf("[1;31m%s[0m| [1m%s[0m (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
 
 					" TODO this parsing of the verbose file is very hacky. We need an
 					" actual solution that:
@@ -584,7 +584,7 @@ function! VURunAllTests(...)
 					let stacktrace = []
 					let lineNo = verbosefile[sFoo]['offset'] + fn
 					let lineDesc = verbosefile[sFoo]['detail']
-					call add(stacktrace,printf('  %s|line %3d|%s',sFoo,lineNo,lineDesc))
+					call add(stacktrace,printf('  %s|[1mline %3d[0m|%s',sFoo,lineNo,lineDesc))
 					let curFunction = sFoo
 
 					" The vimunit#util#parseVerboseFile function does not handly
@@ -596,12 +596,12 @@ function! VURunAllTests(...)
 						let recurses = recurses + 1
 						" TODO find the file that the function is in, and then compute the
 						" line number of the function definition.
-						if !has_key(verbosefile,curFunction)
+						if !has_key(verbosefile,curFunction) || !has_key(verbosefile[curFunction],'offset')
 							break
 						endif
 						let lineNo = verbosefile[curFunction]['offset']
 						let lineDesc = verbosefile[curFunction]['detail']
-						call add(stacktrace,printf('  %s|offset %d|%s',curFunction,lineNo,lineDesc))
+						call add(stacktrace,printf('  %s|[1moffset %d[0m|%s',curFunction,lineNo,lineDesc))
 					endwhile
 
 					call extend(messages,reverse(stacktrace))

@@ -160,11 +160,10 @@ function! vimunit#util#diff(arg1,arg2)
       if !has_key(a:arg2,key)
         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
       else
-        "let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
-        "if len(sub) > 0
-        if a:arg1[key] != a:arg2[key]
+        let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+        if len(sub) > 0
           call add(results,'Different values for key "'. key .'"')
-          call add(results,vimunit#util#diff(a:arg1[key],a:arg2[key]))
+          call add(results,sub)
         endif
       endif
     endfor
@@ -261,4 +260,41 @@ function! vimunit#util#parseVerboseFile(filename)
     endif
   endfor
   return results
+endfunction
+
+" Perform a mapping on the dictionary
+"
+" Parameters:
+"   - dictionary: the dictionary to  map to (not modified)
+"   - evaluation: A string that is evaluated (via exec "").
+"        'key' == the current key in the dictionary
+"        'val' == the current value
+"        'result' == if set, then included in the results
+"     TODO support funcref...if set, then use a function with key/val params.
+"
+" Returns:
+"   - a list of the results
+"
+"
+" Example:
+"
+" call VUAssertEquals(vimunit#util#map({'a': 5, 'b': 6},'let result = val'),[5,6])
+function! vimunit#util#map(dictionary,evaluation)
+  let results = []
+  for [key,val] in items(a:dictionary)
+    exec a:evaluation
+    if exists('result')
+      call add(results,result)
+    endif
+    unlet result
+  endfor
+  return results
+endfunction
+
+function! vimunit#util#sum(list)
+  let sum = 0
+  for i in a:list
+    let sum += i
+  endfor
+  return sum
 endfunction
