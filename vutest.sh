@@ -7,16 +7,15 @@
 # http://creativecommons.org/licenses/by/3.0/.
 
 
-# TODO add individual test commands (maybe regex matches).
-
 set -u
 # don't want to fail on a test failure, we'll handle it in the script and pass it on.
 # set -e
 
 help() {
-	echo "vutest.sh [-v] <script.vim>"
+	echo "vutest.sh [-v] <script.vim> [testpattern]"
 	echo ""
-	echo "Run vimUnit tests and return results to the command line."
+	echo "Run vimUnit tests and return results to the command line. If testpattern is supplied"
+	echo "then only tests matching the testpattern will run, otherwise all tests are run."
 	echo ""
   echo "Options:"
   echo " -v Verbose. If set, then messages passed to MsgSink will be displayed when tests fail." 
@@ -55,7 +54,15 @@ if [[ $# -lt 1 ]]; then
 fi
 
 shift $((OPTIND-1))
-$VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests(true,'$FILE')" $1
+
+if [[ $# -eq 1 ]]; then
+  $VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests('.*',true,'$FILE')" $1
+elif [[ $# -eq 2 ]]; then
+  $VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests('$2',true,'$FILE')" $1
+else
+  help
+fi
+
 returncode=$?
 
 if [[ $TOSTDOUT -eq 1 ]]; then

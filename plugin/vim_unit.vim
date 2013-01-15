@@ -508,6 +508,9 @@ endfunction"}}}
 " PURPOSE:  Runs all the tests in the current file.
 "
 " ARGUMENTS:
+"   - optional test name. If set, then only tests matching this name will be
+"   run. 
+"
 "   - optional boolean. If true, then this function will exit vim with an error
 "   code. Suitable for scripting unit tests ala
 "
@@ -516,14 +519,16 @@ endfunction"}}}
 "   - optional output file. If set, then the output is saved to the output file
 "   specified. Meant to be used with the former option set to true.
 "
-"   - TODO a test pattern 
-"
 " RETURNS:
 "
 "   Echos the test results.
 "
 " -----------------------------------------
 function! VURunAllTests(...)
+	let testpattern = '.*'
+	if exists('a:1')
+		let testpattern = a:1
+	endif
 	let oldFailFast = g:vimUnitFailFast
 	let g:vimUnitFailFast = 1
 	let oldvfile = &verbosefile
@@ -538,7 +543,7 @@ function! VURunAllTests(...)
 	let failedAssertions = 0
 	for fn in vimunit#util#GetCurrentFunctionLocations()
 		let sFoo = vimunit#util#ExtractFunctionName(getline(fn))
-		if match(sFoo,'^Test') > -1
+		if match(sFoo,'^Test') > -1 && match(sFoo,testpattern) > -1
 			if exists( '*'.sFoo)
 				try
 					call s:VURunnerInit()
@@ -629,20 +634,20 @@ function! VURunAllTests(...)
 	call add(messages, "----------------------------------------------")
 	call add(messages, printf("Passed: %d (%d assertions) Failed: %d, Exceptions: %d",goodTests,goodAssertions,failedTests,exceptTests))
 	" write to a file?
-	if a:0 > 1
+	if exists('a:3')
 		" check for carriage returns first.
 		" TODO something is causing this this to write VULog entries twice
 		let forwrite = []
 		for m in messages
 			call extend(forwrite,split(m,'\\n'))
 		endfor
-		call writefile(forwrite,a:000[1])
+		call writefile(forwrite,a:3)
 	else
 		for line in messages
 			echo line
 		endfor
 	endif
-	if a:0 > 0 && a:000[0]
+	if exists('a:2') && a:2
 		if failedTests > 0
 			cquit
 		else
