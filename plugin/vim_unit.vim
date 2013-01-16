@@ -95,13 +95,6 @@ endif
 "	Variables Global
 "	Global variables might be set in vimrc
 
-if !exists('g:vimUnitSelfTest')
-"	1 ==> Always run self test when loaded
-"	0 ==> Do not run self test when loaded. SelfTest will however run if the
-"	file is modified since the documentation was installed.
-	let g:vimUnitSelfTest = 0
-endif
-
 if !exists('g:vimUnitVerbosity')
 	"At the moment there is just 0 (quiet) and 1(verbose)
 	let g:vimUnitVerbosity = 1
@@ -659,9 +652,6 @@ function! VUAutoRun() "{{{
 	"NOTE:If you change this code you must manualy source the file!
 
 	let s:vimUnitAutoRun = 1
-	"Prevent VimUnit from runing selftest if we are testing VimUnit.vim
-	let b:currentVimSelfTest = g:vimUnitSelfTest
-	let g:vimUnitSelfTest = 0
 	"Locate function line on line with or above current line
 	let sFoo = vimunit#util#ExtractFunctionName(vimunit#util#GetCurrentFunctionName())
 	if match(sFoo,'^Test') > -1 
@@ -678,7 +668,6 @@ function! VUAutoRun() "{{{
 		echo "NOTE: Found function name: ".sFoo." Does not start with Test.So we will not run it automaticaly"
 	endif
 	let s:vimUnitAutoRun = 0
-	let g:vimUnitSelfTest = b:currentVimSelfTest
 endfunction
 endif"}}}
 " vim: set noet fdm=marker:

@@ -42,26 +42,6 @@ CONTENT                                                      *vimUnit-contents*
 1.1 vimUnit Configuration                              *vimUnit-configuration*
 															|vimUnit-content|
 															
-															*vimUnit-AutoRun*
-															      *VUAutoRun*
-
-	To ease testing of scripts there is a AutoRun (VUAutoRun()) routine. When 
-	called from the commandline or a mapping of your preference it takes the 
-	cursor position in the file and figure out if your inside a function 
-	starting with 'Test'. If you are the file your in will be saved and sourced.
-	Then the function will be called, and you get a printout of the statistics.
-	So placing the cursor on call (in a vim file) inside the function:
-	
-		function! TestThis()
-			call VUAssertTrue(TRUE(),'Simple test of true')	
-		endfunction
-		
-	And calling:
-
-		:call VUAutoRun()
-		
-	Will give you the statistics.
-	
                                                            *vimUnit-makeprg*
 
     By default the makeprg and errorformat settings are configured for files
@@ -78,15 +58,6 @@ CONTENT                                                      *vimUnit-contents*
 		let g:vimUnitVerbosity = 0
 
 	Default value is 1.
-                                                            *vimUnit-selftest*
-
-	vimUnit has code to test that it work as expected. This code will run the 
-	first time vim is running after you installed vimUnit. After that it will 
-	only run again if there is changes to the vimUnit.vim file. If you want 
-	vimUnit to do a self-test every time it is loaded (sourced) you should add
-	this line to your vimrc file:
-
-		let g:vimUnitSelfTest = 1
 
 ==============================================================================
 1.1 vimUnit Requirements                                *vimUnit-requirements*
@@ -128,10 +99,13 @@ CONTENT                                                      *vimUnit-contents*
         "Best: run your tests outside of your vim editor:
         ~/.vim/bundle/vimunit/vutest.sh yourtestcases.vim
 
+        "Best: run tests that match a pattern outside of your vim editor:
+        ~/.vim/bundle/vimunit/vutest.sh yourtestcases.vim Cube
+
         "Next Best: run all the tests in your current buffer:
         "call VURunAllTests()
 
-        "Next Best: if your cursor is within the test function:
+        "Next Best: place your cursor within the test function:
         :call VUAutoRun()
 
         "Next Best: specify the function to test
@@ -219,11 +193,9 @@ DS = Dane Summers, dsummersl -- yahoo .. com
 ------------------------------------------------------------------------------
 By	Date		Description, if version nr changes place it first.
 ------------------------------------------------------------------------------
-DS	5 Jan 2013	1.0	Support for 'fail fast' unit tests. Added command line
-                    program (vutest.sh) and a VURunAllTests.
+DS	5 Jan 2013	1.0	Major refactoring. Support for 'fail fast' unit tests.
+                    Added command line program (vutest.sh) and VURunAllTests.
 SF	8 Nov 2004	0.1	Initial upload
 ==============================================================================
-" Need the next formating line inside the help document
-" vim: ts=4 sw=4 tw=78: 
 
  vim:tw=78:ts=8:ft=help:norl:
