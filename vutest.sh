@@ -8,6 +8,7 @@
 
 
 set -u
+
 # don't want to fail on a test failure, we'll handle it in the script and pass it on.
 # set -e
 

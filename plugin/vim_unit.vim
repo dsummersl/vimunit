@@ -110,12 +110,16 @@ if !exists('g:vimUnitTestFilePattern')
 	let g:vimUnitTestFilePattern = '*[Tt]est.vim'
 endif
 
+if !exists("g:vimUnitVimPath")
+	let g:vimUnitVimPath = "vim"
+endif
+
 if has("autocmd")
 	" Automatically determine where the vutest.sh script is based on the
 	" location of this script:
 	exe "autocmd BufNewFile,BufRead ". g:vimUnitTestFilePattern ." set makeprg=".
 				\substitute(expand('<sfile>'),"\\v\\w+\/[^\/]+$","","")
-				\."vutest.sh\\\ %"
+				\.'vutest.sh\ -e\ '. g:vimUnitVimPath .'\ %'
 	" This was helpful: http://stackoverflow.com/questions/1525377/vim-errorformat
 	exe "autocmd BufNewFile,BufRead ". g:vimUnitTestFilePattern 
 				\.' set errorformat=%PFile:\ %f,%.%#\|line\ %l\|%m,%-G%.%#,%Q'

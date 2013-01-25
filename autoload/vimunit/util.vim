@@ -209,7 +209,7 @@ function! vimunit#util#parseVerboseFile(filename)
         let results['_count_'. currentfunction] = 1
       else
         " if it does exist, set it up, and give it a new unique key
-        let results['_count_'. currentfunction] = results['_count_'. currentfunction] + 1
+        let results['_count_'. currentfunction] += 1
         let currentfunction = currentfunction .'('. results['_count_'. currentfunction] .')'
       endif
       let results[currentfunction] = {}
@@ -224,6 +224,9 @@ function! vimunit#util#parseVerboseFile(filename)
       let matches = matchlist(line,'^\s*function .* returning\v(.*)$')
       if len(matches) > 0
         let results[currentfunction]['detail'] = matches[1]
+        if has_key(results,'_count_'. currentfunction)
+          let results['_count_'. currentfunction] -= 1
+        endif
       endif
       let results[currentfunction]['status'] = 'returned'
       " for the root function that fails, it has no child..
@@ -251,6 +254,7 @@ function! vimunit#util#parseVerboseFile(filename)
         call VULog('line')
         let results[currentfunction]['offset'] = str2nr(substitute(line,'^\v\s*line (\d+):','\=submatch(1)',''))
         let results[currentfunction]['detail'] = substitute(line,'^\v.*: (.*)$','\=submatch(1)','')
+        call VULog('line: '. results[currentfunction]['offset'] )
       else
         call VULog('unused line (cf): '. line)
       endif
@@ -262,39 +266,3 @@ function! vimunit#util#parseVerboseFile(filename)
   return results
 endfunction
 
-" Perform a mapping on the dictionary
-"
-" Parameters:
-"   - dictionary: the dictionary to  map to (not modified)
-"   - evaluation: A string that is evaluated (via exec "").
-"        'key' == the current key in the dictionary
-"        'val' == the current value
-"        'result' == if set, then included in the results
-"     TODO support funcref...if set, then use a function with key/val params.
-"
-" Returns:
-"   - a list of the results
-"
-"
-" Example:
-"
-" call VUAssertEquals(vimunit#util#map({'a': 5, 'b': 6},'let result = val'),[5,6])
-function! vimunit#util#map(dictionary,evaluation)
-  let results = []
-  for [key,val] in items(a:dictionary)
-    exec a:evaluation
-    if exists('result')
-      call add(results,result)
-    endif
-    unlet result
-  endfor
-  return results
-endfunction
-
-function! vimunit#util#sum(list)
-  let sum = 0
-  for i in a:list
-    let sum += i
-  endfor
-  return sum
-endfunction

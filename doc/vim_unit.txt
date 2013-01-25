@@ -1,19 +1,19 @@
 *vimUnit.txt*    A template to create vim and winmanager managed plugins.  v1.0
 
 
-	vimUnit. A unit-testing framework targeting vim-scripts
+  vimUnit. A unit-testing framework targeting vim-scripts
 
 ==============================================================================
 CONTENT                                                      *vimUnit-contents*
-                                                                 *unit-testing* 
-	Installation        : |vimUnit-installation|                  *unittesting* 
-	Configuration       : |vimUnit-configuration|
-	vimUnit intro       : |vimUnit|
-	Requirements        : |vimUnit-requirements|
-	vimUnit commands    : |vimUnit-commands|
-	Tips                : |vimUnit-tips|
-	Todo list           : |vimUnit-todo|
-	Change log          : |vimUnit-change-log|
+                                                                 *unit-testing*
+  Installation        : |vimUnit-installation|                  *unittesting*
+  Configuration       : |vimUnit-configuration|
+  vimUnit intro       : |vimUnit|
+  Requirements        : |vimUnit-requirements|
+  vimUnit commands    : |vimUnit-commands|
+  Tips                : |vimUnit-tips|
+  Todo list           : |vimUnit-todo|
+  Change log          : |vimUnit-change-log|
 
 ==============================================================================
 1. vimUnit Installation                                 *vimUnit-installation*
@@ -37,62 +37,76 @@ CONTENT                                                      *vimUnit-contents*
     In Vim:
         :Bundle 'dsummersl/vimunit'
         :BundleInstall
-	
+
 ==============================================================================
 1.1 vimUnit Configuration                              *vimUnit-configuration*
-															|vimUnit-content|
-															
-                                                           *vimUnit-makeprg*
+                                                       |vimUnit-content|
+
+                                                       *vimUnit-vimUnitTestFilePattern*
 
     By default the makeprg and errorformat settings are configured for files
     matching '*[tT]est.vim'. You can include any of your own formats by modifying
     the following variable:
-
+>
         let g:vimUnitTestFilePattern = '*[Tt]est.vim'
-
-                                                           *vimUnit-verbosity*
+<
+                                                       *vimUnit-vimUnitVerbosity*
 
     When we are running test cases to much output can be annoying. Turn
     message output off in your vimrc file with:
+>
+    let g:vimUnitVerbosity = 0
+<
 
-		let g:vimUnitVerbosity = 0
+    Default value is 1.
 
-	Default value is 1.
+                                                       *vimUnit-vimUnitVimPath*
+
+    The path to use when setting up the 'make' support.
+
+>
+    let g:vimUnitVimPath = "vim"
+<
 
 ==============================================================================
 1.1 vimUnit Requirements                                *vimUnit-requirements*
-															|vimUnit-content|
-	
-	A Vim7 environment (autoload feature).
-	
+                              |vimUnit-content|
+
+  A Vim7 environment (autoload feature), version 7.3.390+ is required.
+
+  NOTE: the command line version of 'vim' bundled with OSX is not patched
+  beyond patch 390 (as of Jan 2013). You can use homebrew to install a newer
+  version, or install MacVim. Make sure to update your 'g:vimUnitVimPath' if
+  'vim' is no longer in your path.
+
 ==============================================================================
 2. vimUnit Intro                                      *VU* *VimUnit* *vimUnit*
-															|vimUnit-content|
-	
-	The philosophy behind test-first driven development is simple. 
-	When you consider to write some code, you normally have an idea of what you
-	want the code to do. Instead of just thinking of what your code should 
-	do try to write down a test case formalizing your thoughts. When you have 
-	a test case you start writing the code to make the test case complete 
-	successfully. If you discover problem areas, or error conditions 
-	write a test to make sure your code handles it. And will continue 
-	to handle it the next time you make some changes.
+                              |vimUnit-content|
 
-	Example:
+  The philosophy behind test-first driven development is simple.
+  When you consider to write some code, you normally have an idea of what you
+  want the code to do. Instead of just thinking of what your code should
+  do try to write down a test case formalizing your thoughts. When you have
+  a test case you start writing the code to make the test case complete
+  successfully. If you discover problem areas, or error conditions
+  write a test to make sure your code handles it. And will continue
+  to handle it the next time you make some changes.
 
-		"First we have an idea of how our function Cube should work
-		func! TestCaseCube()
-			call VUAssertEquals(<SID>Cube(1),1,'Trying to cube 1)')
-			call VUAssertEquals(<SID>Cube(2),2*2*2,'Trying to cube 2)')
-			call VUAssertEquals(<SID>Cube(3),3*3*3,'Trying to cube 3)')
-		endfunc
+  Example:
 
-		"We write ouer Cube Function
-		func! <SID>Cube(arg1)
-			let nFoo = arg1*arg1*arg1
-			return nFoo
-		endfunc
-		
+    "First we have an idea of how our function Cube should work
+    func! TestCaseCube()
+      call VUAssertEquals(<SID>Cube(1),1,'Trying to cube 1)')
+      call VUAssertEquals(<SID>Cube(2),2*2*2,'Trying to cube 2)')
+      call VUAssertEquals(<SID>Cube(3),3*3*3,'Trying to cube 3)')
+    endfunc
+
+    "We write ouer Cube Function
+    func! <SID>Cube(arg1)
+      let nFoo = arg1*arg1*arg1
+      return nFoo
+    endfunc
+
         "Best: Use make. You must setup makeprg/errorformat. See vimUnit-makeprg
         ":make
 
@@ -113,8 +127,8 @@ CONTENT                                                      *vimUnit-contents*
 
 ==============================================================================
 3. vimUnit Commands                                         *vimUnit-commands*
-															|vimUnit-content|
-	
+                              |vimUnit-content|
+
     *Test* *Commands*
 
     vutest.sh - VimUnit comes with a convenient command to run your tests
@@ -126,28 +140,28 @@ CONTENT                                                      *vimUnit-contents*
     Older non fail-fast test methods: VUAutoRun, VURunnerRunTest.
 
     *Assertions*
-	
-	VUAssertEquals(ar1, arg2, ...)
-		VUAssert that arg1 is equal in content to arg2.
-	VUAssertTrue(arg1, ...)
-		VUAssert that arg1 is true.
-	VUAssertFalse(arg1, ...)
-		VUAssert that arg1 is false.
-	VUAssertNotNull(arg1, ...)
-		VUAssert that arg1 is initiated.
-	VUAssertNotSame(arg1, arg2, ...)
-		VUAssert that arg1 and arg2 reference different memory.
-	VUAssertSame(arg1, arg2, ...)
-		VUAssert that arg1 and arg2 are from the same memory.
-	VUAssertFail(...)
-		Log a user defined failure.
-	VULog(message)
+
+  VUAssertEquals(ar1, arg2, ...)
+    VUAssert that arg1 is equal in content to arg2.
+  VUAssertTrue(arg1, ...)
+    VUAssert that arg1 is true.
+  VUAssertFalse(arg1, ...)
+    VUAssert that arg1 is false.
+  VUAssertNotNull(arg1, ...)
+    VUAssert that arg1 is initiated.
+  VUAssertNotSame(arg1, arg2, ...)
+    VUAssert that arg1 and arg2 reference different memory.
+  VUAssertSame(arg1, arg2, ...)
+    VUAssert that arg1 and arg2 are from the same memory.
+  VUAssertFail(...)
+    Log a user defined failure.
+  VULog(message)
         Log a message. These messages are displayed when g:vimUnitVerbosity is
-        set to 1, and a test fails.
-		
+        set to 1, or when a test fails.
+
 ==============================================================================
 5. vimUnit Tips                                                 *vimUnit-tips*
-															|vimUnit-content|
+                              |vimUnit-content|
 
     Use vutest.sh or :make -- Testing your application inside your editor can
     problematic in that any window/global/etc variables that your functions
@@ -157,45 +171,46 @@ CONTENT                                                      *vimUnit-contents*
 
     Put test functions in a separate vim file. None of your normal plugin
     users will want to access your tests. Use autoload.
-	
+
 ==============================================================================
-6. vimUnit Todo list                                            *vimUnit-todo*   
-															|vimUnit-content|
+6. vimUnit Todo list                                            *vimUnit-todo*
+                              |vimUnit-content|
 
-	TODO: Write more documentation
-	TODO: Cleanup function header comments	
+  TODO: Write more documentation
+  TODO: Cleanup function header comments
 
-	TODO: TestResult methods are not implemented 		    
-		TestResultAddError(test, ...)
-		TestResultAddFailure(test, ...)
-		TestResultAddListener(listener, ...)
-		TestResultCloneListener()
-		TestResultErrorCount()
-		TestResultErrors()
-		TestResultFailureCount()
-		TestResultFailures()
-		TestResultRemoveListener(listener, ...)
-		TestResultRun(testCase, ...)
-		TestResultRunCount()
-		TestResultShouldStop()
-		TestResultStartTest(test)
-		TestResultStop()
-		TestResultWasSuccessful()
+  TODO: TestResult methods are not implemented
+    TestResultAddError(test, ...)
+    TestResultAddFailure(test, ...)
+    TestResultAddListener(listener, ...)
+    TestResultCloneListener()
+    TestResultErrorCount()
+    TestResultErrors()
+    TestResultFailureCount()
+    TestResultFailures()
+    TestResultRemoveListener(listener, ...)
+    TestResultRun(testCase, ...)
+    TestResultRunCount()
+    TestResultShouldStop()
+    TestResultStartTest(test)
+    TestResultStop()
+    TestResultWasSuccessful()
 
 ==============================================================================
 7. vimUnit Change log                                     *vimUnit-change-log*
-															|vimUnit-content|
+                                                          |vimUnit-content|
+
 Developer reference: (break up mail address)
 ---------------------------------------------
 SF = Staale Flock, staale -- lexholm .. no
 DS = Dane Summers, dsummersl -- yahoo .. com
 
 ------------------------------------------------------------------------------
-By	Date		Description, if version nr changes place it first.
+By  Date    Description, if version nr changes place it first.
 ------------------------------------------------------------------------------
-DS	5 Jan 2013	1.0	Major refactoring. Support for 'fail fast' unit tests.
+DS  5 Jan 2013  1.0  Major refactoring. Support for 'fail fast' unit tests.
                     Added command line program (vutest.sh) and VURunAllTests.
-SF	8 Nov 2004	0.1	Initial upload
+SF  8 Nov 2004  0.1  Initial upload
 ==============================================================================
 
  vim:tw=78:ts=8:ft=help:norl:

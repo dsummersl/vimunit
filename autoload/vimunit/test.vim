@@ -286,10 +286,10 @@ fun TestParseVerboseFile()
 	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestLoop.txt')
 	call VULog(string(lines))
 	call VUAssertEquals(lines['TestDoPaintMatches']['status'],'aborted')
-	call VUAssertEquals(lines['TestDoPaintMatches']['offset'], 46)
+	call VUAssertEquals(lines['TestDoPaintMatches']['offset'], 10)
 	call VUAssertEquals(lines['TestDoPaintMatches']['child'],'vimunit#util#diff')
 	call VUAssertEquals(lines['_count_vimunit#util#diff'],2)
-	call VUAssertTrue(has_key('vimunit#util#diff (2)'))
+	call VUAssertTrue(has_key(lines,'vimunit#util#diff(2)'))
 
 	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestConvertToModuloOffset.txt-noline')
 	call VUAssertEquals(lines['TestConvertToModuloOffset']['offset'],1)
@@ -318,11 +318,7 @@ fun TestParseVerboseFile()
 endf
 
 function! TestGetCurrentFunctionNames() 
-	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[311, 283, 266, 256, 243, 230, 213, 196, 169, 138, 88, 2])
+	let sFoo = VUAssertEquals(vimunit#util#GetCurrentFunctionLocations(),[320, 283, 266, 256, 243, 230, 213, 196, 169, 138, 88, 2])
 endfunction	
-
-function! TestMap()
- 	call VUAssertEquals(sort(vimunit#util#map({'a': 5, 'b': 6},'let result = val')),sort([5,6]))
-endfunction
 
 " vim: set noet fdm=marker:
