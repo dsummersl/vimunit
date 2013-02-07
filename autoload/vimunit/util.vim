@@ -194,7 +194,7 @@ function! vimunit#util#parseVerboseFile(filename)
   let results = {}
   let currentfunction = ''
   for line in readfile(a:filename)
-    call VULog('line = '. line)
+    "call VULog('line = '. line)
 
     if currentfunction != '' && !has_key(results,currentfunction)
       let results[currentfunction] = {}
@@ -202,20 +202,12 @@ function! vimunit#util#parseVerboseFile(filename)
       let results[currentfunction]['detail'] = ''
     endif
 
-    if line =~ '^\v\s*calling function.*\.\.[^(]+\([^)]*\)$'
-      let currentfunction = substitute(line,'^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$','\=submatch(1)','')
-      " if the key doesn't exist, set it up
-      if !has_key(results,currentfunction)
-        let results['_count_'. currentfunction] = 1
-      else
-        " if it does exist, set it up, and give it a new unique key
-        let results['_count_'. currentfunction] += 1
-        let currentfunction = currentfunction .'('. results['_count_'. currentfunction] .')'
-      endif
-      let results[currentfunction] = {}
-      let results[currentfunction]['status'] = 'unknown'
-      let results[currentfunction]['detail'] = ''
-      call VULog('currentfunction = "'. currentfunction .'"')
+    if line =~ '^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$'
+      let currentfunction = s:setupkey(line,results,'^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$')
+    elseif line =~ '^\v\s*calling function ([^(]+)\([^)]*\)$'
+      let currentfunction = s:setupkey(line,results, '^\v\s*calling function ([^(]+)\([^)]*\)$')
+    elseif line =~ '^\v\s*autocommand call ([^(]+)\(\)'
+      let currentfunction = s:setupkey(line,results, '^\v\s*autocommand call ([^(]+)\(\)')
     elseif line =~ 'continuing in function'
       let currentfunction = substitute(line,'^\v\s*continuing in function .*<([^. (]+)$','\=submatch(1)','')
       call VULog('currentfunction = "'. currentfunction .'"')
@@ -254,7 +246,7 @@ function! vimunit#util#parseVerboseFile(filename)
         call VULog('line')
         let results[currentfunction]['offset'] = str2nr(substitute(line,'^\v\s*line (\d+):','\=submatch(1)',''))
         let results[currentfunction]['detail'] = substitute(line,'^\v.*: (.*)$','\=submatch(1)','')
-        call VULog('line: '. results[currentfunction]['offset'] )
+        call VULog(currentfunction .' line: '. results[currentfunction]['offset'] )
       else
         call VULog('unused line (cf): '. line)
       endif
@@ -266,3 +258,19 @@ function! vimunit#util#parseVerboseFile(filename)
   return results
 endfunction
 
+function! s:setupkey(line,results,pattern)
+  let currentfunction = substitute(a:line,a:pattern,'\=submatch(1)','')
+  " if the key doesn't exist, set it up
+  if !has_key(a:results,currentfunction)
+    let a:results['_count_'. currentfunction] = 1
+  else
+    " if it does exist, set it up, and give it a new unique key
+    let a:results['_count_'. currentfunction] += 1
+    let currentfunction = currentfunction .'('. a:results['_count_'. currentfunction] .')'
+  endif
+  let a:results[currentfunction] = {}
+  let a:results[currentfunction]['status'] = 'unknown'
+  let a:results[currentfunction]['detail'] = ''
+  call VULog('currentfunction = "'. currentfunction .'"')
+  return currentfunction
+endfunction

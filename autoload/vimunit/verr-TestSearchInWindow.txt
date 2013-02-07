@@ -1,0 +1,2072 @@
+
+line 29: ^I^I^I^I^Icall {sFoo}()
+calling function VURunAllTests..TestSearchInWindow()
+
+line 1:   " Given a file full of the same deal, perform searches from various points
+line 2:   " in the file. It should return the same results every time (well, taking
+line 3:   " into consideration the 'max' searches.
+line 4:   let @/='nothing'
+line 5: 
+line 6:   " Test the base cases - ensure that the right combinations of fields are
+line 7:   " present
+line 8:   try
+line 9:     call sluice#plugins#search#data({'upmax': 5, 'needle':'one'})
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data({'needle': 'one', 'upmax': 5})
+
+line 1:   if !exists('b:sluice_searchfn')
+line 2:     let b:sluice_searchfn = _#memoize(function('sluice#plugins#search#search'),function('sluice#plugins#search#memoizeByLocAndFileVer'))
+Searching for "autoload/_.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vim-sluice,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/vim-indent-guides,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bundle/vim-colors-solarized
+Searching for "/Users/danesummers/.vim/bundle/vundle/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/threesome.vim/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/gundo.vim/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/xmledit/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/tagbar/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/applescript.vim/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-sluice/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/wikia-csv/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vimunit/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-fugitive/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/ctrlp.vim/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/ultisnips/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-scala/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-coffee-script/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-surround/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/webapi-vim/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/gist-vim/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-indent-guides/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-ps1/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-colors-solarized/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/L9/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/cecutil/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/Vimball/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/Align/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/LargeFile/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/genutils/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/matchit.zip/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/Conque-Shell/autoload/_.vim"
+Searching for "/Users/danesummers/.vim/bundle/vus/autoload/_.vim"
+chdir(/Users/danesummers/.vim/bundle/vus/autoload)
+fchdir() to previous dir
+line 2: sourcing "/Users/danesummers/.vim/bundle/vus/autoload/_.vim"
+line 1: function! _#sum(list)
+line 8: 
+line 9: " Perform a mapping on the dictionary
+line 10: "
+line 11: " Parameters:
+line 12: "   - dictionary: the dictionary to  map to (not modified)
+line 13: "   - evaluation: A string that is evaluated (via exec "").
+line 14: "        'key' == the current key in the dictionary
+line 15: "        'val' == the current value
+line 16: "        'result' == if set, then included in the results
+line 17: "     TODO support funcref...if set, then use a function with key/val params.
+line 18: "
+line 19: " Returns:
+line 20: "   - a list of the results
+line 21: "
+line 22: "
+line 23: " Example:
+line 24: "
+line 25: " call VUAssertEquals(vimunit#util#map({'a': 5, 'b': 6},'let result = val'),[5,6])
+line 26: function! _#map(dictionary,evaluation)
+line 37: 
+line 38: " Wrap a function with a memoization storage mechanism.
+line 39: " If the parameters to the function match previous
+line 40: "
+line 41: " Parameters:
+line 42: "   fn     = the funcref of the function that will be memoized.
+line 43: "   hashfn = (optional) how to compute the hash for a fn hit (defaults to the
+line 44: "            hash of the parameters passed to the function). the function
+line 45: "            should take a list of arguments (equal to what is passed to 'fn')
+line 46: "
+line 47: " Returns:
+line 48: "   A callable dictionary with these props/methods:
+line 49: "    - call() -- take the same params as 'fn'
+line 50: "    - clear() -- clear the cache
+line 51: "    - .data['hits'] -- number of cache hits
+line 52: "    - .data['misses'] -- number of cache hits
+line 53: "
+line 54: function! _#memoize(fn,...)
+line 79: 
+line 80: " Given a string, return a much smaller hash of the string (16 characters).
+line 81: "
+line 82: " TODO test the hash function, and/or port to vim
+line 83: "
+line 84: " Note: this function depends on +python support.
+line 85: function! _#hash(str)
+line 97: 
+line 98: " Return the unique elements in a list.
+line 99: "
+line 100: " TODO document and support hashes?
+line 101: " TODO support a funcref?
+line 102: "
+line 103: " Parameters: A list.
+line 104: "
+line 105: " Returns: A new list, with the unique elements from a:list.
+line 106: function! _#uniq(list)
+line 115: 
+line 116: " Sort a list.
+line 117: "
+line 118: " Parameters:
+line 119: "            list: a list.
+line 120: "   sort function: (optional) if... 
+line 121: "                  - A string (that is evaluated) where 'a' and 'b' must be
+line 122: "                    compared and returned (see Vim's sort() method).
+line 123: "                  - A function (with two params, a and b).
+line 124: "                  - A funcref and a dictionary (see Vim's sort()).
+line 125: "                  - number 1. sort with ignorecase.
+line 126: "                  - number 2. try to convert strings to numbers and sort
+line 127: "                    numerically
+line 128: "            dict: (optional) dictionary related to 'sort function' (see sort())
+line 129: " 
+line 130: " Returns: sorted list.
+line 131: function! _#sort(list,...)
+line 165: 
+line 166: " Reduce a list down to one value.
+line 167: "
+line 168: " Parameters:
+line 169: "   list: list or dictionary.
+line 170: "   func: reduction function (funcref). TODO support a string as well as a funcref.
+line 171: "   memo: initial value of the reduction.
+line 172: "
+line 173: " When 'list' is a list:
+line 174: "   The run is provided with 'el', 'i', 'list' and 'memo'
+line 175: "   (current value of the reduction). Must return the new value of the
+line 176: "   reduction.
+line 177: "
+line 178: " When 'list' is a dictionary:
+line 179: "   The function is provided 'key', 'val', 'list' and 'memo'
+line 180: "
+line 181: function! _#reduce(list,func,memo)
+line 200: 
+line 201: " Give the minimum value of a list or dictionary.
+line 202: "
+line 203: " Parameters:
+line 204: "      list: a list or dictionary.
+line 205: "  selector: (optional). One of:
+line 206: "  - string: will be evaluated. Variables 'el' (current element from the
+line 207: "            list), 'i' (index of the element), and 'list' (the list) are provided.
+line 208: "  - TODO funcref: A function with three parameters: el, i, list.
+line 209: "
+line 210: " When 'list' is a dictionary, returns the key with the min value.
+line 211: function! _#min(list,...)
+line 214: 
+line 215: " Give the maximum value of a list or dictionary.
+line 216: "
+line 217: " Parameters:
+line 218: "      list: a list or dictionary.
+line 219: "  selector: (optional). One of:
+line 220: "  - string: will be evaluated. Variables 'el' (current element from the
+line 221: "            list), 'i' (index of the element), and 'list' (the list) are provided.
+line 222: "  - TODO funcref: A function with three parameters: el, i, list.
+line 223: "
+line 224: " When 'list' is a dictionary, returns the key with the max value.
+line 225: function! _#max(list,...)
+finished sourcing /Users/danesummers/.vim/bundle/vus/autoload/_.vim
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data.._#memoize(function('sluice#plugins#search#search'), function('sluice#plugins#search#memoizeByLocAndFileVer'))
+
+line 1:   if exists('a:1')
+line 2:     let Hashfn = a:1
+line 3:   else
+line 4:     let Hashfn = function('vus#internal#dfltmemo')
+line 5:   endif
+line 6:   let result = { 'data': { 'hits': 0, 'misses': 0},'fn': a:fn,'hash': Hashfn}
+line 10:   function result.clear() dict
+line 13:   function result.call(...) dict
+line 23:   return result
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data.._#memoize returning {'call': function('363'), 'data': {'h...unction('sluice#plugins#search#search')}
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data
+
+line 5:   endif
+line 6:   " if the # of memoized values gets big maybe purge...
+line 7:   "if b:sluice_searchfn.data['misses'] > 50
+line 8:   "  b:sluice_searchfn.clear()
+line 9:   "endif
+line 10:   return b:sluice_searchfn.call(a:options)
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363({'needle': 'one', 'upmax': 5})
+
+line 1:     let hash = self.hash(a:000)
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer([{'needle': 'one', 'upmax': 5}])
+
+line 1:   let options = a:args[0]
+line 2: 
+line 3:   if has_key(options,'needle')
+line 4:     let pattern = options['needle']
+line 5:   else
+line 6:     let pattern = @/
+line 7:   endif
+line 8: 
+line 9:   " TODO check that the previous line is within some wiggle of the current
+line 10:   " line...and that changedtick hasn't changed.
+line 11:   return _#hash(printf("%s-%s-%s",b:changedtick,line('.'),pattern))
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer.._#hash('3-1-one')
+
+line 1: ^Ipython import sys
+line 2:   let cleaned = substitute(a:str,"'","\\\\'","g")
+line 3: ^Iexe "python sys.argv = ['". cleaned ."']"
+line 3: python sys.argv = ['3-1-one']
+line 4:   python import hashlib
+line 5:   python import sys
+line 6:   python import vim
+line 7:   python str = sys.argv[0]
+line 8:   python hash = hashlib.md5(str).hexdigest()[0:15]
+line 9:   python vim.command('let s:hash = "'+ hash +'"')
+line 9: let s:hash = "8d047d0a2246630"
+line 10:   return s:hash
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer.._#hash returning '8d047d0a2246630'
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer returning '8d047d0a2246630'
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363
+
+line 2:     if !has_key(self.data,hash)
+line 3:       let self.data[hash] = call(self.fn,a:000)
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#search({'needle': 'one', 'upmax': 5})
+
+line 1:   " max number of milliseconds
+line 2:   "let maxtime = 500
+line 3:   "let starttime = reltime()
+line 4:   "" there just isn't a way to do this quickly at this point:
+line 5:   "if maxtime < 50
+line 6:   "  return {}
+line 7:   "endif
+line 8: 
+line 9:   " set the search pattern
+line 10:   if has_key(a:options,'needle')
+line 11:     let pattern = a:options['needle']
+line 12:   else
+line 13:     let pattern = @/
+line 14:   endif
+line 15: 
+line 16:   if !has_key(a:options,'upmax') && has_key(a:options,'downmax')
+line 17:     throw "'upmax' must be provided when 'downmax' is provided."
+line 18:   endif
+line 19: 
+line 20:   if has_key(a:options,'upmax') && !has_key(a:options,'downmax')
+line 21:     throw "'downmax' must be provided when 'upmax' is provided."
+Exception thrown: 'downmax' must be provided when 'upmax' is provided.
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#search aborted
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363 aborted
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data aborted
+
+continuing in function VURunAllTests..TestSearchInWindow
+
+line 10:     call VUAssertFail('downmax should be included')
+line 11:   catch
+Exception caught: 'downmax' must be provided when 'upmax' is provided.
+
+line 12:   endtry
+Exception finished: 'downmax' must be provided when 'upmax' is provided.
+
+line 13: 
+line 14:   try
+line 15:     call sluice#plugins#search#data({'downmax': 5, 'needle':'one'})
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data({'needle': 'one', 'downmax': 5})
+
+line 1:   if !exists('b:sluice_searchfn')
+line 2:     let b:sluice_searchfn = _#memoize(function('sluice#plugins#search#search'),function('sluice#plugins#search#memoizeByLocAndFileVer'))
+line 5:   endif
+line 6:   " if the # of memoized values gets big maybe purge...
+line 7:   "if b:sluice_searchfn.data['misses'] > 50
+line 8:   "  b:sluice_searchfn.clear()
+line 9:   "endif
+line 10:   return b:sluice_searchfn.call(a:options)
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363({'needle': 'one', 'downmax': 5})
+
+line 1:     let hash = self.hash(a:000)
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer([{'needle': 'one', 'downmax': 5}])
+
+line 1:   let options = a:args[0]
+line 2: 
+line 3:   if has_key(options,'needle')
+line 4:     let pattern = options['needle']
+line 5:   else
+line 6:     let pattern = @/
+line 7:   endif
+line 8: 
+line 9:   " TODO check that the previous line is within some wiggle of the current
+line 10:   " line...and that changedtick hasn't changed.
+line 11:   return _#hash(printf("%s-%s-%s",b:changedtick,line('.'),pattern))
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer.._#hash('3-1-one')
+
+line 1: ^Ipython import sys
+line 2:   let cleaned = substitute(a:str,"'","\\\\'","g")
+line 3: ^Iexe "python sys.argv = ['". cleaned ."']"
+line 3: python sys.argv = ['3-1-one']
+line 4:   python import hashlib
+line 5:   python import sys
+line 6:   python import vim
+line 7:   python str = sys.argv[0]
+line 8:   python hash = hashlib.md5(str).hexdigest()[0:15]
+line 9:   python vim.command('let s:hash = "'+ hash +'"')
+line 9: let s:hash = "8d047d0a2246630"
+line 10:   return s:hash
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer.._#hash returning '8d047d0a2246630'
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#memoizeByLocAndFileVer returning '8d047d0a2246630'
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363
+
+line 2:     if !has_key(self.data,hash)
+line 3:       let self.data[hash] = call(self.fn,a:000)
+calling function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#search({'needle': 'one', 'downmax': 5})
+
+line 1:   " max number of milliseconds
+line 2:   "let maxtime = 500
+line 3:   "let starttime = reltime()
+line 4:   "" there just isn't a way to do this quickly at this point:
+line 5:   "if maxtime < 50
+line 6:   "  return {}
+line 7:   "endif
+line 8: 
+line 9:   " set the search pattern
+line 10:   if has_key(a:options,'needle')
+line 11:     let pattern = a:options['needle']
+line 12:   else
+line 13:     let pattern = @/
+line 14:   endif
+line 15: 
+line 16:   if !has_key(a:options,'upmax') && has_key(a:options,'downmax')
+line 17:     throw "'upmax' must be provided when 'downmax' is provided."
+Exception thrown: 'upmax' must be provided when 'downmax' is provided.
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363..sluice#plugins#search#search aborted
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data..363 aborted
+
+continuing in function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data
+
+function VURunAllTests..TestSearchInWindow..sluice#plugins#search#data aborted
+
+continuing in function VURunAllTests..TestSearchInWindow
+
+line 16:     call VUAssertFail('upmax should be included')
+line 17:   catch
+Exception caught: 'upmax' must be provided when 'downmax' is provided.
+
+line 18:   endtry
+Exception finished: 'upmax' must be provided when 'downmax' is provided.
+
+line 19: 
+line 20:   try
+line 21:     " create a file with 60 total lines. The liens are of the pattern:
+line 22:     " line
+line 23:     " line line
+line 24:     " line
+line 25:     " line line
+line 26:     " ...
+line 27:     " ...
+line 28:     sp abid
+Executing WinEnter Auto commands for "*"
+autocommand call indent_guides#process_autocmds()
+
+line 0: call indent_guides#process_autocmds()
+calling function indent_guides#process_autocmds()
+
+line 1:   if g:indent_guides_autocmds_enabled
+line 2:     call indent_guides#enable()
+line 3:   else
+line 4:     call indent_guides#disable()
+calling function indent_guides#process_autocmds..indent_guides#disable()
+
+line 1:   let g:indent_guides_autocmds_enabled = 0
+line 2:   call indent_guides#clear_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches()
+
+line 1:   call indent_guides#init_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches()
+
+line 1:   let w:indent_guides_matches = exists('w:indent_guides_matches') ? w:indent_guides_matches : []
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches
+
+line 2:   if !empty(w:indent_guides_matches)
+line 3:     let l:index = 0
+line 4:     for l:match_id in w:indent_guides_matches
+line 5:       try
+line 6:         call matchdelete(l:match_id)
+line 7:       catch /E803:/
+line 8:         " Do nothing
+line 9:       endtry
+line 10:       call remove(w:indent_guides_matches, l:index)
+line 11:       let l:index += l:index
+line 12:     endfor
+line 13:   endif
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable
+
+function indent_guides#process_autocmds..indent_guides#disable returning #0
+
+continuing in function indent_guides#process_autocmds
+
+line 5:   end
+function indent_guides#process_autocmds returning #0
+
+continuing in WinEnter Auto commands for "*"
+
+Executing WinEnter Auto commands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+line 0: call s:Highlight_Matching_Pair()
+calling function <SNR>78_Highlight_Matching_Pair()
+
+line 1:   " Remove any previous match.
+line 2:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 3:     3match none
+line 4:     let w:paren_hl_on = 0
+line 5:   endif
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let c = getline(c_lnum)[c_col - 1]
+line 19:   let plist = split(&matchpairs, '.\zs[:,]')
+line 20:   let i = index(plist, c)
+line 21:   if i < 0
+line 22:     " not found, in Insert mode try character before the cursor
+line 23:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 24:       let before = 1
+line 25:       let c = getline(c_lnum)[c_col - 2]
+line 26:       let i = index(plist, c)
+line 27:     endif
+line 28:     if i < 0
+line 29:       " not found, nothing to do
+line 30:       return
+function <SNR>78_Highlight_Matching_Pair returning #0
+
+continuing in WinEnter Auto commands for "*"
+
+chdir(/Users/danesummers/environment/vim/bundle/vim-sluice)
+fchdir() to previous dir
+Executing BufAdd Auto commands for "*"
+autocommand cal s:record(expand('<abuf>', 1))
+
+line 0: cal s:record(expand('<abuf>', 1))
+calling function <SNR>34_record('2')
+
+line 1: ^Iif s:locked | retu | en
+line 1:  retu | en
+line 1:  en
+line 2: ^Ilet bufnr = a:bufnr + 0
+line 3: ^Ilet bufname = bufname(bufnr)
+line 4: ^Iif bufnr > 0 && !empty(bufname)
+line 5: ^I^Ical filter(s:mrbs, 'v:val != bufnr')
+line 6: ^I^Ical insert(s:mrbs, bufnr)
+line 7: ^I^Ical s:addtomrufs(bufname)
+calling function <SNR>34_record..<SNR>34_addtomrufs('abid')
+
+line 1: ^Ilet fn = fnamemodify(a:fname, ':p')
+line 2: ^Ilet fn = exists('+ssl') ? tr(fn, '/', '\') : fn
+line 3: ^Iif ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} ) || !empty(getbufvar('^'.fn.'$', '&bt')) || !filereadable(fn) | retu
+line 3:  retu
+function <SNR>34_record..<SNR>34_addtomrufs returning #0
+
+continuing in function <SNR>34_record
+
+line 8: ^Ien
+function <SNR>34_record returning #0
+
+continuing in BufAdd Auto commands for "*"
+
+Executing BufLeave Auto commands for "*"
+autocommand cal s:record(expand('<abuf>', 1))
+
+line 0: cal s:record(expand('<abuf>', 1))
+calling function <SNR>34_record('1')
+
+line 1: ^Iif s:locked | retu | en
+line 1:  retu | en
+line 1:  en
+line 2: ^Ilet bufnr = a:bufnr + 0
+line 3: ^Ilet bufname = bufname(bufnr)
+line 4: ^Iif bufnr > 0 && !empty(bufname)
+line 5: ^I^Ical filter(s:mrbs, 'v:val != bufnr')
+line 6: ^I^Ical insert(s:mrbs, bufnr)
+line 7: ^I^Ical s:addtomrufs(bufname)
+calling function <SNR>34_record..<SNR>34_addtomrufs('autoload/sluice/test.vim')
+
+line 1: ^Ilet fn = fnamemodify(a:fname, ':p')
+chdir(autoload/sluice)
+fchdir() to previous dir
+line 2: ^Ilet fn = exists('+ssl') ? tr(fn, '/', '\') : fn
+line 3: ^Iif ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} ) || !empty(getbufvar('^'.fn.'$', '&bt')) || !filereadable(fn) | retu
+line 3:  retu
+line 5: ^Ien
+line 6: ^Ilet idx = index(s:mrufs, fn, 0, !{s:cseno})
+line 7: ^Iif idx
+line 8: ^I^Ical filter(s:mrufs, 'v:val !='.( {s:cseno} ? '#' : '?' ).' fn')
+line 9: ^I^Ical insert(s:mrufs, fn)
+line 10: ^I^Iif {s:soup} && idx < 0
+line 11: ^I^I^Ical s:savetofile(s:mergelists())
+line 12: ^I^Ien
+line 13: ^Ien
+function <SNR>34_record..<SNR>34_addtomrufs returning #0
+
+continuing in function <SNR>34_record
+
+line 8: ^Ien
+function <SNR>34_record returning #0
+
+continuing in BufLeave Auto commands for "*"
+
+Executing BufLeave Auto commands for "*"
+autocommand call UltiSnips_LeavingBuffer()
+
+line 0: call UltiSnips_LeavingBuffer()
+calling function UltiSnips_LeavingBuffer()
+
+line 1:     exec g:_uspy "UltiSnips_Manager.leaving_buffer()"
+line 1: :py  UltiSnips_Manager.leaving_buffer()
+function UltiSnips_LeavingBuffer returning #0
+
+continuing in BufLeave Auto commands for "*"
+
+"abid" [New File]
+Reading viminfo file "/Users/danesummers/.viminfo" marks
+Executing BufNewFile Auto commands for "*"
+autocommand if !did_filetype() && expand("<amatch>") !~ g:ft_ignore_pat | runtime! scripts.vim | endif
+
+line 0: if !did_filetype() && expand("<amatch>") !~ g:ft_ignore_pat | runtime! scripts.vim | endif
+line 0:  runtime! scripts.vim | endif
+Searching for "scripts.vim" in "/Users/danesummers/.vim/bundle/vundle,/Users/danesummers/.vim/bundle/vim-unimpaired,/Users/danesummers/.vim/bundle/threesome.vim,/Users/danesummers/.vim/bundle/gundo.vim,/Users/danesummers/.vim/bundle/nerdcommenter,/Users/danesummers/.vim/bundle/tagbar-phpctags,/Users/danesummers/.vim/bundle/xmledit,/Users/danesummers/.vim/bundle/tagbar,/Users/danesummers/.vim/bundle/applescript.vim,/Users/danesummers/.vim/bundle/vim-sluice,/Users/danesummers/.vim/bundle/wikia-csv,/Users/danesummers/.vim/bundle/vimunit,/Users/danesummers/.vim/bundle/vim-fugitive,/Users/danesummers/.vim/bundle/ctrlp.vim,/Users/danesummers/.vim/bundle/ultisnips,/Users/danesummers/.vim/bundle/vim-scala,/Users/danesummers/.vim/bundle/vim-coffee-script,/Users/danesummers/.vim/bundle/vim-surround,/Users/danesummers/.vim/bundle/webapi-vim,/Users/danesummers/.vim/bundle/gist-vim,/Users/danesummers/.vim/bundle/vim-indent-guides,/Users/danesummers/.vim/bundle/vim-ps1,/Users/danesummers/.vim/bundle/vim-colors-solarized,/U
+Searching for "/Users/danesummers/.vim/bundle/vundle/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/threesome.vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/gundo.vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/xmledit/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/tagbar/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/applescript.vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-sluice/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/wikia-csv/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vimunit/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-fugitive/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/ctrlp.vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/ultisnips/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-scala/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-coffee-script/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-surround/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/webapi-vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/gist-vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-indent-guides/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-ps1/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-colors-solarized/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/L9/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/cecutil/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/Vimball/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/Align/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/LargeFile/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/genutils/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/matchit.zip/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/Conque-Shell/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vus/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/gitv/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/nerdtree/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-easymotion/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-repeat/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/argtextobj.vim/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-xdebug/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/neocomplcache/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/csapprox/scripts.vim"
+Searching for "/Users/danesummers/.vim/scripts.vim"
+Searching for "/usr/local/share/vim/vimfiles/scripts.vim"
+Searching for "/usr/local/share/vim/vim73/scripts.vim"
+chdir(/usr/local/share/vim/vim73)
+fchdir() to previous dir
+line 0: sourcing "/usr/local/share/vim/vim73/scripts.vim"
+line 1: " Vim support file to detect file types in scripts
+line 2: "
+line 3: " Maintainer:^IBram Moolenaar <Bram@vim.org>
+line 4: " Last change:^I2012 Aug 30
+line 5: 
+line 6: " This file is called by an autocommand for every file that has just been
+line 7: " loaded into a buffer.  It checks if the type of file can be recognized by
+line 8: " the file contents.  The autocommand is in $VIMRUNTIME/filetype.vim.
+line 9: 
+line 10: 
+line 11: " Only do the rest when the FileType autocommand has not been triggered yet.
+line 12: if did_filetype()
+line 13:   finish
+line 14: endif
+line 15: 
+line 16: " Load the user defined scripts file first
+line 17: " Only do this when the FileType autocommand has not been triggered yet
+line 18: if exists("myscriptsfile") && filereadable(expand(myscriptsfile))
+line 19:   execute "source " . myscriptsfile
+line 20:   if did_filetype()
+line 21:     finish
+line 22:   endif
+line 23: endif
+line 24: 
+line 25: " Line continuation is used here, remove 'C' from 'cpoptions'
+line 26: let s:cpo_save = &cpo
+line 27: set cpo&vim
+line 28: 
+line 29: let s:line1 = getline(1)
+line 30: 
+line 31: if s:line1 =~ "^#!"
+line 32:   " A script that starts with "#!".
+line 33: 
+line 34:   " Check for a line like "#!/usr/bin/env VAR=val bash".  Turn it into
+line 35:   " "#!/usr/bin/bash" to make matching easier.
+line 36:   if s:line1 =~ '^#!\s*\S*\<env\s'
+line 37:     let s:line1 = substitute(s:line1, '\S\+=\S\+', '', 'g')
+line 38:     let s:line1 = substitute(s:line1, '\<env\s\+', '', '')
+line 39:   endif
+line 40: 
+line 41:   " Get the program name.
+line 42:   " Only accept spaces in PC style paths: "#!c:/program files/perl [args]".
+line 43:   " If the word env is used, use the first word after the space:
+line 44:   " "#!/usr/bin/env perl [path/args]"
+line 45:   " If there is no path use the first word: "#!perl [path/args]".
+line 46:   " Otherwise get the last word after a slash: "#!/usr/bin/perl [path/args]".
+line 47:   if s:line1 =~ '^#!\s*\a:[/\\]'
+line 48:     let s:name = substitute(s:line1, '^#!.*[/\\]\(\i\+\).*', '\1', '')
+line 49:   elseif s:line1 =~ '^#!.*\<env\>'
+line 50:     let s:name = substitute(s:line1, '^#!.*\<env\>\s\+\(\i\+\).*', '\1', '')
+line 51:   elseif s:line1 =~ '^#!\s*[^/\\ ]*\>\([^/\\]\|$\)'
+line 52:     let s:name = substitute(s:line1, '^#!\s*\([^/\\ ]*\>\).*', '\1', '')
+line 53:   else
+line 54:     let s:name = substitute(s:line1, '^#!\s*\S*[/\\]\(\i\+\).*', '\1', '')
+line 55:   endif
+line 56: 
+line 57:   " tcl scripts may have #!/bin/sh in the first line and "exec wish" in the
+line 58:   " third line.  Suggested by Steven Atkinson.
+line 59:   if getline(3) =~ '^exec wish'
+line 60:     let s:name = 'wish'
+line 61:   endif
+line 62: 
+line 63:   " Bourne-like shell scripts: bash bash2 ksh ksh93 sh
+line 64:   if s:name =~ '^\(bash\d*\|\|ksh\d*\|sh\)\>'
+line 65:     call SetFileTypeSH(s:line1)^I" defined in filetype.vim
+line 66: 
+line 67:     " csh scripts
+line 68:   elseif s:name =~ '^csh\>'
+line 69:     if exists("g:filetype_csh")
+line 70:       call SetFileTypeShell(g:filetype_csh)
+line 71:     else
+line 72:       call SetFileTypeShell("csh")
+line 73:     endif
+line 74: 
+line 75:     " tcsh scripts
+line 76:   elseif s:name =~ '^tcsh\>'
+line 77:     call SetFileTypeShell("tcsh")
+line 78: 
+line 79:     " Z shell scripts
+line 80:   elseif s:name =~ '^zsh\>'
+line 81:     set ft=zsh
+line 82: 
+line 83:     " TCL scripts
+line 84:   elseif s:name =~ '^\(tclsh\|wish\|expectk\|itclsh\|itkwish\)\>'
+line 85:     set ft=tcl
+line 86: 
+line 87:     " Expect scripts
+line 88:   elseif s:name =~ '^expect\>'
+line 89:     set ft=expect
+line 90: 
+line 91:     " Gnuplot scripts
+line 92:   elseif s:name =~ '^gnuplot\>'
+line 93:     set ft=gnuplot
+line 94: 
+line 95:     " Makefiles
+line 96:   elseif s:name =~ 'make\>'
+line 97:     set ft=make
+line 98: 
+line 99:     " Lua
+line 100:   elseif s:name =~ 'lua'
+line 101:     set ft=lua
+line 102: 
+line 103:     " Perl 6
+line 104:   elseif s:name =~ 'perl6'
+line 105:     set ft=perl6
+line 106: 
+line 107:     " Perl
+line 108:   elseif s:name =~ 'perl'
+line 109:     set ft=perl
+line 110: 
+line 111:     " PHP
+line 112:   elseif s:name =~ 'php'
+line 113:     set ft=php
+line 114: 
+line 115:     " Python
+line 116:   elseif s:name =~ 'python'
+line 117:     set ft=python
+line 118: 
+line 119:     " Groovy
+line 120:   elseif s:name =~ '^groovy\>'
+line 121:     set ft=groovy
+line 122: 
+line 123:     " Ruby
+line 124:   elseif s:name =~ 'ruby'
+line 125:     set ft=ruby
+line 126: 
+line 127:     " BC calculator
+line 128:   elseif s:name =~ '^bc\>'
+line 129:     set ft=bc
+line 130: 
+line 131:     " sed
+line 132:   elseif s:name =~ 'sed\>'
+line 133:     set ft=sed
+line 134: 
+line 135:     " OCaml-scripts
+line 136:   elseif s:name =~ 'ocaml'
+line 137:     set ft=ocaml
+line 138: 
+line 139:     " Awk scripts
+line 140:   elseif s:name =~ 'awk\>'
+line 141:     set ft=awk
+line 142: 
+line 143:     " Website MetaLanguage
+line 144:   elseif s:name =~ 'wml'
+line 145:     set ft=wml
+line 146: 
+line 147:     " Scheme scripts
+line 148:   elseif s:name =~ 'scheme'
+line 149:     set ft=scheme
+line 150: 
+line 151:     " CFEngine scripts
+line 152:   elseif s:name =~ 'cfengine'
+line 153:     set ft=cfengine
+line 154: 
+line 155:   endif
+line 156:   unlet s:name
+line 157: 
+line 158: else
+line 159:   " File does not start with "#!".
+line 160: 
+line 161:   let s:line2 = getline(2)
+line 162:   let s:line3 = getline(3)
+line 163:   let s:line4 = getline(4)
+line 164:   let s:line5 = getline(5)
+line 165: 
+line 166:   " Bourne-like shell scripts: sh ksh bash bash2
+line 167:   if s:line1 =~ '^:$'
+line 168:     call SetFileTypeSH(s:line1)^I" defined in filetype.vim
+line 169: 
+line 170:     " Z shell scripts
+line 172:   elseif s:line1 =~ '^#compdef\>' || s:line1 =~ '^#autoload\>' || "\n".s:line1."\n".s:line2."\n".s:line3."\n".s:line4."\n".s:line5 =~ '\n\s*emulate\s\+\%(-[LR]\s\+\)\=[ckz]\=sh\>'
+line 173:     set ft=zsh
+line 174: 
+line 175:   " ELM Mail files
+line 176:   elseif s:line1 =~ '^From \([a-zA-Z][a-zA-Z_0-9\.=-]*\(@[^ ]*\)\=\|-\) .* \(19\|20\)\d\d$'
+line 177:     set ft=mail
+line 178: 
+line 179:     " Mason
+line 180:   elseif s:line1 =~ '^<[%&].*>'
+line 181:     set ft=mason
+line 182: 
+line 183:     " Vim scripts (must have '" vim' as the first line to trigger this)
+line 184:   elseif s:line1 =~ '^" *[vV]im$'
+line 185:     set ft=vim
+line 186: 
+line 187:     " MOO
+line 188:   elseif s:line1 =~ '^\*\* LambdaMOO Database, Format Version \%([1-3]\>\)\@!\d\+ \*\*$'
+line 189:     set ft=moo
+line 190: 
+line 191:     " Diff file:
+line 192:     " - "diff" in first line (context diff)
+line 193:     " - "Only in " in first line
+line 194:     " - "--- " in first line and "+++ " in second line (unified diff).
+line 195:     " - "*** " in first line and "--- " in second line (context diff).
+line 196:     " - "# It was generated by makepatch " in the second line (makepatch diff).
+line 197:     " - "Index: <filename>" in the first line (CVS file)
+line 198:     " - "=== ", line of "=", "---", "+++ " (SVK diff)
+line 199:     " - "=== ", "--- ", "+++ " (bzr diff, common case)
+line 200:     " - "=== (removed|added|renamed|modified)" (bzr diff, alternative)
+line 201:     " - "# HG changeset patch" in first line (Mercurial export format)
+line 207:   elseif s:line1 =~ '^\(diff\>\|Only in \|\d\+\(,\d\+\)\=[cda]\d\+\>\|# It was generated by makepatch \|Index:\s\+\f\+\r\=$\|===== \f\+ \d\+\.\d\+ vs edited\|==== //\f\+#\d\+\|# HG changeset patch\)' || (s:line1 =~ '^--- ' && s:line2 =~ '^+++ ') || (s:line1 =~ '^\* looking for ' && s:line2 =~ '^\* comparing to ') || (s:line1 =~ '^\*\*\* ' && s:line2 =~ '^--- ') || (s:line1 =~ '^=== ' && ((s:line2 =~ '^=\{66\}' && s:line3 =~ '^--- ' && s:line4 =~ '^+++') || (s:line2 =~ '^--- ' && s:line3 =~ '^+++ '))) || (s:line1 =~ '^=== \(removed\|added\|renamed\|modified\)')
+line 208:     set ft=diff
+line 209: 
+line 210:     " PostScript Files (must have %!PS as the first line, like a2ps output)
+line 211:   elseif s:line1 =~ '^%![ \t]*PS'
+line 212:     set ft=postscr
+line 213: 
+line 214:     " M4 scripts: Guess there is a line that starts with "dnl".
+line 219:   elseif s:line1 =~ '^\s*dnl\>' || s:line2 =~ '^\s*dnl\>' || s:line3 =~ '^\s*dnl\>' || s:line4 =~ '^\s*dnl\>' || s:line5 =~ '^\s*dnl\>'
+line 220:     set ft=m4
+line 221: 
+line 222:     " AmigaDos scripts
+line 224:   elseif $TERM == "amiga" && (s:line1 =~ "^;" || s:line1 =~ '^\.[bB][rR][aA]')
+line 225:     set ft=amiga
+line 226: 
+line 227:     " SiCAD scripts (must have procn or procd as the first line to trigger this)
+line 228:   elseif s:line1 =~? '^ *proc[nd] *$'
+line 229:     set ft=sicad
+line 230: 
+line 231:     " Purify log files start with "****  Purify"
+line 232:   elseif s:line1 =~ '^\*\*\*\*  Purify'
+line 233:     set ft=purifylog
+line 234: 
+line 235:     " XML
+line 236:   elseif s:line1 =~ '<?\s*xml.*?>'
+line 237:     set ft=xml
+line 238: 
+line 239:     " XHTML (e.g.: PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN")
+line 240:   elseif s:line1 =~ '\<DTD\s\+XHTML\s'
+line 241:     set ft=xhtml
+line 242: 
+line 243:     " HTML (e.g.: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN")
+line 244:   elseif s:line1 =~? '\<DOCTYPE\s\+html\>'
+line 245:     set ft=html
+line 246: 
+line 247:     " PDF
+line 248:   elseif s:line1 =~ '^%PDF-'
+line 249:     set ft=pdf
+line 250: 
+line 251:     " XXD output
+line 252:   elseif s:line1 =~ '^\x\{7}: \x\{2} \=\x\{2} \=\x\{2} \=\x\{2} '
+line 253:     set ft=xxd
+line 254: 
+line 255:     " RCS/CVS log output
+line 256:   elseif s:line1 =~ '^RCS file:' || s:line2 =~ '^RCS file:'
+line 257:     set ft=rcslog
+line 258: 
+line 259:     " CVS commit
+line 260:   elseif s:line2 =~ '^CVS:' || getline("$") =~ '^CVS: '
+line 261:     set ft=cvs
+line 262: 
+line 263:     " Prescribe
+line 264:   elseif s:line1 =~ '^!R!'
+line 265:     set ft=prescribe
+line 266: 
+line 267:     " Send-pr
+line 268:   elseif s:line1 =~ '^SEND-PR:'
+line 269:     set ft=sendpr
+line 270: 
+line 271:     " SNNS files
+line 272:   elseif s:line1 =~ '^SNNS network definition file'
+line 273:     set ft=snnsnet
+line 274:   elseif s:line1 =~ '^SNNS pattern definition file'
+line 275:     set ft=snnspat
+line 276:   elseif s:line1 =~ '^SNNS result file'
+line 277:     set ft=snnsres
+line 278: 
+line 279:     " Virata
+line 284:   elseif s:line1 =~ '^%.\{-}[Vv]irata' || s:line2 =~ '^%.\{-}[Vv]irata' || s:line3 =~ '^%.\{-}[Vv]irata' || s:line4 =~ '^%.\{-}[Vv]irata' || s:line5 =~ '^%.\{-}[Vv]irata'
+line 285:     set ft=virata
+line 286: 
+line 287:     " Strace
+line 288:   elseif s:line1 =~ '^\(\[pid \d\+\] \)\=[0-9:.]* *execve(' || s:line1 =~ '^__libc_start_main'
+line 289:     set ft=strace
+line 290: 
+line 291:     " VSE JCL
+line 292:   elseif s:line1 =~ '^\* $$ JOB\>' || s:line1 =~ '^// *JOB\>'
+line 293:     set ft=vsejcl
+line 294: 
+line 295:     " TAK and SINDA
+line 296:   elseif s:line4 =~ 'K & K  Associates' || s:line2 =~ 'TAK 2000'
+line 297:     set ft=takout
+line 298:   elseif s:line3 =~ 'S Y S T E M S   I M P R O V E D '
+line 299:     set ft=sindaout
+line 300:   elseif getline(6) =~ 'Run Date: '
+line 301:     set ft=takcmp
+line 302:   elseif getline(9) =~ 'Node    File  1'
+line 303:     set ft=sindacmp
+line 304: 
+line 305:     " DNS zone files
+line 306:   elseif s:line1.s:line2.s:line3.s:line4 =~ '^; <<>> DiG [0-9.]\+ <<>>\|BIND.*named\|$ORIGIN\|$TTL\|IN\s\+SOA'
+line 307:     set ft=bindzone
+line 308: 
+line 309:     " BAAN
+line 311:   elseif s:line1 =~ '|\*\{1,80}' && s:line2 =~ 'VRC ' || s:line2 =~ '|\*\{1,80}' && s:line3 =~ 'VRC '
+line 312:     set ft=baan
+line 313: 
+line 314:   " Valgrind
+line 315:   elseif s:line1 =~ '^==\d\+== valgrind' || s:line3 =~ '^==\d\+== Using valgrind'
+line 316:     set ft=valgrind
+line 317: 
+line 318:   " Renderman Interface Bytestream
+line 319:   elseif s:line1 =~ '^##RenderMan'
+line 320:     set ft=rib
+line 321: 
+line 322:   " Scheme scripts
+line 323:   elseif s:line1 =~ 'exec\s\+\S*scheme' || s:line2 =~ 'exec\s\+\S*scheme'
+line 324:     set ft=scheme
+line 325: 
+line 326:   " Git output
+line 327:   elseif s:line1 =~ '^\(commit\|tree\|object\) \x\{40\}\>\|^tag \S\+$'
+line 328:     set ft=git
+line 329: 
+line 330:   " CVS diff
+line 331:   else
+line 332:     let s:lnum = 1
+line 333:     while getline(s:lnum) =~ "^? " && s:lnum < line("$")
+line 334:       let s:lnum += 1
+line 335:     endwhile
+line 336:     if getline(s:lnum) =~ '^Index:\s\+\f\+$'
+line 337:       set ft=diff
+line 338: 
+line 339:       " locale input files: Formal Definitions of Cultural Conventions
+line 340:       " filename must be like en_US, fr_FR@euro or en_US.UTF-8
+line 341:     elseif expand("%") =~ '\a\a_\a\a\($\|[.@]\)\|i18n$\|POSIX$\|translit_'
+line 342:       let s:lnum = 1
+line 343:       while s:lnum < 100 && s:lnum < line("$")
+line 344: ^Iif getline(s:lnum) =~ '^LC_\(IDENTIFICATION\|CTYPE\|COLLATE\|MONETARY\|NUMERIC\|TIME\|MESSAGES\|PAPER\|TELEPHONE\|MEASUREMENT\|NAME\|ADDRESS\)$'
+line 345: ^I  setf fdcc
+line 346: ^I  break
+line 347: ^Iendif
+line 348: ^Ilet s:lnum += 1
+line 349:       endwhile
+line 350:     endif
+line 351:     unlet s:lnum
+line 352: 
+line 353:   endif
+line 354: 
+line 355:   unlet s:line2 s:line3 s:line4 s:line5
+line 356: 
+line 357: endif
+line 358: 
+line 359: " Restore 'cpoptions'
+line 360: let &cpo = s:cpo_save
+line 361: 
+line 362: unlet s:cpo_save s:line1
+finished sourcing /usr/local/share/vim/vim73/scripts.vim
+continuing in BufNewFile Auto commands for "*"
+Searching for "/usr/local/share/vim/vimfiles/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vundle/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vundle/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/threesome.vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/gundo.vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/nerdcommenter/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/tagbar-phpctags/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/xmledit/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/tagbar/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/applescript.vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-sluice/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/wikia-csv/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vimunit/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-fugitive/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/ctrlp.vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/ultisnips/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-scala/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-coffee-script/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-surround/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/webapi-vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/gist-vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-indent-guides/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-ps1/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-colors-solarized/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/L9/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/cecutil/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/Vimball/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/Align/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/LargeFile/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/genutils/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/matchit.zip/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-unimpaired/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/Conque-Shell/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vus/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/gitv/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/nerdtree/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-easymotion/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-repeat/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/argtextobj.vim/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/vim-xdebug/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/neocomplcache/after/scripts.vim"
+Searching for "/Users/danesummers/.vim/bundle/csapprox/after/scripts.vim"
+line 0:  endif
+Executing BufNewFile Auto commands for "*"
+autocommand call s:DetectScala()
+
+line 0: call s:DetectScala()
+calling function <SNR>8_DetectScala()
+
+line 1:     if getline(1) == '#!/usr/bin/env scala'
+line 2:         set filetype=scala
+line 3:     endif
+function <SNR>8_DetectScala returning #0
+
+continuing in BufNewFile Auto commands for "*"
+
+Executing BufNewFile Auto commands for "*"
+autocommand if !did_filetype() && expand("<amatch>") !~ g:ft_ignore_pat    && (getline(1) =~ '^#' || getline(2) =~ '^#' || getline(3) =~ '^#'^I|| getline(4) =~ '^#' || getline(5) =~ '^#') |   setf conf | endif
+
+line 0: if !did_filetype() && expand("<amatch>") !~ g:ft_ignore_pat    && (getline(1) =~ '^#' || getline(2) =~ '^#' || getline(3) =~ '^#'^I|| getline(4) =~ '^#' || getline(5) =~ '^#') |   setf conf | endif
+line 0:    setf conf | endif
+line 0:  endif
+Executing BufNewFile Auto commands for "*"
+autocommand highlight! UnderCursor guibg=#ffffff
+
+line 0: highlight! UnderCursor guibg=#ffffff
+Executing BufNewFile Auto commands for "*"
+autocommand call s:Detect(expand('<amatch>:p'))
+
+line 0: call s:Detect(expand('<amatch>:p'))
+calling function <SNR>32_Detect('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('b:git_dir') && (b:git_dir ==# '' || b:git_dir =~# '/$')
+line 2:     unlet b:git_dir
+line 3:   endif
+line 4:   if !exists('b:git_dir')
+line 5:     let dir = fugitive#extract_git_dir(a:path)
+calling function <SNR>32_Detect..fugitive#extract_git_dir('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if s:shellslash(a:path) =~# '^fugitive://.*//'
+calling function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_shellslash('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('+shellslash') && !&shellslash
+line 2:     return s:gsub(a:path,'\\','/')
+line 3:   else
+line 4:     return a:path
+function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_shellslash returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir
+
+line 2:     return matchstr(s:shellslash(a:path), '\C^fugitive://\zs.\{-\}\ze//')
+line 3:   endif
+line 4:   let root = s:shellslash(simplify(fnamemodify(a:path, ':p:s?[\/]$??')))
+calling function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_shellslash('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('+shellslash') && !&shellslash
+line 2:     return s:gsub(a:path,'\\','/')
+line 3:   else
+line 4:     return a:path
+function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_shellslash returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir
+
+line 5:   let previous = ""
+line 6:   while root !=# previous
+line 7:     let dir = s:sub(root, '[\/]$', '') . '/.git'
+calling function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_sub('/Users/danesummers/environment/vim/bundle/vim-sluice/abid', '[\/]$', '')
+
+line 1:   return substitute(a:str,'\v\C'.a:pat,a:rep,'')
+function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_sub returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir
+
+line 8:     let type = getftype(dir)
+line 9:     if type ==# 'dir' && fugitive#is_git_dir(dir)
+line 10:       return dir
+line 11:     elseif type ==# 'link' && fugitive#is_git_dir(dir)
+line 12:       return resolve(dir)
+line 13:     elseif type !=# '' && filereadable(dir)
+line 14:       let line = get(readfile(dir, '', 1), 0, '')
+line 15:       if line =~# '^gitdir: \.' && fugitive#is_git_dir(root.'/'.line[8:-1])
+line 16:         return simplify(root.'/'.line[8:-1])
+line 17:       elseif line =~# '^gitdir: ' && fugitive#is_git_dir(line[8:-1])
+line 18:         return line[8:-1]
+line 19:       endif
+line 20:     elseif fugitive#is_git_dir(root)
+calling function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   let path = s:sub(a:path, '[\/]$', '') . '/'
+calling function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir..<SNR>32_sub('/Users/danesummers/environment/vim/bundle/vim-sluice/abid', '[\/]$', '')
+
+line 1:   return substitute(a:str,'\v\C'.a:pat,a:rep,'')
+function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir..<SNR>32_sub returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir
+
+line 2:   return isdirectory(path.'objects') && isdirectory(path.'refs') && getfsize(path.'HEAD') > 10
+function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir returning #0
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir
+
+line 21:       return root
+line 22:     endif
+line 23:     let previous = root
+line 24:     let root = fnamemodify(root, ':h')
+line 25:   endwhile
+line 6:   while root !=# previous
+line 7:     let dir = s:sub(root, '[\/]$', '') . '/.git'
+calling function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_sub('/Users/danesummers/environment/vim/bundle/vim-sluice', '[\/]$', '')
+
+line 1:   return substitute(a:str,'\v\C'.a:pat,a:rep,'')
+function <SNR>32_Detect..fugitive#extract_git_dir..<SNR>32_sub returning '/Users/danesummers/environment/vim/bundle/vim-sluice'
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir
+
+line 8:     let type = getftype(dir)
+line 9:     if type ==# 'dir' && fugitive#is_git_dir(dir)
+calling function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir('/Users/danesummers/environment/vim/bundle/vim-sluice/.git')
+
+line 1:   let path = s:sub(a:path, '[\/]$', '') . '/'
+calling function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir..<SNR>32_sub('/Users/danesummers/environment/vim/bundle/vim-sluice/.git', '[\/]$', '')
+
+line 1:   return substitute(a:str,'\v\C'.a:pat,a:rep,'')
+function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir..<SNR>32_sub returning '/Users/danesummers/environment/vim/bundle/vim-sluice/.git'
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir
+
+line 2:   return isdirectory(path.'objects') && isdirectory(path.'refs') && getfsize(path.'HEAD') > 10
+function <SNR>32_Detect..fugitive#extract_git_dir..fugitive#is_git_dir returning #1
+
+continuing in function <SNR>32_Detect..fugitive#extract_git_dir
+
+line 10:       return dir
+function <SNR>32_Detect..fugitive#extract_git_dir returning '/Users/danesummers/environment/vim/bundle/vim-sluice/.git'
+
+continuing in function <SNR>32_Detect
+
+line 6:     if dir !=# ''
+line 7:       let b:git_dir = dir
+line 8:     endif
+line 9:   endif
+line 10:   if exists('b:git_dir')
+line 11:     silent doautocmd User Fugitive
+Executing User Auto commands for "Fugitive"
+autocommand call s:define_commands()
+
+line 0: call s:define_commands()
+calling function <SNR>32_define_commands()
+
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bang -nargs=? -complete=customlist,s:GitComplete Git :execute s:Git(<bang>0,<q-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:DirComplete Gcd  :cd<bang>  `=s:repo().bare() ? s:repo().dir(<q-args>) : s:repo().tree(<q-args>)`
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:DirComplete Glcd :lcd<bang> `=s:repo().bare() ? s:repo().dir(<q-args>) : s:repo().tree(<q-args>)`
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar Gstatus :execute s:Status()
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -nargs=? -complete=customlist,s:CommitComplete Gcommit :execute s:Commit(<q-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bang -nargs=? -complete=customlist,s:EditComplete Ggrep :execute s:Grep('grep',<bang>0,<q-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bang -nargs=? -complete=customlist,s:EditComplete Glgrep :execute s:Grep('lgrep',<bang>0,<q-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=* -complete=customlist,s:EditComplete Glog :execute s:Log('grep<bang>',<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=* -complete=customlist,s:EditComplete Gllog :execute s:Log('lgrep<bang>',<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditComplete Ge       :execute s:Edit('edit<bang>',0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditComplete Gedit    :execute s:Edit('edit<bang>',0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditRunComplete Gpedit   :execute s:Edit('pedit',<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditRunComplete Gsplit   :execute s:Edit('split',<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditRunComplete Gvsplit  :execute s:Edit('vsplit',<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditRunComplete Gtabedit :execute s:Edit('tabedit',<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -count -complete=customlist,s:EditRunComplete Gread :execute s:Edit((!<count> && <line1> ? '' : <count>).'read',<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditComplete Gwrite :execute s:Write(<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditComplete Gw :execute s:Write(<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -nargs=? -complete=customlist,s:EditComplete Gwq :execute s:Wq(<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bang -bar -nargs=? -complete=customlist,s:EditComplete Gdiff :execute s:Diff(<bang>0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -nargs=? -complete=customlist,s:EditComplete Gvdiff :execute s:Diff(0,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -nargs=? -complete=customlist,s:EditComplete Gsdiff :execute s:Diff(1,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 2: command! -buffer -bar -bang -range -nargs=? -complete=customlist,s:EditComplete Gbrowse :execute s:Browse(<bang>0,<line1>,<count>,<f-args>)
+line 3:   endfor
+line 1:   for command in s:commands
+line 2:     exe 'command! -buffer '.command
+line 3:   endfor
+function <SNR>32_define_commands returning #0
+
+continuing in User Auto commands for "Fugitive"
+
+Executing User Auto commands for "Fugitive"
+autocommand if s:buffer().commit() =~# '^0\=$' | exe "command! -buffer -bar -bang -nargs=1 -complete=customlist,s:MoveComplete Gmove :execute s:Move(<bang>0,<q-args>)" | exe "command! -buffer -bar -bang Gremove :execute s:Remove(<bang>0)" | endif
+
+line 0: if s:buffer().commit() =~# '^0\=$' | exe "command! -buffer -bar -bang -nargs=1 -complete=customlist,s:MoveComplete Gmove :execute s:Move(<bang>0,<q-args>)" | exe "command! -buffer -bar -bang Gremove :execute s:Remove(<bang>0)" | endif
+calling function <SNR>32_buffer()
+
+line 1:   let buffer = {'#': bufnr(a:0 ? a:1 : '%')}
+line 2:   call extend(extend(buffer,s:buffer_prototype,'keep'),s:abstract_prototype,'keep')
+line 3:   if buffer.getvar('git_dir') !=# ''
+calling function <SNR>32_buffer..<SNR>32_buffer_getvar('git_dir')
+
+line 1:   return getbufvar(self['#'],a:var)
+function <SNR>32_buffer..<SNR>32_buffer_getvar returning '/Users/danesummers/environment/vim/bundle/vim-sluice/.git'
+
+continuing in function <SNR>32_buffer
+
+line 4:     return buffer
+function <SNR>32_buffer returning {'containing_commit': function('<SNR>...'name': function('<SNR>32_buffer_name')}
+
+continuing in User Auto commands for "Fugitive"
+
+calling function <SNR>32_buffer_commit()
+
+line 1:   return matchstr(self.spec(),'^fugitive://.\{-\}//\zs\w*')
+calling function <SNR>32_buffer_commit..<SNR>32_buffer_spec()
+
+line 1:     let bufname = bufname(self['#'])
+line 2:     return s:shellslash(bufname == '' ? '' : fnamemodify(bufname,':p'))
+calling function <SNR>32_buffer_commit..<SNR>32_buffer_spec..<SNR>32_shellslash('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('+shellslash') && !&shellslash
+line 2:     return s:gsub(a:path,'\\','/')
+line 3:   else
+line 4:     return a:path
+function <SNR>32_buffer_commit..<SNR>32_buffer_spec..<SNR>32_shellslash returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_commit..<SNR>32_buffer_spec
+
+function <SNR>32_buffer_commit..<SNR>32_buffer_spec returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_commit
+
+function <SNR>32_buffer_commit returning ''
+
+continuing in User Auto commands for "Fugitive"
+
+line 0:  exe "command! -buffer -bar -bang -nargs=1 -complete=customlist,s:MoveComplete Gmove :execute s:Move(<bang>0,<q-args>)" | exe "command! -buffer -bar -bang Gremove :execute s:Remove(<bang>0)" | endif
+line 0: command! -buffer -bar -bang -nargs=1 -complete=customlist,s:MoveComplete Gmove :execute s:Move(<bang>0,<q-args>)
+line 0:  exe "command! -buffer -bar -bang Gremove :execute s:Remove(<bang>0)" | endif
+line 0: command! -buffer -bar -bang Gremove :execute s:Remove(<bang>0)
+line 0:  endif
+Executing User Auto commands for "Fugitive"
+autocommand if s:buffer().type('file', 'blob') | exe "command! -buffer -bar -bang -range=0 -nargs=* Gblame :execute s:Blame(<bang>0,<line1>,<line2>,<count>,[<f-args>])" | endif
+
+line 0: if s:buffer().type('file', 'blob') | exe "command! -buffer -bar -bang -range=0 -nargs=* Gblame :execute s:Blame(<bang>0,<line1>,<line2>,<count>,[<f-args>])" | endif
+calling function <SNR>32_buffer()
+
+line 1:   let buffer = {'#': bufnr(a:0 ? a:1 : '%')}
+line 2:   call extend(extend(buffer,s:buffer_prototype,'keep'),s:abstract_prototype,'keep')
+line 3:   if buffer.getvar('git_dir') !=# ''
+calling function <SNR>32_buffer..<SNR>32_buffer_getvar('git_dir')
+
+line 1:   return getbufvar(self['#'],a:var)
+function <SNR>32_buffer..<SNR>32_buffer_getvar returning '/Users/danesummers/environment/vim/bundle/vim-sluice/.git'
+
+continuing in function <SNR>32_buffer
+
+line 4:     return buffer
+function <SNR>32_buffer returning {'containing_commit': function('<SNR>...'name': function('<SNR>32_buffer_name')}
+
+continuing in User Auto commands for "Fugitive"
+
+calling function <SNR>32_buffer_type('file', 'blob')
+
+line 1:   if self.getvar('fugitive_type') != ''
+calling function <SNR>32_buffer_type..<SNR>32_buffer_getvar('fugitive_type')
+
+line 1:   return getbufvar(self['#'],a:var)
+function <SNR>32_buffer_type..<SNR>32_buffer_getvar returning ''
+
+continuing in function <SNR>32_buffer_type
+
+line 2:     let type = self.getvar('fugitive_type')
+line 3:   elseif fnamemodify(self.spec(),':p') =~# '.\git/refs/\|\.git/\w*HEAD$'
+calling function <SNR>32_buffer_type..<SNR>32_buffer_spec()
+
+line 1:     let bufname = bufname(self['#'])
+line 2:     return s:shellslash(bufname == '' ? '' : fnamemodify(bufname,':p'))
+calling function <SNR>32_buffer_type..<SNR>32_buffer_spec..<SNR>32_shellslash('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('+shellslash') && !&shellslash
+line 2:     return s:gsub(a:path,'\\','/')
+line 3:   else
+line 4:     return a:path
+function <SNR>32_buffer_type..<SNR>32_buffer_spec..<SNR>32_shellslash returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_type..<SNR>32_buffer_spec
+
+function <SNR>32_buffer_type..<SNR>32_buffer_spec returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_type
+
+line 4:     let type = 'head'
+line 5:   elseif self.getline(1) =~ '^tree \x\{40\}$' && self.getline(2) == ''
+calling function <SNR>32_buffer_type..<SNR>32_buffer_getline(1)
+
+line 1:   return getbufline(self['#'],a:lnum)[0]
+function <SNR>32_buffer_type..<SNR>32_buffer_getline returning ''
+
+continuing in function <SNR>32_buffer_type
+
+line 6:     let type = 'tree'
+line 7:   elseif self.getline(1) =~ '^\d\{6\} \w\{4\} \x\{40\}\>\t'
+calling function <SNR>32_buffer_type..<SNR>32_buffer_getline(1)
+
+line 1:   return getbufline(self['#'],a:lnum)[0]
+function <SNR>32_buffer_type..<SNR>32_buffer_getline returning ''
+
+continuing in function <SNR>32_buffer_type
+
+line 8:     let type = 'tree'
+line 9:   elseif self.getline(1) =~ '^\d\{6\} \x\{40\}\> \d\t'
+calling function <SNR>32_buffer_type..<SNR>32_buffer_getline(1)
+
+line 1:   return getbufline(self['#'],a:lnum)[0]
+function <SNR>32_buffer_type..<SNR>32_buffer_getline returning ''
+
+continuing in function <SNR>32_buffer_type
+
+line 10:     let type = 'index'
+line 11:   elseif isdirectory(self.spec())
+calling function <SNR>32_buffer_type..<SNR>32_buffer_spec()
+
+line 1:     let bufname = bufname(self['#'])
+line 2:     return s:shellslash(bufname == '' ? '' : fnamemodify(bufname,':p'))
+calling function <SNR>32_buffer_type..<SNR>32_buffer_spec..<SNR>32_shellslash('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('+shellslash') && !&shellslash
+line 2:     return s:gsub(a:path,'\\','/')
+line 3:   else
+line 4:     return a:path
+function <SNR>32_buffer_type..<SNR>32_buffer_spec..<SNR>32_shellslash returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_type..<SNR>32_buffer_spec
+
+function <SNR>32_buffer_type..<SNR>32_buffer_spec returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_type
+
+line 12:     let type = 'directory'
+line 13:   elseif self.spec() == ''
+calling function <SNR>32_buffer_type..<SNR>32_buffer_spec()
+
+line 1:     let bufname = bufname(self['#'])
+line 2:     return s:shellslash(bufname == '' ? '' : fnamemodify(bufname,':p'))
+calling function <SNR>32_buffer_type..<SNR>32_buffer_spec..<SNR>32_shellslash('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   if exists('+shellslash') && !&shellslash
+line 2:     return s:gsub(a:path,'\\','/')
+line 3:   else
+line 4:     return a:path
+function <SNR>32_buffer_type..<SNR>32_buffer_spec..<SNR>32_shellslash returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_type..<SNR>32_buffer_spec
+
+function <SNR>32_buffer_type..<SNR>32_buffer_spec returning '/Users/danesummers/environment/vim/bundle/vim-sluice/abid'
+
+continuing in function <SNR>32_buffer_type
+
+line 14:     let type = 'null'
+line 15:   else
+line 16:     let type = 'file'
+line 17:   endif
+line 18:   if a:0
+line 19:     return !empty(filter(copy(a:000),'v:val ==# type'))
+function <SNR>32_buffer_type returning #1
+
+continuing in User Auto commands for "Fugitive"
+
+line 0:  exe "command! -buffer -bar -bang -range=0 -nargs=* Gblame :execute s:Blame(<bang>0,<line1>,<line2>,<count>,[<f-args>])" | endif
+line 0: command! -buffer -bar -bang -range=0 -nargs=* Gblame :execute s:Blame(<bang>0,<line1>,<line2>,<count>,[<f-args>])
+line 0:  endif
+Executing User Auto commands for "Fugitive"
+autocommand if &filetype =~# '^git\%(commit\)\=$' && &foldtext ==# 'foldtext()' |    set foldtext=fugitive#foldtext() | endif
+
+line 0: if &filetype =~# '^git\%(commit\)\=$' && &foldtext ==# 'foldtext()' |    set foldtext=fugitive#foldtext() | endif
+line 0:     set foldtext=fugitive#foldtext() | endif
+line 0:  endif
+line 12:     cnoremap <buffer> <expr> <C-R><C-G> <SID>recall()
+line 13:     nnoremap <buffer> <silent> y<C-G> :call setreg(v:register, <SID>recall())<CR>
+line 14:     let buffer = fugitive#buffer()
+calling function <SNR>32_Detect..fugitive#buffer()
+
+line 1:   return s:buffer(a:0 ? a:1 : '%')
+calling function <SNR>32_Detect..fugitive#buffer..<SNR>32_buffer('%')
+
+line 1:   let buffer = {'#': bufnr(a:0 ? a:1 : '%')}
+line 2:   call extend(extend(buffer,s:buffer_prototype,'keep'),s:abstract_prototype,'keep')
+line 3:   if buffer.getvar('git_dir') !=# ''
+calling function <SNR>32_Detect..fugitive#buffer..<SNR>32_buffer..<SNR>32_buffer_getvar('git_dir')
+
+line 1:   return getbufvar(self['#'],a:var)
+function <SNR>32_Detect..fugitive#buffer..<SNR>32_buffer..<SNR>32_buffer_getvar returning '/Users/danesummers/environment/vim/bundle/vim-sluice/.git'
+
+continuing in function <SNR>32_Detect..fugitive#buffer..<SNR>32_buffer
+
+line 4:     return buffer
+function <SNR>32_Detect..fugitive#buffer..<SNR>32_buffer returning {'containing_commit': function('<SNR>...'name': function('<SNR>32_buffer_name')}
+
+continuing in function <SNR>32_Detect..fugitive#buffer
+
+function <SNR>32_Detect..fugitive#buffer returning {'containing_commit': function('<SNR>...'name': function('<SNR>32_buffer_name')}
+
+continuing in function <SNR>32_Detect
+
+line 15:     if expand('%:p') =~# '//'
+line 16:       call buffer.setvar('&path', s:sub(buffer.getvar('&path'), '^\.%(,|$)', ''))
+line 17:     endif
+line 18:     if stridx(buffer.getvar('&tags'), escape(b:git_dir.'/tags', ', ')) == -1
+calling function <SNR>32_Detect..<SNR>32_buffer_getvar('&tags')
+
+line 1:   return getbufvar(self['#'],a:var)
+function <SNR>32_Detect..<SNR>32_buffer_getvar returning './tags,tags'
+
+continuing in function <SNR>32_Detect
+
+line 19:       call buffer.setvar('&tags', escape(b:git_dir.'/tags', ', ').','.buffer.getvar('&tags'))
+calling function <SNR>32_Detect..<SNR>32_buffer_getvar('&tags')
+
+line 1:   return getbufvar(self['#'],a:var)
+function <SNR>32_Detect..<SNR>32_buffer_getvar returning './tags,tags'
+
+continuing in function <SNR>32_Detect
+
+calling function <SNR>32_Detect..<SNR>32_buffer_setvar('&tags', '/Users/danesummers/environment/vim/bundle/vim-sluice/.git/tags,./tags,tags')
+
+line 1:   return setbufvar(self['#'],a:var,a:value)
+function <SNR>32_Detect..<SNR>32_buffer_setvar returning #0
+
+continuing in function <SNR>32_Detect
+
+line 20:       if &filetype !=# ''
+line 21:         call buffer.setvar('&tags', escape(b:git_dir.'/'.&filetype.'.tags', ', ').','.buffer.getvar('&tags'))
+line 22:       endif
+line 23:     endif
+line 24:   endif
+function <SNR>32_Detect returning #0
+
+continuing in BufNewFile Auto commands for "*"
+
+Executing BufNewFile Auto commands for "*"
+autocommand if has_key(s:temp_files,expand('<amatch>:p')) |   let b:git_dir = s:temp_files[expand('<amatch>:p')] |   let b:git_type = 'temp' |   call s:Detect(expand('<amatch>:p')) |   setlocal bufhidden=delete |   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+
+line 0: if has_key(s:temp_files,expand('<amatch>:p')) |   let b:git_dir = s:temp_files[expand('<amatch>:p')] |   let b:git_type = 'temp' |   call s:Detect(expand('<amatch>:p')) |   setlocal bufhidden=delete |   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+line 0:    let b:git_dir = s:temp_files[expand('<amatch>:p')] |   let b:git_type = 'temp' |   call s:Detect(expand('<amatch>:p')) |   setlocal bufhidden=delete |   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+line 0:    let b:git_type = 'temp' |   call s:Detect(expand('<amatch>:p')) |   setlocal bufhidden=delete |   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+line 0:    call s:Detect(expand('<amatch>:p')) |   setlocal bufhidden=delete |   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+line 0:    setlocal bufhidden=delete |   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+line 0:    nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>| endif
+line 0:  endif
+Executing BufEnter Auto commands for "*"
+autocommand :call s:SetUpForNewFiletype(&filetype, 0)
+
+line 0: :call s:SetUpForNewFiletype(&filetype, 0)
+calling function <SNR>21_SetUpForNewFiletype('', 0)
+
+line 1:     let ft = a:filetype
+line 2: 
+line 3:     "for compound filetypes, if we dont know how to handle the full filetype
+line 4:     "then break it down and use the first part that we know how to handle
+line 5:     if ft =~ '\.' && !has_key(s:delimiterMap, ft)
+line 6:         let filetypes = split(a:filetype, '\.')
+line 7:         for i in filetypes
+line 8:             if has_key(s:delimiterMap, i)
+line 9:                 let ft = i
+line 10:                 break
+line 11:             endif
+line 12:         endfor
+line 13:     endif
+line 14: 
+line 15:     let b:NERDSexyComMarker = ''
+line 16: 
+line 17:     if has_key(s:delimiterMap, ft)
+line 18:         let b:NERDCommenterDelims = s:delimiterMap[ft]
+line 19:         for i in ['left', 'leftAlt', 'right', 'rightAlt']
+line 20:             if !has_key(b:NERDCommenterDelims, i)
+line 21:                 let b:NERDCommenterDelims[i] = ''
+line 22:             endif
+line 23:         endfor
+line 24:     else
+line 25:         let b:NERDCommenterDelims = s:CreateDelimMapFromCms()
+calling function <SNR>21_SetUpForNewFiletype..<SNR>21_CreateDelimMapFromCms()
+
+line 1:     return { 'left': substitute(&commentstring, '\([^ \t]*\)\s*%s.*', '\1', ''), 'right': substitute(&commentstring, '.*%s\s*\(.*\)', '\1', 'g'), 'leftAlt': '', 'rightAlt': '' }
+function <SNR>21_SetUpForNewFiletype..<SNR>21_CreateDelimMapFromCms returning {'right': '*/', 'rightAlt': '', 'leftAlt': '', 'left': '/*'}
+
+continuing in function <SNR>21_SetUpForNewFiletype
+
+line 26:     endif
+line 27: 
+function <SNR>21_SetUpForNewFiletype returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand let b:sluice_signs = {}
+
+line 0: let b:sluice_signs = {}
+Executing BufEnter Auto commands for "*"
+autocommand cal s:record(expand('<abuf>', 1))
+
+line 0: cal s:record(expand('<abuf>', 1))
+calling function <SNR>34_record('2')
+
+line 1: ^Iif s:locked | retu | en
+line 1:  retu | en
+line 1:  en
+line 2: ^Ilet bufnr = a:bufnr + 0
+line 3: ^Ilet bufname = bufname(bufnr)
+line 4: ^Iif bufnr > 0 && !empty(bufname)
+line 5: ^I^Ical filter(s:mrbs, 'v:val != bufnr')
+line 6: ^I^Ical insert(s:mrbs, bufnr)
+line 7: ^I^Ical s:addtomrufs(bufname)
+calling function <SNR>34_record..<SNR>34_addtomrufs('abid')
+
+line 1: ^Ilet fn = fnamemodify(a:fname, ':p')
+line 2: ^Ilet fn = exists('+ssl') ? tr(fn, '/', '\') : fn
+line 3: ^Iif ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} ) || !empty(getbufvar('^'.fn.'$', '&bt')) || !filereadable(fn) | retu
+line 3:  retu
+function <SNR>34_record..<SNR>34_addtomrufs returning #0
+
+continuing in function <SNR>34_record
+
+line 8: ^Ien
+function <SNR>34_record returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand call indent_guides#process_autocmds()
+
+line 0: call indent_guides#process_autocmds()
+calling function indent_guides#process_autocmds()
+
+line 1:   if g:indent_guides_autocmds_enabled
+line 2:     call indent_guides#enable()
+line 3:   else
+line 4:     call indent_guides#disable()
+calling function indent_guides#process_autocmds..indent_guides#disable()
+
+line 1:   let g:indent_guides_autocmds_enabled = 0
+line 2:   call indent_guides#clear_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches()
+
+line 1:   call indent_guides#init_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches()
+
+line 1:   let w:indent_guides_matches = exists('w:indent_guides_matches') ? w:indent_guides_matches : []
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches
+
+line 2:   if !empty(w:indent_guides_matches)
+line 3:     let l:index = 0
+line 4:     for l:match_id in w:indent_guides_matches
+line 5:       try
+line 6:         call matchdelete(l:match_id)
+line 7:       catch /E803:/
+line 8:         " Do nothing
+line 9:       endtry
+line 10:       call remove(w:indent_guides_matches, l:index)
+line 11:       let l:index += l:index
+line 12:     endfor
+line 13:   endif
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable
+
+function indent_guides#process_autocmds..indent_guides#disable returning #0
+
+continuing in function indent_guides#process_autocmds
+
+line 5:   end
+function indent_guides#process_autocmds returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand call nerdtree#checkForBrowse(expand("<amatch>"))
+
+line 0: call nerdtree#checkForBrowse(expand("<amatch>"))
+calling function nerdtree#checkForBrowse('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:     if a:dir != '' && isdirectory(a:dir)
+line 2:         call g:NERDTreeCreator.CreateSecondary(a:dir)
+line 3:     endif
+function nerdtree#checkForBrowse returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand sil! call s:LocalBrowse(expand("<amatch>"))
+
+line 0: sil! call s:LocalBrowse(expand("<amatch>"))
+calling function <SNR>79_LocalBrowse('/Users/danesummers/environment/vim/bundle/vim-sluice/abid')
+
+line 1:   " unfortunate interaction -- debugging calls can't be used here;
+line 2:   " the BufEnter event causes triggering when attempts to write to
+line 3:   " the DBG buffer are made.
+line 4: "  echomsg "dirname<".a:dirname.">"
+line 5:   if has("amiga")
+line 6:    " The check against '' is made for the Amiga, where the empty
+line 7:    " string is the current directory and not checking would break
+line 8:    " things such as the help command.
+line 9:    if a:dirname != '' && isdirectory(a:dirname)
+line 10:     sil! call netrw#LocalBrowseCheck(a:dirname)
+line 11:    endif
+line 12:   elseif isdirectory(a:dirname)
+line 13: "   echomsg "dirname<".dirname."> isdir"
+line 14:    sil! call netrw#LocalBrowseCheck(a:dirname)
+line 15:   endif
+line 16:   " not a directory, ignore it
+function <SNR>79_LocalBrowse returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufWinEnter Auto commands for "*"
+autocommand if s:diff_window_count() == 1 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diffoff() | endif
+
+line 0: if s:diff_window_count() == 1 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diffoff() | endif
+calling function <SNR>32_diff_window_count()
+
+line 1:   let c = 0
+line 2:   for nr in range(1,winnr('$'))
+line 3:     let c += getwinvar(nr,'&diff')
+line 4:   endfor
+line 2:   for nr in range(1,winnr('$'))
+line 3:     let c += getwinvar(nr,'&diff')
+line 4:   endfor
+line 2:   for nr in range(1,winnr('$'))
+line 3:     let c += getwinvar(nr,'&diff')
+line 4:   endfor
+line 5:   return c
+function <SNR>32_diff_window_count returning #0
+
+continuing in BufWinEnter Auto commands for "*"
+
+line 0:  call s:diffoff() | endif
+line 0:  endif
+line 28: unlet! b:keymap_name
+line 29:     normal iline line
+
+line 30:     normal Oline
+
+line 31:     normal 2yy29P
+58 more lines
+line 32:     $
+line 33:     let options['upmax']
+Exception thrown: Vim(let):E488: Trailing characters
+
+line 34:     let bottomresults = sluice#plugins#search#data({'upmax': 5, 'downmax': 5, 'needle': 'line'})
+line 35:     1 
+line 36:     let topresults = sluice#plugins#search#data({'upmax': 5, 'downmax': 5, 'needle': 'line'})
+line 37:     30 
+line 38:     let middleresults = sluice#plugins#search#data({'upmax': 5, 'downmax': 5, 'needle': 'line'})
+line 39:   finally
+Exception made pending: Vim(let):E488: Trailing characters
+
+line 40:     " ensure that if there are any function errors, we still close the temp
+line 41:     " buffer
+line 42:     bd!
+Executing BufLeave Auto commands for "*"
+autocommand cal s:record(expand('<abuf>', 1))
+
+line 0: cal s:record(expand('<abuf>', 1))
+calling function <SNR>34_record('2')
+
+line 1: ^Iif s:locked | retu | en
+line 1:  retu | en
+line 1:  en
+line 2: ^Ilet bufnr = a:bufnr + 0
+line 3: ^Ilet bufname = bufname(bufnr)
+line 4: ^Iif bufnr > 0 && !empty(bufname)
+line 5: ^I^Ical filter(s:mrbs, 'v:val != bufnr')
+line 6: ^I^Ical insert(s:mrbs, bufnr)
+line 7: ^I^Ical s:addtomrufs(bufname)
+calling function <SNR>34_record..<SNR>34_addtomrufs('abid')
+
+line 1: ^Ilet fn = fnamemodify(a:fname, ':p')
+line 2: ^Ilet fn = exists('+ssl') ? tr(fn, '/', '\') : fn
+line 3: ^Iif ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} ) || !empty(getbufvar('^'.fn.'$', '&bt')) || !filereadable(fn) | retu
+line 3:  retu
+function <SNR>34_record..<SNR>34_addtomrufs returning #0
+
+continuing in function <SNR>34_record
+
+line 8: ^Ien
+function <SNR>34_record returning #0
+
+continuing in BufLeave Auto commands for "*"
+
+Executing BufLeave Auto commands for "*"
+autocommand call UltiSnips_LeavingBuffer()
+
+line 0: call UltiSnips_LeavingBuffer()
+calling function UltiSnips_LeavingBuffer()
+
+line 1:     exec g:_uspy "UltiSnips_Manager.leaving_buffer()"
+line 1: :py  UltiSnips_Manager.leaving_buffer()
+function UltiSnips_LeavingBuffer returning #0
+
+continuing in BufLeave Auto commands for "*"
+
+Executing BufWinLeave Auto commands for "*"
+autocommand execute getwinvar(+bufwinnr(+expand('<abuf>')), 'fugitive_leave')
+
+line 0: execute getwinvar(+bufwinnr(+expand('<abuf>')), 'fugitive_leave')
+line 0: 
+Executing BufWinLeave Auto commands for "*"
+autocommand if s:diff_window_count() == 2 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diffoff_all(getbufvar(+expand('<abuf>'), 'git_dir')) | endif
+
+line 0: if s:diff_window_count() == 2 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diffoff_all(getbufvar(+expand('<abuf>'), 'git_dir')) | endif
+calling function <SNR>32_diff_window_count()
+
+line 1:   let c = 0
+line 2:   for nr in range(1,winnr('$'))
+line 3:     let c += getwinvar(nr,'&diff')
+line 4:   endfor
+line 2:   for nr in range(1,winnr('$'))
+line 3:     let c += getwinvar(nr,'&diff')
+line 4:   endfor
+line 2:   for nr in range(1,winnr('$'))
+line 3:     let c += getwinvar(nr,'&diff')
+line 4:   endfor
+line 5:   return c
+function <SNR>32_diff_window_count returning #0
+
+continuing in BufWinLeave Auto commands for "*"
+
+line 0:  call s:diffoff_all(getbufvar(+expand('<abuf>'), 'git_dir')) | endif
+line 0:  endif
+Executing WinEnter Auto commands for "*"
+autocommand call indent_guides#process_autocmds()
+
+line 0: call indent_guides#process_autocmds()
+calling function indent_guides#process_autocmds()
+
+line 1:   if g:indent_guides_autocmds_enabled
+line 2:     call indent_guides#enable()
+line 3:   else
+line 4:     call indent_guides#disable()
+calling function indent_guides#process_autocmds..indent_guides#disable()
+
+line 1:   let g:indent_guides_autocmds_enabled = 0
+line 2:   call indent_guides#clear_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches()
+
+line 1:   call indent_guides#init_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches()
+
+line 1:   let w:indent_guides_matches = exists('w:indent_guides_matches') ? w:indent_guides_matches : []
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches
+
+line 2:   if !empty(w:indent_guides_matches)
+line 3:     let l:index = 0
+line 4:     for l:match_id in w:indent_guides_matches
+line 5:       try
+line 6:         call matchdelete(l:match_id)
+line 7:       catch /E803:/
+line 8:         " Do nothing
+line 9:       endtry
+line 10:       call remove(w:indent_guides_matches, l:index)
+line 11:       let l:index += l:index
+line 12:     endfor
+line 13:   endif
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable
+
+function indent_guides#process_autocmds..indent_guides#disable returning #0
+
+continuing in function indent_guides#process_autocmds
+
+line 5:   end
+function indent_guides#process_autocmds returning #0
+
+continuing in WinEnter Auto commands for "*"
+
+Executing WinEnter Auto commands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+line 0: call s:Highlight_Matching_Pair()
+calling function <SNR>78_Highlight_Matching_Pair()
+
+line 1:   " Remove any previous match.
+line 2:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 3:     3match none
+line 4:     let w:paren_hl_on = 0
+line 5:   endif
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let c = getline(c_lnum)[c_col - 1]
+line 19:   let plist = split(&matchpairs, '.\zs[:,]')
+line 20:   let i = index(plist, c)
+line 21:   if i < 0
+line 22:     " not found, in Insert mode try character before the cursor
+line 23:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 24:       let before = 1
+line 25:       let c = getline(c_lnum)[c_col - 2]
+line 26:       let i = index(plist, c)
+line 27:     endif
+line 28:     if i < 0
+line 29:       " not found, nothing to do
+line 30:       return
+function <SNR>78_Highlight_Matching_Pair returning #0
+
+continuing in WinEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand :call s:SetUpForNewFiletype(&filetype, 0)
+
+line 0: :call s:SetUpForNewFiletype(&filetype, 0)
+calling function <SNR>21_SetUpForNewFiletype('vim', 0)
+
+line 1:     let ft = a:filetype
+line 2: 
+line 3:     "for compound filetypes, if we dont know how to handle the full filetype
+line 4:     "then break it down and use the first part that we know how to handle
+line 5:     if ft =~ '\.' && !has_key(s:delimiterMap, ft)
+line 6:         let filetypes = split(a:filetype, '\.')
+line 7:         for i in filetypes
+line 8:             if has_key(s:delimiterMap, i)
+line 9:                 let ft = i
+line 10:                 break
+line 11:             endif
+line 12:         endfor
+line 13:     endif
+line 14: 
+line 15:     let b:NERDSexyComMarker = ''
+line 16: 
+line 17:     if has_key(s:delimiterMap, ft)
+line 18:         let b:NERDCommenterDelims = s:delimiterMap[ft]
+line 19:         for i in ['left', 'leftAlt', 'right', 'rightAlt']
+line 20:             if !has_key(b:NERDCommenterDelims, i)
+line 21:                 let b:NERDCommenterDelims[i] = ''
+line 22:             endif
+line 23:         endfor
+line 24:     else
+line 25:         let b:NERDCommenterDelims = s:CreateDelimMapFromCms()
+calling function <SNR>21_SetUpForNewFiletype..<SNR>21_CreateDelimMapFromCms()
+
+line 1:     return { 'left': substitute(&commentstring, '\([^ \t]*\)\s*%s.*', '\1', ''), 'right': substitute(&commentstring, '.*%s\s*\(.*\)', '\1', 'g'), 'leftAlt': '', 'rightAlt': '' }
+function <SNR>21_SetUpForNewFiletype..<SNR>21_CreateDelimMapFromCms returning {'right': '', 'rightAlt': '', 'leftAlt': '', 'left': '"'}
+
+continuing in function <SNR>21_SetUpForNewFiletype
+
+line 26:     endif
+line 27: 
+function <SNR>21_SetUpForNewFiletype returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand let b:sluice_signs = {}
+
+line 0: let b:sluice_signs = {}
+Executing BufEnter Auto commands for "*"
+autocommand cal s:record(expand('<abuf>', 1))
+
+line 0: cal s:record(expand('<abuf>', 1))
+calling function <SNR>34_record('1')
+
+line 1: ^Iif s:locked | retu | en
+line 1:  retu | en
+line 1:  en
+line 2: ^Ilet bufnr = a:bufnr + 0
+line 3: ^Ilet bufname = bufname(bufnr)
+line 4: ^Iif bufnr > 0 && !empty(bufname)
+line 5: ^I^Ical filter(s:mrbs, 'v:val != bufnr')
+line 6: ^I^Ical insert(s:mrbs, bufnr)
+line 7: ^I^Ical s:addtomrufs(bufname)
+calling function <SNR>34_record..<SNR>34_addtomrufs('autoload/sluice/test.vim')
+
+line 1: ^Ilet fn = fnamemodify(a:fname, ':p')
+chdir(autoload/sluice)
+fchdir() to previous dir
+line 2: ^Ilet fn = exists('+ssl') ? tr(fn, '/', '\') : fn
+line 3: ^Iif ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} ) || !empty(getbufvar('^'.fn.'$', '&bt')) || !filereadable(fn) | retu
+line 3:  retu
+line 5: ^Ien
+line 6: ^Ilet idx = index(s:mrufs, fn, 0, !{s:cseno})
+line 7: ^Iif idx
+line 8: ^I^Ical filter(s:mrufs, 'v:val !='.( {s:cseno} ? '#' : '?' ).' fn')
+line 9: ^I^Ical insert(s:mrufs, fn)
+line 10: ^I^Iif {s:soup} && idx < 0
+line 11: ^I^I^Ical s:savetofile(s:mergelists())
+line 12: ^I^Ien
+line 13: ^Ien
+function <SNR>34_record..<SNR>34_addtomrufs returning #0
+
+continuing in function <SNR>34_record
+
+line 8: ^Ien
+function <SNR>34_record returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand call indent_guides#process_autocmds()
+
+line 0: call indent_guides#process_autocmds()
+calling function indent_guides#process_autocmds()
+
+line 1:   if g:indent_guides_autocmds_enabled
+line 2:     call indent_guides#enable()
+line 3:   else
+line 4:     call indent_guides#disable()
+calling function indent_guides#process_autocmds..indent_guides#disable()
+
+line 1:   let g:indent_guides_autocmds_enabled = 0
+line 2:   call indent_guides#clear_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches()
+
+line 1:   call indent_guides#init_matches()
+calling function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches()
+
+line 1:   let w:indent_guides_matches = exists('w:indent_guides_matches') ? w:indent_guides_matches : []
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches..indent_guides#init_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches
+
+line 2:   if !empty(w:indent_guides_matches)
+line 3:     let l:index = 0
+line 4:     for l:match_id in w:indent_guides_matches
+line 5:       try
+line 6:         call matchdelete(l:match_id)
+line 7:       catch /E803:/
+line 8:         " Do nothing
+line 9:       endtry
+line 10:       call remove(w:indent_guides_matches, l:index)
+line 11:       let l:index += l:index
+line 12:     endfor
+line 13:   endif
+function indent_guides#process_autocmds..indent_guides#disable..indent_guides#clear_matches returning #0
+
+continuing in function indent_guides#process_autocmds..indent_guides#disable
+
+function indent_guides#process_autocmds..indent_guides#disable returning #0
+
+continuing in function indent_guides#process_autocmds
+
+line 5:   end
+function indent_guides#process_autocmds returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand call nerdtree#checkForBrowse(expand("<amatch>"))
+
+line 0: call nerdtree#checkForBrowse(expand("<amatch>"))
+calling function nerdtree#checkForBrowse('/Users/danesummers/environment/vim/bundle/vim-sluice/autoload/sluice/test.vim')
+
+line 1:     if a:dir != '' && isdirectory(a:dir)
+line 2:         call g:NERDTreeCreator.CreateSecondary(a:dir)
+line 3:     endif
+function nerdtree#checkForBrowse returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+Executing BufEnter Auto commands for "*"
+autocommand sil! call s:LocalBrowse(expand("<amatch>"))
+
+line 0: sil! call s:LocalBrowse(expand("<amatch>"))
+calling function <SNR>79_LocalBrowse('/Users/danesummers/environment/vim/bundle/vim-sluice/autoload/sluice/test.vim')
+
+line 1:   " unfortunate interaction -- debugging calls can't be used here;
+line 2:   " the BufEnter event causes triggering when attempts to write to
+line 3:   " the DBG buffer are made.
+line 4: "  echomsg "dirname<".a:dirname.">"
+line 5:   if has("amiga")
+line 6:    " The check against '' is made for the Amiga, where the empty
+line 7:    " string is the current directory and not checking would break
+line 8:    " things such as the help command.
+line 9:    if a:dirname != '' && isdirectory(a:dirname)
+line 10:     sil! call netrw#LocalBrowseCheck(a:dirname)
+line 11:    endif
+line 12:   elseif isdirectory(a:dirname)
+line 13: "   echomsg "dirname<".dirname."> isdir"
+line 14:    sil! call netrw#LocalBrowseCheck(a:dirname)
+line 15:   endif
+line 16:   " not a directory, ignore it
+function <SNR>79_LocalBrowse returning #0
+
+continuing in BufEnter Auto commands for "*"
+
+line 43:   endtry
+Exception resumed: Vim(let):E488: Trailing characters
+
+function VURunAllTests..TestSearchInWindow aborted
+
+continuing in function VURunAllTests
+
+line 30: ^I^I^I^I^Ilet goodTests = goodTests + 1
+line 31: ^I^I^I^Icatch /.*/
+Exception caught: Vim(let):E488: Trailing characters
+
+line 32: ^I^I^I^I^Ilet failtype = 'Failure'
+line 33: ^I^I^I^I^Iif v:exception =~ 'VU'
+line 34: ^I^I^I^I^I^Ilet failedTests = failedTests + 1
+line 35: ^I^I^I^I^Ielse
+line 36: ^I^I^I^I^I^Ilet exceptTests = exceptTests + 1
+line 37: ^I^I^I^I^I^Ilet failtype = 'Exception'
+line 38: ^I^I^I^I^Iendif
+line 39: 
+line 40: ^I^I^I^I^Iexec "set verbose=".oldverbose
+line 40: set verbose=0

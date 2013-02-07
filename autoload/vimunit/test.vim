@@ -315,6 +315,10 @@ fun TestParseVerboseFile()
 	call VULog(string(lines))
 	call VUAssertEquals(lines['mvom#renderer#CombineData']['status'],'aborted')
 	call VUAssertEquals(lines['mvom#renderer#CombineData']['offset'], 46)
+
+	" test yet another scenario that doesn't work.
+	let lines = vimunit#util#parseVerboseFile('autoload/vimunit/verr-TestSearchInWindow.txt')
+	call VUAssertEquals(lines['TestSearchInWindow']['offset'],28)
 endf
 
 function! TestGetCurrentFunctionNames() 
