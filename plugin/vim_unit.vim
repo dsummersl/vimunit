@@ -567,7 +567,7 @@ function! VURunAllTests(...)
 					exec "silent !cp vfile.txt verr-". sFoo .".txt"
 
 					call add(messages,"\n")
-					call extend(messages, s:msgSink)
+					call add(messages, join(s:msgSink, " "))
 					call add(messages,printf("[1;31m%s[0m| [1m%s[0m (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
 
 					" TODO this parsing of the verbose file is very hacky. We need an

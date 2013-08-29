@@ -192,6 +192,7 @@ endfunction
 "   name (which should be in this dictionary)
 function! vimunit#util#parseVerboseFile(filename)
   let results = {}
+  let stack = []
   let currentfunction = ''
   for line in readfile(a:filename)
     "call VULog('line = '. line)
@@ -202,14 +203,21 @@ function! vimunit#util#parseVerboseFile(filename)
       let results[currentfunction]['detail'] = ''
     endif
 
-    if line =~ '^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$'
-      let currentfunction = s:setupkey(line,results,'^\v\s*calling function.*\.\.([^(]+)\([^)]*\)$')
-    elseif line =~ '^\v\s*calling function ([^(]+)\([^)]*\)$'
-      let currentfunction = s:setupkey(line,results, '^\v\s*calling function ([^(]+)\([^)]*\)$')
-    elseif line =~ '^\v\s*autocommand call ([^(]+)\(\)'
-      let currentfunction = s:setupkey(line,results, '^\v\s*autocommand call ([^(]+)\(\)')
+    if line =~ '^\v\s*calling function.*\.\.([^(]+)\(.*\)$'
+      let currentfunction = s:setupkey(line,results,'^\v\s*calling function.*\.\.([^(]+)\(.*\)$')
+      let stack = stack + [currentfunction]
+      call VULog('stack = '. string(stack))
+    elseif line =~ '^\v\s*calling function ([^(]+)\(.*\)$'
+      let currentfunction = s:setupkey(line,results, '^\v\s*calling function ([^(]+)\(.*\)$')
+      let stack = stack + [currentfunction]
+      call VULog('stack = '. string(stack))
     elseif line =~ 'continuing in function'
       let currentfunction = substitute(line,'^\v\s*continuing in function .*<([^. (]+)$','\=submatch(1)','')
+      if len(stack) > 0
+        let stack = stack[0:-2]
+        call VULog('stack = '. string(stack))
+      endif
+      let stack = stack + [currentfunction]
       call VULog('currentfunction = "'. currentfunction .'"')
     elseif line =~ '^\s*function .* returning' && currentfunction != ''
       call VULog('returning '. currentfunction)
@@ -221,6 +229,20 @@ function! vimunit#util#parseVerboseFile(filename)
         endif
       endif
       let results[currentfunction]['status'] = 'returned'
+      if len(stack) > 0
+        let newfunction = stack[-1]
+        if newfunction == currentfunction
+          let stack = stack[0:-2]
+        endif
+      endif
+      if len(stack) > 0
+        " we need a stack here, so that we can pop back to the previous
+        " function.
+        let currentfunction = stack[-1]
+        let stack = stack[0:-2]
+        call VULog('stack = '. string(stack))
+        call VULog('currentfunction = '. currentfunction)
+      endif
       " for the root function that fails, it has no child..
     elseif line =~ 'Exception thrown:' && currentfunction != ''
       call VULog('except for '. currentfunction)
@@ -239,12 +261,27 @@ function! vimunit#util#parseVerboseFile(filename)
       call VULog("ugcurrentfunction = ". matches[1])
       let results[matches[1]]['status'] = 'aborted'
       let results[matches[1]]['child'] = matches[2]
+      if len(stack) > 0
+        " we need a stack here, so that we can pop back to the previous
+        " function.
+        let currentfunction = stack[-1]
+        let stack = stack[0:-2]
+        call VULog('stack = '. string(stack))
+        call VULog('currentfunction = '. currentfunction)
+      endif
     elseif currentfunction != ''
       " we are within a file, if the line starts with line then we'll want to
       " parse that.
       if line =~ '^\s*line '
-        call VULog('line')
-        let results[currentfunction]['offset'] = str2nr(substitute(line,'^\v\s*line (\d+):','\=submatch(1)',''))
+        call VULog('line: '. line)
+        let newoffset = str2nr(substitute(line,'^\v\s*line (\d+):','\=submatch(1)',''))
+        if has_key(results[currentfunction],'offset')
+          if results[currentfunction]['offset'] < newoffset
+            let results[currentfunction]['offset'] = newoffset
+          endif
+        else
+          let results[currentfunction]['offset'] = newoffset
+        endif
         let results[currentfunction]['detail'] = substitute(line,'^\v.*: (.*)$','\=submatch(1)','')
         call VULog(currentfunction .' line: '. results[currentfunction]['offset'] )
       else

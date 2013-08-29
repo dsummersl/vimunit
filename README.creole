@@ -21,5 +21,4 @@ To run vim_unit's own tests type the following:
 
 Requirements:
 
-  - Version 7.3.390+ is required (7.3.2xx misses a patch to the sort() function
-    that supports dictionaries).
+  - Version 7.2.411+ is required.

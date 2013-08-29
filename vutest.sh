@@ -30,7 +30,7 @@ help() {
 
 VERBOSE=0
 VIM='vim'
-FILE=`mktemp -t log.txt`
+FILE=`mktemp log.txt-XXXX`
 TOSTDOUT=1
 while getopts "vf:e:" opt; do
   case $opt in
@@ -57,9 +57,9 @@ fi
 shift $((OPTIND-1))
 
 if [[ $# -eq 1 ]]; then
-  $VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests('.*',true,'$FILE')" $1
+  $VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests('.*',1,'$FILE')" $1
 elif [[ $# -eq 2 ]]; then
-  $VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests('$2',true,'$FILE')" $1
+  $VIM -nc ":so % | let g:vimUnitVerbosity=$VERBOSE | call VURunAllTests('$2',1,'$FILE')" $1
 else
   help
 fi
