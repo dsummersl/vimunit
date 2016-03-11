@@ -538,87 +538,101 @@ function! VURunAllTests(...)
 	let exceptTests = 0
 	let goodAssertions = 0
 	let failedAssertions = 0
-	for fn in vimunit#util#GetCurrentFunctionLocations()
-		let sFoo = vimunit#util#ExtractFunctionName(getline(fn))
+
+	" Collect the names of the test functions to run
+	let testInfos = []
+	for floc in vimunit#util#GetCurrentFunctionLocations()
+		let sFoo = vimunit#util#ExtractFunctionName(getline(floc))
 		if match(sFoo,'^Test') > -1 && match(sFoo,testpattern) > -1
 			if exists( '*'.sFoo)
-				try
-					call s:VURunnerInit()
-					" TODO Make the verbose file a temp file.
-					" Get the line number of this particular function
-					" then grep the verbose file for the offset.
-					exe "silent !rm -f vfile.txt"
-					set verbosefile=vfile.txt
-					set verbose=20
-					call {sFoo}()
-					let goodTests = goodTests + 1
-				catch /.*/
-					let failtype = 'Failure'
-					if v:exception =~ 'VU'
-						let failedTests = failedTests + 1
-					else
-						let exceptTests = exceptTests + 1
-						let failtype = 'Exception'
-					endif
-
-					exec "set verbose=".oldverbose
-					exec "set verbosefile=".oldvfile
-					" for debugging an error, save the output for later use...
-					exec "silent !cp vfile.txt verr-". sFoo .".txt"
-
-					call add(messages,"\n")
-					call add(messages, join(s:msgSink, " "))
-					call add(messages,printf("[1;31m%s[0m| [1m%s[0m (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
-
-					" TODO this parsing of the verbose file is very hacky. We need an
-					" actual solution that:
-					" - notes the function enter/exit messages:
-					"   - calling function
-					"   - continuing in function
-					"   - function.* aborted
-					" By parsing this better we could reliably get the line number in the
-					" test case...which at the moment sometimes does happen, and sometimes
-					" doesn't.
-
-					" Extract the line where the test failed (if there was an exception)
-					let verbosefile = vimunit#util#parseVerboseFile('vfile.txt')
-					call writefile([string(verbosefile)],'out'. sFoo .'.txt')
-					let stacktrace = []
-					let lineNo = verbosefile[sFoo]['offset'] + fn
-					let lineDesc = verbosefile[sFoo]['detail']
-					call add(stacktrace,printf('  %s|[1mline %3d[0m|%s',sFoo,lineNo,lineDesc))
-					let curFunction = sFoo
-
-					" The vimunit#util#parseVerboseFile function does not handly
-					" recursive calls to the same function correctly. To prevent any
-					" potential errors from that...cap the recursion:
-					let recurses = 0
-					while has_key(verbosefile[curFunction],'child') && recurses < 10
-						let curFunction = verbosefile[curFunction]['child']
-						let recurses = recurses + 1
-						" TODO find the file that the function is in, and then compute the
-						" line number of the function definition.
-						if !has_key(verbosefile,curFunction) || !has_key(verbosefile[curFunction],'offset')
-							break
-						endif
-						let lineNo = verbosefile[curFunction]['offset']
-						let lineDesc = verbosefile[curFunction]['detail']
-						call add(stacktrace,printf('  %s|[1moffset %d[0m|%s',curFunction,lineNo,lineDesc))
-					endwhile
-
-					call extend(messages,reverse(stacktrace))
-				finally
-					exec "set verbose=".oldverbose
-					exec "set verbosefile=".oldvfile
-					let goodAssertions = goodAssertions + s:testRunSuccessCount
-					let failedAssertions = failedAssertions + s:testRunFailureCount
-				endtry
+				call add(testInfos, [sFoo, floc])
 			else
 				call confirm ("ERROR: VUAutoRunner. Function name: ".sFoo." Could not be found by function exists(".sFoo.")")
 			endif
 		else
-			"call add(messages,"NOTE: Found function name: ".sFoo." Does not start with Test.So we will not run it automaticaly")
+			" call add(messages,"NOTE: Found function name: ".sFoo." Does not start with Test.So we will not run it automaticaly")
 		endif
+	endfor
+
+	" Call the collected test functions, if they still exist.
+	for ti in testInfos
+		let sFoo = ti[0]
+		let fn = ti[1]
+		if !exists( '*'.sFoo)
+			call confirm ("ERROR: VUAutoRunner. Function name: ".sFoo." Could not be found by function exists(".sFoo.")")
+			continue
+		endif
+		try
+			call s:VURunnerInit()
+			" TODO Make the verbose file a temp file.
+			" Get the line number of this particular function
+			" then grep the verbose file for the offset.
+			exe "silent !rm -f vfile.txt"
+			set verbosefile=vfile.txt
+			set verbose=20
+			call {sFoo}()
+			let goodTests = goodTests + 1
+		catch /.*/
+			let failtype = 'Failure'
+			if v:exception =~ 'VU'
+				let failedTests = failedTests + 1
+			else
+				let exceptTests = exceptTests + 1
+				let failtype = 'Exception'
+			endif
+
+			exec "set verbose=".oldverbose
+			exec "set verbosefile=".oldvfile
+			" for debugging an error, save the output for later use...
+			exec "silent !cp vfile.txt verr-". sFoo .".txt"
+
+			call add(messages,"\n")
+			call add(messages, join(s:msgSink, " "))
+			call add(messages,printf("[1;31m%s[0m| [1m%s[0m (assertions %d)| %s",failtype,sFoo,s:testRunSuccessCount,v:exception))
+
+			" TODO this parsing of the verbose file is very hacky. We need an
+			" actual solution that:
+			" - notes the function enter/exit messages:
+			"   - calling function
+			"   - continuing in function
+			"   - function.* aborted
+			" By parsing this better we could reliably get the line number in the
+			" test case...which at the moment sometimes does happen, and sometimes
+			" doesn't.
+
+			" Extract the line where the test failed (if there was an exception)
+			let verbosefile = vimunit#util#parseVerboseFile('vfile.txt')
+			call writefile([string(verbosefile)],'out'. sFoo .'.txt')
+			let stacktrace = []
+			let lineNo = verbosefile[sFoo]['offset'] + fn
+			let lineDesc = verbosefile[sFoo]['detail']
+			call add(stacktrace,printf('  %s|[1mline %3d[0m|%s',sFoo,lineNo,lineDesc))
+			let curFunction = sFoo
+
+			" The vimunit#util#parseVerboseFile function does not handly
+			" recursive calls to the same function correctly. To prevent any
+			" potential errors from that...cap the recursion:
+			let recurses = 0
+			while has_key(verbosefile[curFunction],'child') && recurses < 10
+				let curFunction = verbosefile[curFunction]['child']
+				let recurses = recurses + 1
+				" TODO find the file that the function is in, and then compute the
+				" line number of the function definition.
+				if !has_key(verbosefile,curFunction) || !has_key(verbosefile[curFunction],'offset')
+					break
+				endif
+				let lineNo = verbosefile[curFunction]['offset']
+				let lineDesc = verbosefile[curFunction]['detail']
+				call add(stacktrace,printf('  %s|[1moffset %d[0m|%s',curFunction,lineNo,lineDesc))
+			endwhile
+
+			call extend(messages,reverse(stacktrace))
+		finally
+			exec "set verbose=".oldverbose
+			exec "set verbosefile=".oldvfile
+			let goodAssertions = goodAssertions + s:testRunSuccessCount
+			let failedAssertions = failedAssertions + s:testRunFailureCount
+		endtry
 	endfor
 
 	" final deletion of log files.
