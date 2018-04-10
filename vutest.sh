@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # (c) 2012, Dane Summers <dsummers@pinedesk.biz>
 # 
