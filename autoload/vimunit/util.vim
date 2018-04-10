@@ -12,7 +12,7 @@ endfunction
 " utility library)
 function! vimunit#util#searchallpair(start,middle,end, ...)
 	let flags = ''
-	let stopline = 0
+	let stopline = ''
 	let timeout = 0
 	if a:0 > 0
 		let flags = a:1
